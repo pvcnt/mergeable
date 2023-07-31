@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 1024 1024" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<g>
+<path d="M3.94351e-14 150C3.94351e-14 67.1573 67.1573 2.84217e-14 150 2.84217e-14L874 2.84217e-14C956.843 2.84217e-14 1024 67.1573 1024 150L1024 874C1024 956.843 956.843 1024 874 1024L150 1024C67.1573 1024 3.94351e-14 956.843 3.94351e-14 874L3.94351e-14 150Z" fill="#d33d17" fill-rule="nonzero" opacity="1" stroke="none"/>
+<path d="M237.311 200C237.311 144.772 282.083 100 337.311 100C392.54 100 437.311 144.772 437.311 200C437.311 255.228 392.54 300 337.311 300C282.083 300 237.311 255.228 237.311 200Z" fill="#68c1ee" fill-opacity="0" fill-rule="nonzero" opacity="1" stroke="#edeff2" stroke-linecap="butt" stroke-linejoin="round" stroke-width="40"/>
+<path d="M237.311 818.162C237.311 762.933 282.083 718.162 337.311 718.162C392.54 718.162 437.311 762.933 437.311 818.162C437.311 873.39 392.54 918.162 337.311 918.162C282.083 918.162 237.311 873.39 237.311 818.162Z" fill="#68c1ee" fill-opacity="0" fill-rule="nonzero" opacity="1" stroke="#edeff2" stroke-linecap="butt" stroke-linejoin="round" stroke-width="40"/>
+<path d="M687.147 615.081C687.147 558.151 733.297 512 790.227 512C847.157 512 893.308 558.151 893.308 615.081C893.308 672.011 847.157 718.162 790.227 718.162C733.297 718.162 687.147 672.011 687.147 615.081Z" fill="#68c1ee" fill-opacity="0" fill-rule="nonzero" opacity="1" stroke="#edeff2" stroke-linecap="butt" stroke-linejoin="round" stroke-width="40"/>
+<path d="M337.311 718.162C337.311 718.162 337.311 726.966 337.311 622.426C337.311 517.886 337.311 300 337.311 300" fill="none" opacity="1" stroke="#edeff2" stroke-linecap="butt" stroke-linejoin="round" stroke-width="40"/>
+<path d="M687.147 615.081C590.945 615.081 491.838 613.074 406.159 576.09C370 560.481 337.311 517.192 337.311 464.725" fill="none" opacity="1" stroke="#edeff2" stroke-linecap="butt" stroke-linejoin="round" stroke-width="40"/>
+</g>
+</svg>

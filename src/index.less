@@ -1,0 +1,179 @@
+@import "@blueprintjs/core/lib/less/variables";
+@import "utils.less";
+
+.announcement, .bp5-dark .announcement {
+    background-color: @pt-intent-warning;
+    color: white;
+    margin-bottom: 1rem;
+
+    a {
+        color: white;
+        text-decoration: underline;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+a .title {
+    color: @pt-text-color;
+}
+
+*:focus {
+    outline: 0;
+}
+
+#root {
+    width: 100%;
+}
+
+.app {
+    width: 100%;
+    display: flex;
+}
+
+.sidebar {
+    width: 4rem;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    gap: 0.5rem;
+    border-right: 1px solid @gray3;
+
+    .bottom {
+        margin-top: auto;
+    }
+}
+
+main {
+    margin: 1rem;
+    width: 100%;
+    height: 100%;
+}
+
+.bp5-dark {
+    background-color: #2f343c;
+    width: 100%;
+    height: 100%;
+
+    & table.bp5-html-table td, & table.bp5-html-table th, & span, & div, & p, & time {
+        color: @light-gray5;
+    }
+    & a, & a:hover {
+        color: @pt-dark-link-color;
+      }
+    & .bp5-tag:not([class*="bp5-intent-primary"])>span {
+        color: @pt-text-color;
+    }
+    & .bp5-icon>svg {
+        color: @light-gray5;
+    }
+}
+
+.dashboard-page {
+    .section {
+        margin-top: 1rem;
+
+        .header {
+            display: flex;
+
+            .link {
+                display: block;
+                &:hover {
+                    text-decoration: none;
+                }
+                & .bp5-icon {
+                    color: @pt-text-color;
+                }
+            }
+
+            .actions {
+                margin-left: auto;
+            }
+        }
+
+        .title {
+            margin-left: @pt-grid-size;
+        }
+
+        .count {
+            margin-left: @pt-grid-size;
+        }
+
+        .pull-title {
+            font-weight: 600;
+        }
+
+        .pull-metadata {
+            font-size: @pt-font-size-small;
+        }
+    }
+}
+
+.pull-table {
+    width: 100%;
+    thead th {
+        color: @pt-text-color-disabled;
+        font-size: @pt-font-size-small;
+    }
+    tbody td {
+        overflow: hidden;
+        vertical-align: middle;
+    }
+    tbody td:nth-child(1) {
+        text-align: center;
+        width: 50px;
+    }
+    tbody td:nth-child(3) {
+        text-align: center;
+        width: 50px;
+    }
+    tbody td:nth-child(4) {
+        width: 250px;
+    }
+    tbody td a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: @pt-text-color;
+
+        &:hover {
+            text-decoration: none;
+        }
+        &:focus {
+            outline: 0;
+        }
+    }
+}
+
+.dashboard-bar {
+    display: flex;
+    width: 100%;
+
+    .search {
+        flex-grow: 1;
+    }
+
+    button {
+        margin-left: 1rem;
+    }
+}
+
+.edit-section-dialog {
+    textarea {
+        width: 100%;
+    }
+}
+
+.additions {
+    color: @green3;
+}
+
+.deletions {
+    color: @red3;
+}
