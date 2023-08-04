@@ -44,7 +44,8 @@ const toaster = OverlayToaster.create()
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
         onError: (error) => {
-            toaster.show({message: `Something went wrong: ${error.message}`, intent: Intent.DANGER})
+            const details = (error instanceof Error) ? error.message : "Internal error";
+            toaster.show({message: `Something went wrong: ${details}`, intent: Intent.DANGER})
         }
     }),
 })
