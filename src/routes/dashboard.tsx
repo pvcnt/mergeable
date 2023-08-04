@@ -1,13 +1,57 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Section, emptySectionConfig, ConfigContext } from "../config";
 import DashboardSection from "../components/DashboardSection";
 import { Button, InputGroup } from "@blueprintjs/core";
 import EditSectionDialog from "../components/EditSectionDialog";
+import { useQueries } from "@tanstack/react-query";
+import { getPulls, getViewer } from "../github";
+import { Pull } from "../model";
+
+function matches(pull: Pull, tokens: string[]): boolean {
+    return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.nameWithOwner.indexOf(tok) > -1)
+}
+
+function sum(values: number[]): number {
+    return values.reduce((acc, v) => acc + v, 0)
+}
 
 export default function Dashboard() {
     const { config, setConfig } = useContext(ConfigContext)
     const [ search, setSearch ] = useState("")
     const [ isEditing, setEditing ] = useState(false)
+
+    const viewers = useQueries({
+        queries: config.connections.map(connection => ({
+            queryKey: ['viewer', connection.host],
+            queryFn: () => getViewer(connection),
+            staleTime: Infinity,
+        })),
+    })
+    const results = useQueries({
+        queries: config.sections.flatMap(section => {
+            return config.connections.map((connection, idx) => ({
+                queryKey: ['pulls', connection.host, section.search],
+                queryFn: () => getPulls(connection, section.search, viewers[idx].data?.login || ""),
+                refetchInterval: 60000,
+                refetchIntervalInBackground: true,
+                enabled: viewers[idx].data !== undefined,
+            }))
+        }),
+    })
+
+    const tokens = search.split(" ").map(tok => tok.toLowerCase())
+
+    const count = sum(config.sections.map((section, idx) => {
+        return sum(results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
+    }))
+
+    useEffect(() => {
+        if (count > 0) {
+            document.title = `(${count}) Reviewer`
+        } else {
+            document.title = "Reviewer"
+        }
+    }, [count])
 
     const handleSubmit = (config: Section) => {
         setConfig(v => ({...v, sections: [config, ...v.sections]}))
@@ -40,11 +84,11 @@ export default function Dashboard() {
             {config !== undefined && config.sections.map((section, idx) => {
                 return (
                     <DashboardSection key={idx}
-                                      config={config}
-                                      section={section} 
+                                      section={section}
+                                      isLoading={results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).some(res => res.isLoading)}
+                                      data={results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map((res, idx) => ({host: config.connections[idx].host, pulls: (res.data || []).filter(v => matches(v, tokens))}))}
                                       isFirst={idx === 0}
                                       isLast={idx === config.sections.length - 1}
-                                      search={search}
                                       onChange={v => handleChange(idx, v)}
                                       onDelete={() => handleDelete(idx)}
                                       onMoveUp={() => handleMoveUp(idx)}

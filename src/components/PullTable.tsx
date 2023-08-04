@@ -6,10 +6,10 @@ import IconWithTooltip from "./IconWithTooltip"
 
 
 export type Props = {
-    pullsByHost: PullList[],
+    data: PullList[],
 }
 
-export default function PullTable({pullsByHost}: Props) {
+export default function PullTable({data}: Props) {
     return (
         <HTMLTable interactive className="pull-table">
             <thead>
@@ -21,7 +21,7 @@ export default function PullTable({pullsByHost}: Props) {
             </tr>
             </thead>
             <tbody>
-            {pullsByHost.flatMap((pulls, idx) => (
+            {data.flatMap((pulls, idx) => (
                 pulls.pulls.map((pull, idx2) => (
                     <tr key={`${idx}-${idx2}`}>
                         <td>
