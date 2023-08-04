@@ -15,10 +15,6 @@
     }
 }
 
-a .title {
-    color: @pt-text-color;
-}
-
 *:focus {
     outline: 0;
 }
@@ -58,8 +54,6 @@ main {
 
 .bp5-dark {
     background-color: #2f343c;
-    width: 100%;
-    height: 100%;
 
     & table.bp5-html-table td, & table.bp5-html-table th, & span, & div, & p, & time {
         color: @light-gray5;
@@ -75,43 +69,12 @@ main {
     }
 }
 
-.dashboard-page {
-    .section {
-        margin-top: 1rem;
-
-        .header {
-            display: flex;
-
-            .link {
-                display: block;
-                &:hover {
-                    text-decoration: none;
-                }
-                & .bp5-icon {
-                    color: @pt-text-color;
-                }
-            }
-
-            .actions {
-                margin-left: auto;
-            }
-        }
-
-        .title {
-            margin-left: @pt-grid-size;
-        }
-
-        .count {
-            margin-left: @pt-grid-size;
-        }
-
-        .pull-title {
-            font-weight: 600;
-        }
-
-        .pull-metadata {
-            font-size: @pt-font-size-small;
-        }
+.section-label {
+    display: block;
+    color: @pt-text-color;
+    &:hover {
+        color: @pt-text-color;
+        text-decoration: none;
     }
 }
 
@@ -148,25 +111,6 @@ main {
         &:focus {
             outline: 0;
         }
-    }
-}
-
-.dashboard-bar {
-    display: flex;
-    width: 100%;
-
-    .search {
-        flex-grow: 1;
-    }
-
-    button {
-        margin-left: 1rem;
-    }
-}
-
-.edit-section-dialog {
-    textarea {
-        width: 100%;
     }
 }
 

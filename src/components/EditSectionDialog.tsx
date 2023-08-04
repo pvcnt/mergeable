@@ -39,7 +39,7 @@ export default function EditSectionDialog({title, section, isOpen, isDeleteButto
 
     return (
         <>
-            <Dialog title={title} isOpen={isOpen} onClose={onClose} onOpening={handleOpening} className="edit-section-dialog">
+            <Dialog title={title} isOpen={isOpen} onClose={onClose} onOpening={handleOpening}>
                 <DialogBody>
                     <FormGroup label="Label" labelInfo="(required)">
                         <InputGroup value={label} onChange={e => setLabel(e.target.value)} />
@@ -49,7 +49,7 @@ export default function EditSectionDialog({title, section, isOpen, isDeleteButto
                         labelInfo="(required)"
                         helperText={<a href="https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests" target="_blank">Documentation on search syntax</a>}
                     >
-                        <TextArea value={search} onChange={e => setSearch(e.target.value)} />
+                        <TextArea value={search} onChange={e => setSearch(e.target.value)} className="w-full" />
                     </FormGroup>
                 </DialogBody>
                 <DialogFooter actions={

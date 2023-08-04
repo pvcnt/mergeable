@@ -26,10 +26,10 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="dashboard-page">
-            <div className="dashboard-bar">
-                <InputGroup leftIcon="search" placeholder="Search pull requests" round className="search" value={search} onChange={e => setSearch(e.target.value)} />
-                <Button text="New section" icon="plus" onClick={() => setEditing(true)}/>
+        <>
+            <div className="flex w-full">
+                <InputGroup leftIcon="search" placeholder="Search pull requests" round className="grow" value={search} onChange={e => setSearch(e.target.value)} />
+                <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
             </div>
             <EditSectionDialog
                 section={emptySectionConfig}
@@ -51,6 +51,6 @@ export default function Dashboard() {
                                       onMoveDown={() => handleMoveDown(idx)}/>
                 )
             })}
-        </div>
+        </>
     )
 }

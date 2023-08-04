@@ -1,4 +1,4 @@
-import { Button, H2, H3 } from "@blueprintjs/core"
+import { Button, H3 } from "@blueprintjs/core"
 import ConnectionCard from "../components/ConnectionCard"
 import { useContext, useState } from "react"
 import NewConnectionDialog from "../components/NewConnectionDialog"

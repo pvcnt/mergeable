@@ -8,6 +8,7 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import TimeAgo from 'javascript-time-ago'
 import timeAgoEnLocale from 'javascript-time-ago/locale/en.json'
+import { Intent, OverlayToaster } from '@blueprintjs/core'
 
 import App from './App.tsx'
 import ErrorPage from './error-page.tsx'
@@ -17,8 +18,7 @@ import Settings from './routes/settings.tsx'
 import 'normalize.css/normalize.css'
 import '@blueprintjs/icons/lib/css/blueprint-icons.css'
 import '@blueprintjs/core/lib/css/blueprint.css'
-import './index.less'
-import { Intent, OverlayToaster } from '@blueprintjs/core'
+import './styles/index.less'
 
 TimeAgo.addDefaultLocale(timeAgoEnLocale)
 

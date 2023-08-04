@@ -56,20 +56,20 @@ export default function DashboardSection({config, section, isFirst, isLast, sear
     }
 
     return (
-        <Card className="section">
-            <div className="header">
+        <Card className="mt-4">
+            <div className="flex">
                 <H5 onClick={(e) => handleTitleClick(e)}>
-                    <a className="link">
-                        <Icon icon={isCollapsed ? "chevron-up" : "chevron-down"}/>
-                        <span className="title">{section.label}</span>
-                        {pullsByHost !== undefined && <span className="count">
-                            <Tag round intent={(count > 0) ? Intent.PRIMARY : Intent.NONE}>
+                    <a className="section-label">
+                        <Icon icon={isCollapsed ? "chevron-up" : "chevron-down"} color="text"/>
+                        <span className="ml-2">{section.label}</span>
+                        {pullsByHost !== undefined && (
+                            <Tag round intent={(count > 0) ? Intent.PRIMARY : Intent.NONE} className="ml-2">
                                 {count}
                             </Tag>
-                        </span>}
+                        )}
                     </a>
                 </H5>
-                <div className="actions">
+                <div className="ml-auto">
                     <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={onMoveUp}/>
                     <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={onMoveDown}/>
                     <Button icon="edit" minimal onClick={() => setEditing(true)}/>

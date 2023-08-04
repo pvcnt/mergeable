@@ -42,8 +42,8 @@ export default function PullTable({pullsByHost}: Props) {
                         </td>
                         <td>
                             <a href={pull.url}>
-                                <div className="pull-title">{pull.title}</div>
-                                <div className="pull-metadata">
+                                <div className="font-semibold">{pull.title}</div>
+                                <div className="text-sm">
                                     {pulls.host}:{pull.repository.nameWithOwner} #{pull.number}
                                 </div>
                             </a>
