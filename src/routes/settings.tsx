@@ -1,7 +1,7 @@
 import { Button, H3 } from "@blueprintjs/core"
 import ConnectionCard from "../components/ConnectionCard"
 import { useContext, useState } from "react"
-import NewConnectionDialog from "../components/NewConnectionDialog"
+import ConnectionDialog from "../components/ConnectionDialog"
 import { ConfigContext, Connection } from "../config"
 import { useQueries } from "@tanstack/react-query"
 import { getViewer } from "../github"
@@ -31,7 +31,7 @@ export default function Settings() {
                 <Button text="New connection" icon="plus" onClick={() => setEditing(true)}/>
             </div>
 
-            <NewConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
+            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
             
             {config.connections.map((connection, idx) => (
                 <ConnectionCard key={idx} connection={connection} viewer={viewers[idx]?.data} onDelete={() => handleDelete(idx)}/>

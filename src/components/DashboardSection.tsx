@@ -1,6 +1,6 @@
 import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core"
 import { useState } from "react"
-import EditSectionDialog from "./EditSectionDialog";
+import SectionDialog from "./SectionDialog";
 import { Section } from "../config";
 import PullTable from "./PullTable";
 import { PullList } from "../model";
@@ -49,7 +49,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                 </div>
             </div>
 
-            <EditSectionDialog
+            <SectionDialog
                 section={section}
                 title="Edit section"
                 isOpen={isEditing}

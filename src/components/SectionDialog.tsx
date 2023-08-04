@@ -14,7 +14,7 @@ export type Props = {
     onDelete?: () => void,
 }
 
-export default function EditSectionDialog({title, section, isOpen, isDeleteButtonShown = false, onClose, onSubmit, onDelete}: Props) {    
+export default function SectionDialog({title, section, isOpen, isDeleteButtonShown = false, onClose, onSubmit, onDelete}: Props) {    
     const [label, setLabel] = useState(section.label)
     const [search, setSearch] = useState(section.search)
     const [notified, setNotified] = useState(section.notified)

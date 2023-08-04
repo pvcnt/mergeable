@@ -9,7 +9,7 @@ export type Props = {
     onSubmit: (connection: Connection) => void,
 }
 
-export default function NewConnectionDialog({isOpen, onClose, onSubmit}: Props) {    
+export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {    
     const [baseUrl, setBaseUrl] = useState("")
     const [auth, setAuth] = useState("")
 

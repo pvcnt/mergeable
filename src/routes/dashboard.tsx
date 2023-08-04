@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Section, emptySectionConfig, ConfigContext } from "../config";
 import DashboardSection from "../components/DashboardSection";
 import { Button, InputGroup } from "@blueprintjs/core";
-import EditSectionDialog from "../components/EditSectionDialog";
+import SectionDialog from "../components/SectionDialog";
 import { useQueries } from "@tanstack/react-query";
 import { getPulls, getViewer } from "../github";
 import { Pull } from "../model";
@@ -78,7 +78,7 @@ export default function Dashboard() {
                 <InputGroup leftIcon="search" placeholder="Search pull requests" round className="grow" value={search} onChange={e => setSearch(e.target.value)} />
                 <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
             </div>
-            <EditSectionDialog
+            <SectionDialog
                 section={emptySectionConfig}
                 title="New section"
                 isOpen={isEditing}
