@@ -11,3 +11,5 @@ It provides the following features:
 * Dark mode.
 
 You can use the demo instance hosted at [reviewer.pages.dev](https://reviewer.pages.dev/), or run your own instance.
+
+**Please note that this project is still in its very early stages.**
