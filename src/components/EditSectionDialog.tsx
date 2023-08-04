@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent, TextArea } from "@blueprintjs/core";
+import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent, TextArea } from "@blueprintjs/core";
 import { useState } from "react";
 import { Section } from "../config";
 import ConfirmDialog from "./ConfirmDialog";
@@ -17,15 +17,17 @@ export type Props = {
 export default function EditSectionDialog({title, section, isOpen, isDeleteButtonShown = false, onClose, onSubmit, onDelete}: Props) {    
     const [label, setLabel] = useState(section.label)
     const [search, setSearch] = useState(section.search)
+    const [notified, setNotified] = useState(section.notified)
     const [isDeleting, setDeleting] = useState(false)
 
     const handleOpening = () => {
         setLabel(section.label)
         setSearch(section.search)
+        setNotified(section.notified)
     }
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({label, search})
+            onSubmit({label, search, notified})
             onClose()
         }
     }
@@ -51,14 +53,16 @@ export default function EditSectionDialog({title, section, isOpen, isDeleteButto
                     >
                         <TextArea value={search} onChange={e => setSearch(e.target.value)} className="w-full" />
                     </FormGroup>
+                    <Checkbox checked={notified} label="Notify me about those pull requests" onChange={e => setNotified(e.currentTarget.checked)} />
                 </DialogBody>
                 <DialogFooter actions={
                     <>
                         <Button intent={Intent.PRIMARY} text="Submit" onClick={handleSubmit} disabled={!isValid()} />
-                        {isDeleteButtonShown && <Button intent={Intent.DANGER}  text="Delete" onClick={() => setDeleting(true)} />}
                         <Button text="Cancel" onClick={onClose} />
                     </>
-                } />
+                }>
+                    {isDeleteButtonShown && <Button intent={Intent.DANGER} text="Delete" minimal onClick={() => setDeleting(true)} />}
+                </DialogFooter>
             </Dialog>
 
             <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={handleDelete}>

@@ -42,7 +42,10 @@ export default function Dashboard() {
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
 
     const count = sum(config.sections.map((section, idx) => {
-        return sum(results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
+        if (section.notified) {
+            return sum(results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
+        }
+        return 0
     }))
 
     useEffect(() => {

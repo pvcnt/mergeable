@@ -9,6 +9,7 @@ export type Config = {
 export type Section = {
     label: string,
     search: string,
+    notified: boolean,
 }
 
 export type Connection = {
@@ -22,35 +23,41 @@ const configKey = "config"
 export const defaultConfig: Config = {
     sections: [
         {
-            "label": "Needs your review",
-            "search": "is:open review-requested:{USER} -review:approved -reviewed-by:{USER}",
+            label: "Needs your review",
+            search: "is:open review-requested:{USER} -review:approved -reviewed-by:{USER}",
+            notified: true,
         },
         {
-            "label": "Changes requested",
-            "search": "is:open author:{USER} review:changes_requested",
+            label: "Changes requested",
+            search: "is:open author:{USER} review:changes_requested",
+            notified: true,
         },
         {
-            "label": "Approved",
-            "search": "is:open author:{USER} review:approved",
+            label: "Approved",
+            search: "is:open author:{USER} review:approved",
+            notified: false,
         },
         {
-            "label": "Waiting for reviewers",
-            "search": "is:open author:{USER} review:none",
+            label: "Waiting for reviewers",
+            search: "is:open author:{USER} review:none",
+            notified: false,
         },
         {
-            "label": "Waiting for the author",
-            "search": "is:open review-requested:{USER} review:changes_requested",
+            label: "Waiting for the author",
+            search: "is:open review-requested:{USER} review:changes_requested",
+            notified: false,
         },
         {
-            "label": "Draft",
-            "search": "is:open author:{USER} draft:true",
+            label: "Draft",
+            search: "is:open author:{USER} draft:true",
+            notified: false,
         }
     ],
     connections: [],
 }
 
 export const emptyConfig = {sections: [], connections: []}
-export const emptySectionConfig = {label: "", search: ""}
+export const emptySectionConfig = {label: "", search: "", notified: false}
 
 export function readConfig(): Promise<Config> {
     return localforage.getItem<Config>(configKey)
