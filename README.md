@@ -1,9 +1,20 @@
-# reviewer
+# Reviewer
 
 Reviewer is an inbox for GitHub pull requests.
-It is an attempt at being better than GitHub when providing an overview of open pull requests needing my attention.
 
-It provides the following features:
+**ℹ️ Please note that this project is still in its very early stage.**
+
+This project is an attempt at being better than GitHub when providing an overview of open pull requests needing my attention.
+Indeed, the "[Pull Requests](https://github.com/pulls)" page is not customisable at all.
+It comes with four tabs associated with pre-defined search queries, that we cannot change.
+Tabs are also inconvenient, as they requiring switching from one to another to see pull requests of interest.
+
+Reviewer attempts to fill this gap by providing a single dashboard showing all pull requests one is interesting in at a glance.
+It even allows to track pull requests associated with different accounts and/or several instances of GitHub (e.g., GitHub Enterprise).
+
+## Features
+
+Reviewer provides the following features:
 * Fully customisable sections.
 * Any number of GitHub instances can be connected (e.g., GitHub Enterprise).
 * Number of pending pull requests is shown in the page's title.
@@ -11,5 +22,3 @@ It provides the following features:
 * Dark mode.
 
 You can use the demo instance hosted at [reviewer.pages.dev](https://reviewer.pages.dev/), or run your own instance.
-
-**Please note that this project is still in its very early stages.**
