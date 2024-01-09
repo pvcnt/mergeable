@@ -43,3 +43,7 @@ npm run build
 This will create a standard SPA website under the `dist/` directory.
 It can then be deployed to any Web server able to serve static content, e.g., [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/) or [Netlify](https://docs.netlify.com/integrations/frameworks/vite/).
 The only required configuration is that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
+
+## Docker
+
+A dockerfile is provided that compiles and runs a simple nginx server serving the static content.
