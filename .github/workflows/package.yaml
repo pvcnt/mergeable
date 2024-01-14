@@ -30,7 +30,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/pvcnt/reviewer
-          tags: type=sha,prefix=,format=long
+          tags: |
+            type=sha,prefix=,format=long
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{ is_default_branch }}
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
