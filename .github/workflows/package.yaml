@@ -28,4 +28,4 @@ jobs:
           context: .
           push: false
           platforms: linux/amd64,linux/arm64
-          tags: pvcnt/reviewer:latest,pvcnt/reviewer:${{ GITHUB_SHA }}
+          tags: pvcnt/reviewer:latest,pvcnt/reviewer:${{ env.GITHUB_SHA }}
