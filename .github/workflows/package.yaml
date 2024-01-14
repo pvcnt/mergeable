@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - '*'
 
 jobs:
   docker:
@@ -22,7 +21,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -32,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: false
-          platforms: linux/amd64,linux/arm64
+          push: true
+          platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
