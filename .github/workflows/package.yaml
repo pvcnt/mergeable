@@ -25,7 +25,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: pvcnt/reviewer
+          images: ghcr.io/pvcnt/reviewer
           tags: type=sha,prefix=,format=long
       - name: Build and push
         uses: docker/build-push-action@v5
