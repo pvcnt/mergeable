@@ -47,3 +47,4 @@ The only required configuration is that all traffic directed to a path that does
 ## Docker
 
 A dockerfile is provided that compiles and runs a simple nginx server serving the static content.
+
