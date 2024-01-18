@@ -1,14 +1,11 @@
-# Default values for reviewer.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
-  repository: pvcnt/reviewer
+  repository: ghcr.io/pvcnt/reviewer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  # check the available tags at https://github.com/pvcnt/reviewer/pkgs/container/reviewer
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -64,16 +61,10 @@ ingress:
 
 resources:
   {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
+  # This is an extremely small container running base nginx, resource requests are minimal.
   # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #   cpu: 50m
+  #   memory: 64Mi
 
 # Additional volumes on the output Deployment definition.
 volumes: []

@@ -1,6 +1,8 @@
 apiVersion: v2
 name: reviewer
-description: A Helm chart for Kubernetes
+description: A Helm chart for reviewer, an inbox for GitHub pull requests.
 type: application
 version: 0.0.1
 appVersion: "0.0.1"
+maintainers:
+  - name: pvcnt
