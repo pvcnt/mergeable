@@ -10,13 +10,15 @@ type Props = {
     onDelete: () => void,
 }
 
+const isBlank = (value: string | null | undefined) => value == null || value === ''
+
 export default function ConnectionCard({connection, viewer, onDelete}: Props) {
     const [isDeleting, setDeleting] = useState(false)
     return (
         <>
             <Card className="flex">
                 <div className="grow">
-                    {connection.name != null && (
+                    {!isBlank(connection.name) && (
                         <H4>{connection.name}</H4>
                     )}
                     <span><b>Host:</b> <a href={`https://${connection.host}`}>{connection.host}</a></span>

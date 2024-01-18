@@ -10,17 +10,18 @@ export type Props = {
 }
 
 export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
-    const [name, setName] = useState<string | undefined>(undefined)
+    const [connectionName, setConnectionName] = useState("")
     const [baseUrl, setBaseUrl] = useState("")
     const [auth, setAuth] = useState("")
 
     const handleOpening = () => {
-        setName(undefined)
+        setConnectionName("")
         setBaseUrl("")
         setAuth("")
     }
     const handleSubmit = () => {
         if (isValid()) {
+            const name = connectionName.trim()
             const url = new URL(baseUrl)
             const host = (url.hostname == "api.github.com") ? "github.com" : url.hostname
             onSubmit({name, baseUrl, host, auth})
@@ -35,8 +36,8 @@ export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
                 <DialogBody>
                     <FormGroup label="Connection Name">
                         <InputGroup
-                            value={name ?? ""}
-                            onChange={e => setName(e.target.value)} />
+                            value={connectionName}
+                            onChange={e => setConnectionName(e.target.value)} />
                     </FormGroup>
                     <FormGroup label="Base URL" labelInfo="(required)">
                         <InputGroup
