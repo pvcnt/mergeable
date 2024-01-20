@@ -30,7 +30,7 @@ export default function Dashboard() {
     const results = useQueries({
         queries: config.sections.flatMap(section => {
             return config.connections.map((connection, idx) => ({
-                queryKey: ['pulls', connection.host, section.search],
+                queryKey: ['pulls', connection.host, connection.auth, section.search],
                 queryFn: () => getPulls(connection, section.search, viewers[idx].data?.login || ""),
                 refetchInterval: 60000,
                 refetchIntervalInBackground: true,
