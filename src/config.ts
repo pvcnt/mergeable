@@ -5,7 +5,7 @@ export type Config = {
     sections: Section[],
     connections: Connection[],
 }
-  
+
 export type Section = {
     label: string,
     search: string,
@@ -13,6 +13,7 @@ export type Section = {
 }
 
 export type Connection = {
+    name?: string,
     host: string,
     baseUrl: string,
     auth: string,

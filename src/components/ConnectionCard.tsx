@@ -1,4 +1,4 @@
-import { Button, Card, Intent } from "@blueprintjs/core"
+import { Button, Card, Intent, H4 } from "@blueprintjs/core"
 import { Connection } from "../config"
 import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
@@ -10,12 +10,17 @@ type Props = {
     onDelete: () => void,
 }
 
+const isBlank = (value: string | null | undefined) => value == null || value === ''
+
 export default function ConnectionCard({connection, viewer, onDelete}: Props) {
     const [isDeleting, setDeleting] = useState(false)
     return (
-        <>  
+        <>
             <Card className="flex">
                 <div className="grow">
+                    {!isBlank(connection.name) && (
+                        <H4>{connection.name}</H4>
+                    )}
                     <span><b>Host:</b> <a href={`https://${connection.host}`}>{connection.host}</a></span>
                     {viewer !== undefined && <span className="ml-4"><b>User: </b>{viewer.login}</span>}
                 </div>
