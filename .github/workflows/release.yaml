@@ -28,7 +28,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag image
-        id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
@@ -43,6 +42,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_COMMIT_SHA=${{ github.sha }}
       - name: Sign image
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY  ghcr.io/${{ github.repository }}:${{ github.sha }}
