@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Section, emptySectionConfig, ConfigContext } from "../config";
 import DashboardSection from "../components/DashboardSection";
 import { Button, InputGroup } from "@blueprintjs/core";
@@ -39,6 +39,12 @@ export default function Dashboard() {
         }),
     })
 
+    const refetchAll = useCallback(async () => {
+		await Promise.all(results.map(res => res.refetch()));
+	}, [results]);
+
+    const isFetching = results.some(res => res.isFetching)
+
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
 
     const count = sum(config.sections.map((section, idx) => {
@@ -77,6 +83,11 @@ export default function Dashboard() {
             <div className="flex w-full">
                 <InputGroup leftIcon="search" placeholder="Search pull requests" round className="grow" value={search} onChange={e => setSearch(e.target.value)} />
                 <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
+                <Button icon="refresh"
+                    disabled={isFetching}
+                    loading={isFetching}
+                    className="ml-4"
+                    onClick={refetchAll}/>
             </div>
             <SectionDialog
                 section={emptySectionConfig}
