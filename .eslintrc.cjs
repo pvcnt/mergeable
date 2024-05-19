@@ -23,5 +23,10 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      // https://github.com/typescript-eslint/typescript-eslint/issues/4619
+      { checksVoidReturn: false }
+    ],
   },
 }
