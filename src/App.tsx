@@ -7,7 +7,10 @@ import Sidebar from './components/Sidebar';
 import { Config, ConfigContext, defaultConfig, readConfig, writeConfig } from './config';
 
 export default function App() {
-    const [isDark, setDark] = useState(false)
+    const [isDark, setDark] = useState<boolean>(() => {
+        // Read the isDark value from local storage (or false if it's not set)
+        return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
+    });
     const [isLoaded, setLoaded] = useState(false)
     const [config, setConfig] = useState<Config>(defaultConfig)
 
@@ -26,12 +29,17 @@ export default function App() {
         writeConfig(config).catch(console.error)
     }, [config])
 
+    useEffect(() => {
+        // Write the isDark value to local storage whenever it changes
+        localStorage.setItem('isDark', JSON.stringify(isDark));
+    }, [isDark]);
+
     return (
         <ConfigContext.Provider value={{ config, setConfig }}>
             <div className={clsx("app", isDark && "bp5-dark")}>
                 <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
                 <main>
-                    {(isLoaded && config.connections.length === 0) && 
+                    {(isLoaded && config.connections.length === 0) &&
                         <Card className="announcement">
                             No connections are configured. Please go to <Link to="/settings">the settings page</Link> to add a new connection.
                         </Card>}
