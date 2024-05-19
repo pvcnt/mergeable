@@ -32,7 +32,7 @@ export default function Dashboard() {
             return config.connections.map((connection, idx) => ({
                 queryKey: ['pulls', connection.host, connection.auth, section.search],
                 queryFn: () => getPulls(connection, section.search, viewers[idx].data?.login || ""),
-                refetchInterval: 60000,
+                refetchInterval: 300_000,
                 refetchIntervalInBackground: true,
                 enabled: viewers[idx].data !== undefined,
             }))
