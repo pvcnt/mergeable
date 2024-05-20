@@ -46,16 +46,16 @@ export default function PullTable({data}: Props) {
                         <td>
                             <a href={pull.url}>
                                 {pull.isDraft
-                                ? <IconWithTooltip icon="document" title="Draft" color="#738091"/>
+                                ? <IconWithTooltip icon="document" title="Draft" color="#5F6B7C"/>
                                 : pull.merged
                                 ? <IconWithTooltip icon="git-merge" title="Merged" color="#634DBF"/>
                                 : pull.closed
-                                ? <IconWithTooltip icon="cross-circle" title="Closed" color="#8E292C"/>
+                                ? <IconWithTooltip icon="cross-circle" title="Closed" color="#AC2F33"/>
                                 : pull.reviewDecision == "APPROVED"
                                 ? <IconWithTooltip icon="git-pull" title="Approved" color="#1C6E42"/>
                                 : pull.reviewDecision == "CHANGES_REQUESTED"
                                 ? <IconWithTooltip icon="issue" title="Changes requested" color="#C87619"/>
-                                : <IconWithTooltip icon="git-pull" title="Pending review" color="#738091"/>
+                                : <IconWithTooltip icon="git-pull" title="Pending review" color="#C87619"/>
                                 }
                             </a>
                         </td>
