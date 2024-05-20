@@ -51,7 +51,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                 section={section}
                 title="Edit section"
                 isOpen={isEditing}
-                isDeleteButtonShown={true}
+                isNew={false}
                 onClose={() => setEditing(false)}
                 onSubmit={onChange}
                 onDelete={onDelete}/>

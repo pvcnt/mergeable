@@ -118,6 +118,7 @@ export default function Dashboard() {
                 section={newSection}
                 title="New section"
                 isOpen={isEditing}
+                isNew={true}
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
             {config !== undefined && config.sections.map((section, idx) => {

@@ -10,7 +10,7 @@ import TimeAgo from 'javascript-time-ago'
 import timeAgoEnLocale from 'javascript-time-ago/locale/en.json'
 import { Intent } from '@blueprintjs/core'
 
-import toaster from './toaster'
+import { AppToaster}  from './toaster'
 import App from './App.tsx'
 import ErrorPage from './error-page.tsx'
 import Dashboard from './routes/dashboard.tsx'
@@ -43,9 +43,9 @@ const router = createBrowserRouter([
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
-        onError: (error) => {
+        onError: async (error) => {
             const details = (error instanceof Error) ? error.message : "Internal error";
-            toaster.show({message: `Something went wrong: ${details}`, intent: Intent.DANGER})
+            (await AppToaster).show({message: `Something went wrong: ${details}`, intent: Intent.DANGER})
         }
     }),
 })

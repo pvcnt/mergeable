@@ -1,7 +1,7 @@
 import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent, TextArea } from "@blueprintjs/core";
 import { useState } from "react";
 import { Section } from "../config";
-import toaster from "../toaster"
+import { AppToaster } from "../toaster"
 import ConfirmDialog from "./ConfirmDialog";
 
 
@@ -9,13 +9,13 @@ export type Props = {
     section: Section,
     title: string,
     isOpen: boolean,
-    isDeleteButtonShown?: boolean;
+    isNew: boolean;
     onClose: () => void,
     onSubmit: (value: Section) => void,
     onDelete?: () => void,
 }
 
-export default function SectionDialog({title, section, isOpen, isDeleteButtonShown = false, onClose, onSubmit, onDelete}: Props) {    
+export default function SectionDialog({title, section, isOpen, isNew, onClose, onSubmit, onDelete}: Props) {    
     const [label, setLabel] = useState(section.label)
     const [search, setSearch] = useState(section.search)
     const [notified, setNotified] = useState(section.notified)
@@ -43,8 +43,8 @@ export default function SectionDialog({title, section, isOpen, isDeleteButtonSho
         params.set('action', 'share')
         params.set('label', label)
         params.set('search', search)
-        await navigator.clipboard.writeText(`${window.location.origin}/?${params.toString()}`)
-        toaster.show({message: "Share URL has been copied to clipboard.", intent: Intent.SUCCESS})
+        await navigator.clipboard.writeText(`${window.location.origin}/?${params.toString()}`);
+        (await AppToaster).show({message: "Share URL has been copied to clipboard.", intent: Intent.SUCCESS});
     }
 
     const isValid = () => label.trim().length > 0 && search.trim().length > 0
@@ -71,8 +71,8 @@ export default function SectionDialog({title, section, isOpen, isDeleteButtonSho
                         <Button text="Cancel" onClick={onClose} />
                     </>
                 }>
-                    {isDeleteButtonShown && <Button intent={Intent.DANGER} text="Delete" minimal onClick={() => setDeleting(true)} />}
-                    <Button text="Share" onClick={handleShare} minimal />
+                    {!isNew && <Button intent={Intent.DANGER} text="Delete" minimal onClick={() => setDeleting(true)} />}
+                    {!isNew && <Button text="Share" onClick={handleShare} minimal />}
                 </DialogFooter>
             </Dialog>
 
