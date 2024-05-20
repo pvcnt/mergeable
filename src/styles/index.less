@@ -55,8 +55,8 @@ main {
 }
 
 footer {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     font-size: @pt-font-size-small;
     color: @dark-gray5;
 }
@@ -81,6 +81,7 @@ footer {
 .section-label {
     display: block;
     color: @pt-text-color;
+    cursor: pointer;
     &:hover {
         color: @pt-text-color;
         text-decoration: none;
@@ -97,16 +98,20 @@ footer {
         overflow: hidden;
         vertical-align: middle;
     }
-    tbody td:nth-child(1) {
+    tbody td:nth-child(1) { /* Author */
         text-align: center;
         width: 50px;
     }
-    tbody td:nth-child(3) {
+    tbody td:nth-child(2) { /* Status */
         text-align: center;
         width: 50px;
     }
-    tbody td:nth-child(4) {
-        width: 250px;
+    tbody td:nth-child(3) { /* Last Action */
+        width: 200px;
+    }
+    tbody td:nth-child(4) { /* Size */
+        text-align: center;
+        width: 50px;
     }
     tbody td a {
         display: block;
@@ -121,12 +126,22 @@ footer {
             outline: 0;
         }
     }
+
+    .pull-author img {
+        border-radius: 5rem;
+        height: 32px;
+    }
+}
+
+.no-results {
+    color: @dark-gray5;
+    margin: 0;
 }
 
 .additions {
-    color: @green3;
+    color: @green4;
 }
 
 .deletions {
-    color: @red3;
+    color: @red4;
 }

@@ -34,6 +34,7 @@ export default function Dashboard() {
                 queryFn: () => getPulls(connection, section.search, viewers[idx].data?.login || ""),
                 refetchInterval: 300_000,
                 refetchIntervalInBackground: true,
+                refetchOnWindowFocus: false,
                 enabled: viewers[idx].data !== undefined,
             }))
         }),
