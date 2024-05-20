@@ -36,9 +36,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                         <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
                         {!isLoading && (count > 0) && (
-                            <Tag round intent={(count > 0) ? Intent.PRIMARY : Intent.NONE} className="ml-2">
-                                {count}
-                            </Tag>
+                            <Tag round intent={Intent.NONE} className="ml-2">{count}</Tag>
                         )}
                     </div>
                 </H5>
