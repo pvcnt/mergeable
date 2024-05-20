@@ -4,6 +4,7 @@ import DashboardSection from "../components/DashboardSection";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import { useQueries } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { getPulls, getViewer } from "../github";
 import { Pull } from "../model";
 import SearchInput from "../components/SearchInput";
@@ -20,6 +21,8 @@ export default function Dashboard() {
     const { config, setConfig } = useContext(ConfigContext)
     const [ search, setSearch ] = useState("")
     const [ isEditing, setEditing ] = useState(false)
+    const [ searchParams, setSearchParams ] = useSearchParams()
+    const [ newSection, setNewSection ] = useState(emptySectionConfig)
 
     const viewers = useQueries({
         queries: config.connections.map(connection => ({
@@ -56,6 +59,7 @@ export default function Dashboard() {
         return 0
     }))
 
+    // Change window's title to include number of pull requests.
     useEffect(() => {
         if (count > 0) {
             document.title = `(${count}) Reviewer`
@@ -64,8 +68,26 @@ export default function Dashboard() {
         }
     }, [count])
 
+    // Open a "New section" dialog if URL is a share link.
+    useEffect(() => {
+        if (searchParams.get("action") === "share") {
+            setNewSection({
+                label: searchParams.get("label") || emptySectionConfig.label,
+                search: searchParams.get("search") || emptySectionConfig.search,
+                notified: emptySectionConfig.notified
+            })
+            setEditing(true)
+        }
+    }, [searchParams])
+
     const handleSubmit = (config: Section) => {
         setConfig(v => ({...v, sections: [config, ...v.sections]}))
+
+        // Remove sharing parameters from URL if they were defined once the new section
+        // has been created from those parameters.
+        if (searchParams.get("action") === "share") {
+            setSearchParams({})
+        }
     }
     const handleChange = (idx: number, value: Section) => {
         setConfig(v => ({...v, sections: [...v.sections.slice(0, idx), value, ...v.sections.slice(idx + 1)]}))
@@ -93,7 +115,7 @@ export default function Dashboard() {
                     onClick={refetchAll}/>
             </div>
             <SectionDialog
-                section={emptySectionConfig}
+                section={newSection}
                 title="New section"
                 isOpen={isEditing}
                 onClose={() => setEditing(false)}

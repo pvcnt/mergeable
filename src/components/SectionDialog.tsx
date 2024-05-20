@@ -1,6 +1,7 @@
 import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent, TextArea } from "@blueprintjs/core";
 import { useState } from "react";
 import { Section } from "../config";
+import toaster from "../toaster"
 import ConfirmDialog from "./ConfirmDialog";
 
 
@@ -37,13 +38,22 @@ export default function SectionDialog({title, section, isOpen, isDeleteButtonSho
         }
         onClose()
     }
+    const handleShare = async () => {
+        const params = new URLSearchParams()
+        params.set('action', 'share')
+        params.set('label', label)
+        params.set('search', search)
+        await navigator.clipboard.writeText(`${window.location.origin}/?${params.toString()}`)
+        toaster.show({message: "Share URL has been copied to clipboard.", intent: Intent.SUCCESS})
+    }
+
     const isValid = () => label.trim().length > 0 && search.trim().length > 0
 
     return (
         <>
             <Dialog title={title} isOpen={isOpen} onClose={onClose} onOpening={handleOpening}>
                 <DialogBody>
-                    <FormGroup label="Label" labelInfo="(required)">
+                    <FormGroup label="Section label" labelInfo="(required)">
                         <InputGroup value={label} onChange={e => setLabel(e.target.value)} />
                     </FormGroup>
                     <FormGroup
@@ -53,7 +63,7 @@ export default function SectionDialog({title, section, isOpen, isDeleteButtonSho
                     >
                         <TextArea value={search} onChange={e => setSearch(e.target.value)} className="w-full" />
                     </FormGroup>
-                    <Checkbox checked={notified} label="Notify me about those pull requests" onChange={e => setNotified(e.currentTarget.checked)} />
+                    <Checkbox checked={notified} label="Pull requests in this section add to the badge count" onChange={e => setNotified(e.currentTarget.checked)} />
                 </DialogBody>
                 <DialogFooter actions={
                     <>
@@ -62,6 +72,7 @@ export default function SectionDialog({title, section, isOpen, isDeleteButtonSho
                     </>
                 }>
                     {isDeleteButtonShown && <Button intent={Intent.DANGER} text="Delete" minimal onClick={() => setDeleting(true)} />}
+                    <Button text="Share" onClick={handleShare} minimal />
                 </DialogFooter>
             </Dialog>
 

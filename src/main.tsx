@@ -8,8 +8,9 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import TimeAgo from 'javascript-time-ago'
 import timeAgoEnLocale from 'javascript-time-ago/locale/en.json'
-import { Intent, OverlayToaster } from '@blueprintjs/core'
+import { Intent } from '@blueprintjs/core'
 
+import toaster from './toaster'
 import App from './App.tsx'
 import ErrorPage from './error-page.tsx'
 import Dashboard from './routes/dashboard.tsx'
@@ -40,7 +41,6 @@ const router = createBrowserRouter([
     },
 ])
 
-const toaster = OverlayToaster.create()
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
         onError: (error) => {
