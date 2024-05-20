@@ -32,15 +32,15 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
         <Card className="mt-4">
             <div className="flex">
                 <H5 onClick={(e) => handleTitleClick(e)}>
-                    <a className="section-label">
-                        <Icon icon={isCollapsed ? "chevron-up" : "chevron-down"} color="text"/>
+                    <div className="section-label">
+                        <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
-                        {!isLoading && (
+                        {!isLoading && (count > 0) && (
                             <Tag round intent={(count > 0) ? Intent.PRIMARY : Intent.NONE} className="ml-2">
                                 {count}
                             </Tag>
                         )}
-                    </a>
+                    </div>
                 </H5>
                 <div className="ml-auto">
                     <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={onMoveUp}/>
@@ -61,7 +61,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
             {isLoading && <Spinner/>}
             
             {!isLoading && <Collapse isOpen={!isCollapsed}>
-                {count > 0 && <PullTable data={data} />}
+                {count > 0 ? <PullTable data={data} /> : <p className="no-results">No results</p>}
             </Collapse>}
         </Card>
     )
