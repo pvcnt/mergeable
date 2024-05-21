@@ -105,7 +105,7 @@ export default function Dashboard() {
     return (
         <>
             <div className="flex w-full">
-                <SearchInput value={search} onChange={setSearch}/>
+                <SearchInput value={search} onChange={setSearch} className="grow"/>
                 <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
                 <Button
                     icon="refresh"
