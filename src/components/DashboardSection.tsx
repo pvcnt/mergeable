@@ -35,7 +35,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                     <div className="section-label">
                         <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
-                        {!isLoading && (count > 0) && (
+                        {(count > 0) && (
                             <Tag round intent={Intent.NONE} className="ml-2">{count}</Tag>
                         )}
                     </div>
@@ -56,11 +56,11 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                 onSubmit={onChange}
                 onDelete={onDelete}/>
 
-            {isLoading && <Spinner/>}
-            
-            {!isLoading && <Collapse isOpen={!isCollapsed}>
-                {count > 0 ? <PullTable data={data} /> : <p className="no-results">No results</p>}
-            </Collapse>}
+            {isLoading 
+                ? <Spinner/>
+                : <Collapse isOpen={!isCollapsed}>
+                    {count > 0 ? <PullTable data={data} /> : <p className="no-results">No results</p>}
+                </Collapse>}
         </Card>
     )
 }

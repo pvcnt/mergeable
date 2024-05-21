@@ -1,7 +1,10 @@
+import { useContext } from "react"
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core"
-import ReactTimeAgo from 'react-time-ago'
+import ReactTimeAgo from "react-time-ago"
+
 import { PullList, computeSize } from "../model"
 import IconWithTooltip from "./IconWithTooltip"
+import { ConfigContext } from "../config"
 
 
 export type Props = {
@@ -19,10 +22,20 @@ const formatDate = (d: string)  => {
 }
 
 export default function PullTable({data}: Props) {
+    const { config, setConfig } = useContext(ConfigContext)
+
+    const stars = new Set(config.stars)
+
+    const handleStar = (number: number) => {
+        setConfig(prev => prev.stars.indexOf(number) > -1 
+            ? {...prev, stars: prev.stars.filter(s => s != number)} 
+            : {...prev, stars: prev.stars.concat([number])})
+    }
     return (
         <HTMLTable interactive className="pull-table">
             <thead>
                 <tr>
+                    <th>&nbsp;</th>
                     <th>Author</th>
                     <th>Status</th>
                     <th>Last Action</th>
@@ -31,9 +44,14 @@ export default function PullTable({data}: Props) {
                 </tr>
             </thead>
             <tbody>
-            {data.flatMap((pulls, idx) => (
-                pulls.pulls.map((pull, idx2) => (
+                {data.map((pullList, idx) => (
+                    pullList.pulls.map((pull, idx2) => (
                     <tr key={`${idx}-${idx2}`}>
+                        <td className="cursor-pointer" onClick={() => handleStar(pull.number)}>
+                            {stars.has(pull.number)
+                                ? <Tooltip content="Unstar pull request"><Icon icon="star" color="#FBD065"/></Tooltip>
+                                : <Tooltip content="Star pull request"><Icon icon="star-empty"/></Tooltip>}
+                        </td>
                         <td>
                             <a href={pull.url}>
                                 <div className="pull-author">
@@ -75,7 +93,7 @@ export default function PullTable({data}: Props) {
                             <a href={pull.url}>
                                 <div className="font-semibold">{pull.title}</div>
                                 <div className="text-sm">
-                                    {pulls.host}:{pull.repository.nameWithOwner} #{pull.number}
+                                    {pullList.host}:{pull.repository.nameWithOwner} #{pull.number}
                                 </div>
                             </a>
                         </td>

@@ -46,6 +46,7 @@ export default function Sidebar({ isDark, onDarkChange }: Props) {
     <div className="sidebar">
       <img src="/logo.svg" height="30" className="mt-2 mb-2"/>
       <SidebarLink link="/" title="Dashboard" icon="dashboard"/>
+      <SidebarLink link="/stars" title="Stars" icon="bookmark"/>
       <SidebarLink link="/settings" title="Settings" icon="cog"/>
       <div className="bottom">
         <SidebarButton

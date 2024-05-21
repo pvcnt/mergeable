@@ -1,13 +1,13 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Section, emptySectionConfig, ConfigContext } from "../config";
-import DashboardSection from "../components/DashboardSection";
-import { Button } from "@blueprintjs/core";
-import SectionDialog from "../components/SectionDialog";
-import { useQueries } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
-import { getPulls, getViewer } from "../github";
-import { Pull } from "../model";
-import SearchInput from "../components/SearchInput";
+import { useCallback, useContext, useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
+import { Button } from "@blueprintjs/core"
+
+import { Section, emptySectionConfig, ConfigContext } from "../config"
+import SectionDialog from "../components/SectionDialog"
+import DashboardSection from "../components/DashboardSection"
+import { Pull } from "../model"
+import SearchInput from "../components/SearchInput"
+import { usePullRequests } from "../queries"
 
 function matches(pull: Pull, tokens: string[]): boolean {
     return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.nameWithOwner.indexOf(tok) > -1)
@@ -24,25 +24,7 @@ export default function Dashboard() {
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [ newSection, setNewSection ] = useState(emptySectionConfig)
 
-    const viewers = useQueries({
-        queries: config.connections.map(connection => ({
-            queryKey: ['viewer', connection.host],
-            queryFn: () => getViewer(connection),
-            staleTime: Infinity,
-        })),
-    })
-    const results = useQueries({
-        queries: config.sections.flatMap(section => {
-            return config.connections.map((connection, idx) => ({
-                queryKey: ['pulls', connection.host, connection.auth, section.search],
-                queryFn: () => getPulls(connection, section.search, viewers[idx].data?.login || ""),
-                refetchInterval: 300_000,
-                refetchIntervalInBackground: true,
-                refetchOnWindowFocus: false,
-                enabled: viewers[idx].data !== undefined,
-            }))
-        }),
-    })
+    const results = usePullRequests(config)
 
     const refetchAll = useCallback(async () => {
 		await Promise.all(results.map(res => res.refetch()));
