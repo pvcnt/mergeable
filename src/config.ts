@@ -4,6 +4,7 @@ import { createContext } from "react"
 export type Config = {
     sections: Section[],
     connections: Connection[],
+    stars: number[],
 }
 
 export type Section = {
@@ -55,6 +56,7 @@ export const defaultConfig: Config = {
         }
     ],
     connections: [],
+    stars: [],
 }
 
 export const emptyConfig = {sections: [], connections: []}
@@ -62,7 +64,7 @@ export const emptySectionConfig = {label: "", search: "", notified: false}
 
 export function readConfig(): Promise<Config> {
     return localforage.getItem<Config>(configKey)
-        .then(config => (config === null) ? defaultConfig : config)
+        .then(config => (config === null) ? defaultConfig : {...defaultConfig, ...config})
 }
 
 export function writeConfig(config: Config): Promise<Config> {
