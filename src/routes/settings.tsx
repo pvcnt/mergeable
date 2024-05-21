@@ -34,7 +34,11 @@ export default function Settings() {
             <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
             
             {config.connections.map((connection, idx) => (
-                <ConnectionCard key={idx} connection={connection} viewer={viewers[idx]?.data} onDelete={() => handleDelete(idx)}/>
+                <ConnectionCard
+                    key={idx}
+                    connection={connection}
+                    user={viewers[idx]?.data}
+                    onDelete={() => handleDelete(idx)}/>
             ))}
         </div>
     )

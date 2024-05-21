@@ -26,7 +26,7 @@ export default function SearchInput({value, onChange, className}: Props) {
         <HotkeysTarget2 hotkeys={hotkeys}>
             <InputGroup
                 leftIcon="search"
-                placeholder="Search pull requests"
+                placeholder="Search diffs"
                 round
                 className={className}
                 value={value}

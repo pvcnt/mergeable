@@ -1,9 +1,34 @@
 import { Octokit } from "@octokit/rest"
 import { Connection } from "./config"
-import { Pull, User } from "./model"
+import { Diff, DiffState, User } from "./model"
 
 export function createClient(connection: Connection): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
+}
+
+type Pull = {
+    number: number,
+    title: string,
+    state: string,
+    author: GitHubUser,
+    createdAt: string,
+    updatedAt: string,
+    url: string,
+    additions: number,
+    deletions: number,
+    repository: {
+        nameWithOwner: string,
+    },
+    isDraft: boolean,
+    merged: boolean,
+    closed: boolean,
+    reviewDecision?: string,
+}
+
+type GitHubUser = {
+    name: string,
+    login: string,
+    avatarUrl: string,
 }
 
 type RateLimit = {
@@ -16,7 +41,6 @@ type RateLimit = {
 export function getViewer(connection: Connection): Promise<User> {
     const query = `query {
         viewer {
-            name
             login
             avatarUrl
         }
@@ -28,13 +52,46 @@ export function getViewer(connection: Connection): Promise<User> {
         }
     }`
     type Data = {
-        viewer: User,
+        viewer: GitHubUser,
         rateLimit: RateLimit,
     }
 
     return createClient(connection).graphql<Data>(query)
         .then(data => data.viewer)
-} 
+        .then(user => ({name: user.login, avatarUrl: user.avatarUrl}))
+}
+
+export function getDiffs(connection: Connection, search: string, user: string): Promise<Diff[]> {
+    return getPulls(connection, search, user).then(pulls => {
+        return pulls.map(pull => ({
+            uid: `${connection.host}/${pull.number}`,
+            host: connection.host,
+            id: `${pull.number}`,
+            repository: pull.repository.nameWithOwner,
+            title: pull.title,
+            state: pull.isDraft
+                ? DiffState.Draft
+                : pull.merged
+                ? DiffState.Merged
+                : pull.closed
+                ? DiffState.Closed
+                : pull.reviewDecision == "APPROVED"
+                ? DiffState.Approved
+                : pull.reviewDecision == "CHANGES_REQUESTED"
+                ? DiffState.ChangesRequested
+                : DiffState.Pending,
+            createdAt: pull.createdAt,
+            updatedAt: pull.updatedAt,
+            url: pull.url,
+            additions: pull.additions,
+            deletions: pull.deletions,
+            author: {
+                name: pull.author.login,
+                avatarUrl: pull.author.avatarUrl,
+            },
+        }))
+    })
+}
 
 export function getPulls(connection: Connection, search: string, user: string): Promise<Pull[]> {
     const query = `query dashboard($search: String!) {

@@ -4,7 +4,7 @@ import { createContext } from "react"
 export type Config = {
     sections: Section[],
     connections: Connection[],
-    stars: number[],
+    stars: string[],
 }
 
 export type Section = {

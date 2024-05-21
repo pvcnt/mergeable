@@ -1,30 +1,29 @@
-export type Pull = {
-    number: number,
+export enum DiffState {
+    Draft = 1,
+    Pending,
+    Approved,
+    ChangesRequested,
+    Merged,
+    Closed,
+}
+
+export type Diff = {
+    uid: string,
+    host: string,
+    id: string,
+    repository: string,
     title: string,
-    state: string,
-    author: User,
+    state: DiffState,
     createdAt: string,
     updatedAt: string,
     url: string,
     additions: number,
     deletions: number,
-    repository: {
-        nameWithOwner: string,
-    },
-    isDraft: boolean,
-    merged: boolean,
-    closed: boolean,
-    reviewDecision?: string,
-}
-
-export type PullList = {
-    host: string,
-    pulls: Pull[],
+    author: User,
 }
 
 export type User = {
     name: string,
-    login: string,
     avatarUrl: string,
 }
 
@@ -39,8 +38,8 @@ const sizes: {label: string, changes: number}[] = [
 ]
 sizes.reverse()
   
-export function computeSize(pull: Pull): string {
-    const changes = pull.additions + pull.deletions
+export function computeSize(diff: Diff): string {
+    const changes = diff.additions + diff.deletions
     const size = sizes.find(s => changes >= s.changes)
     return size === undefined ? sizes[sizes.length - 1].label : size.label
 }

@@ -2,26 +2,24 @@ import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@bluepri
 import { useState } from "react"
 import SectionDialog from "./SectionDialog";
 import { Section } from "../config";
-import PullTable from "./PullTable";
-import { PullList } from "../model";
+import DiffTable from "./DiffTable";
+import { Diff } from "../model";
 
 export type Props = {
     section: Section,
     isFirst: boolean,
     isLast: boolean,
     isLoading: boolean,
-    data: PullList[],
+    diffs: Diff[],
     onMoveUp: () => void,
     onMoveDown: () => void,
     onChange: (config: Section) => void,
     onDelete: () => void,
 }
 
-export default function DashboardSection({isLoading, section, isFirst, isLast, data, onChange, onMoveUp, onMoveDown, onDelete}: Props) {
+export default function DashboardSection({isLoading, section, isFirst, isLast, diffs, onChange, onMoveUp, onMoveDown, onDelete}: Props) {
     const [isCollapsed, setCollapsed] = useState(false)
     const [isEditing, setEditing] = useState(false)
-
-    const count = data.map(res => res.pulls.length).reduce((acc, v) => acc + v, 0)
 
     const handleTitleClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault()
@@ -35,8 +33,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                     <div className="section-label">
                         <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
-                        {(count > 0) && (
-                            <Tag round intent={Intent.NONE} className="ml-2">{count}</Tag>
+                        {(diffs.length > 0) && (
+                            <Tag round intent={Intent.NONE} className="ml-2">{diffs.length}</Tag>
                         )}
                     </div>
                 </H5>
@@ -59,7 +57,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
             {isLoading 
                 ? <Spinner/>
                 : <Collapse isOpen={!isCollapsed}>
-                    {count > 0 ? <PullTable data={data} /> : <p className="no-results">No results</p>}
+                    {diffs.length > 0 ? <DiffTable diffs={diffs} /> : <p className="no-results">No results</p>}
                 </Collapse>}
         </Card>
     )

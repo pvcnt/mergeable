@@ -5,12 +5,12 @@ import { Button } from "@blueprintjs/core"
 import { Section, emptySectionConfig, ConfigContext } from "../config"
 import SectionDialog from "../components/SectionDialog"
 import DashboardSection from "../components/DashboardSection"
-import { Pull } from "../model"
+import { Diff } from "../model"
 import SearchInput from "../components/SearchInput"
-import { usePullRequests } from "../queries"
+import { useDiffs } from "../queries"
 
-function matches(pull: Pull, tokens: string[]): boolean {
-    return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.nameWithOwner.indexOf(tok) > -1)
+function matches(diff: Diff, tokens: string[]): boolean {
+    return tokens.length === 0 || tokens.every(tok => diff.title.toLowerCase().indexOf(tok) > -1 || diff.repository.indexOf(tok) > -1)
 }
 
 function sum(values: number[]): number {
@@ -24,24 +24,24 @@ export default function Dashboard() {
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [ newSection, setNewSection ] = useState(emptySectionConfig)
 
-    const results = usePullRequests(config)
+    const diffs = useDiffs(config)
 
     const refetchAll = useCallback(async () => {
-		await Promise.all(results.map(res => res.refetch()));
-	}, [results]);
+		await Promise.all(diffs.map(res => res.refetch()));
+	}, [diffs]);
 
-    const isFetching = results.some(res => res.isFetching)
+    const isFetching = diffs.some(res => res.isFetching)
 
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
 
     const count = sum(config.sections.map((section, idx) => {
         if (section.notified) {
-            return sum(results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
+            return sum(diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
         }
         return 0
     }))
 
-    // Change window's title to include number of pull requests.
+    // Change window's title to include number of diffs.
     useEffect(() => {
         if (count > 0) {
             document.title = `(${count}) Reviewer`
@@ -104,12 +104,13 @@ export default function Dashboard() {
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
             {config !== undefined && config.sections.map((section, idx) => {
+                const data = diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length)
                 return (
                     <DashboardSection
                         key={idx}
                         section={section}
-                        isLoading={results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).some(res => res.isLoading)}
-                        data={results.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map((res, idx) => ({host: config.connections[idx].host, pulls: (res.data || []).filter(v => matches(v, tokens))}))}
+                        isLoading={data.some(res => res.isLoading)}
+                        diffs={data.flatMap(res => (res.data || []).filter(v => matches(v, tokens)))}
                         isFirst={idx === 0}
                         isLast={idx === config.sections.length - 1}
                         onChange={v => handleChange(idx, v)}

@@ -6,13 +6,13 @@ import { User } from "../model"
 
 type Props = {
     connection: Connection,
-    viewer?: User,
+    user?: User,
     onDelete: () => void,
 }
 
 const isBlank = (value: string | null | undefined) => value == null || value === ''
 
-export default function ConnectionCard({connection, viewer, onDelete}: Props) {
+export default function ConnectionCard({connection, user, onDelete}: Props) {
     const [isDeleting, setDeleting] = useState(false)
     return (
         <>
@@ -22,7 +22,7 @@ export default function ConnectionCard({connection, viewer, onDelete}: Props) {
                         <H4>{connection.name}</H4>
                     )}
                     <span><b>Host:</b> <a href={`https://${connection.host}`}>{connection.host}</a></span>
-                    {viewer !== undefined && <span className="ml-4"><b>User: </b>{viewer.login}</span>}
+                    {user !== undefined && <span className="ml-4"><b>User: </b>{user.name}</span>}
                 </div>
                 <Button text="Delete" minimal intent={Intent.DANGER} onClick={() => setDeleting(true)}></Button>
             </Card>
