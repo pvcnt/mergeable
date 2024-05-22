@@ -8,10 +8,9 @@ export enum DiffState {
 }
 
 export type Diff = {
-    uid: string,
     host: string,
-    id: string,
     repository: string,
+    id: string,
     title: string,
     state: DiffState,
     createdAt: string,
@@ -25,6 +24,10 @@ export type Diff = {
 export type User = {
     name: string,
     avatarUrl: string,
+}
+
+export function getDiffUid(diff: Diff) {
+    return `${diff.host}/${diff.repository}/${diff.id}`
 }
 
 // Comes from Prow: https://github.com/kubernetes/test-infra/blob/master/prow/plugins/size/size.go

@@ -10,7 +10,7 @@ type Pull = {
     number: number,
     title: string,
     state: string,
-    author: GitHubUser,
+    author: GHUser,
     createdAt: string,
     updatedAt: string,
     url: string,
@@ -25,7 +25,7 @@ type Pull = {
     reviewDecision?: string,
 }
 
-type GitHubUser = {
+type GHUser = {
     name: string,
     login: string,
     avatarUrl: string,
@@ -52,7 +52,7 @@ export function getViewer(connection: Connection): Promise<User> {
         }
     }`
     type Data = {
-        viewer: GitHubUser,
+        viewer: GHUser,
         rateLimit: RateLimit,
     }
 
@@ -64,10 +64,9 @@ export function getViewer(connection: Connection): Promise<User> {
 export function getDiffs(connection: Connection, search: string, user: string): Promise<Diff[]> {
     return getPulls(connection, search, user).then(pulls => {
         return pulls.map(pull => ({
-            uid: `${connection.host}/${pull.number}`,
             host: connection.host,
-            id: `${pull.number}`,
             repository: pull.repository.nameWithOwner,
+            id: `${pull.number}`,
             title: pull.title,
             state: pull.isDraft
                 ? DiffState.Draft

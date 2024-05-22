@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core"
 import ReactTimeAgo from "react-time-ago"
 
-import { Diff, DiffState, computeSize } from "../model"
+import { Diff, DiffState, computeSize, getDiffUid } from "../model"
 import IconWithTooltip from "./IconWithTooltip"
 import { ConfigContext } from "../config"
 
@@ -26,7 +26,8 @@ export default function DiffTable({diffs}: Props) {
 
     const stars = new Set(config.stars)
 
-    const handleStar = (uid: string) => {
+    const handleStar = (diff: Diff) => {
+        const uid = getDiffUid(diff)
         setConfig(prev => prev.stars.indexOf(uid) > -1 
             ? {...prev, stars: prev.stars.filter(s => s != uid)} 
             : {...prev, stars: prev.stars.concat([uid])})
@@ -46,10 +47,10 @@ export default function DiffTable({diffs}: Props) {
             <tbody>
                 {diffs.map((diff, idx) => (
                     <tr key={idx}>
-                        <td className="cursor-pointer" onClick={() => handleStar(diff.uid)}>
-                            {stars.has(diff.uid)
-                                ? <Tooltip content="Unstar diff"><Icon icon="star" color="#FBD065"/></Tooltip>
-                                : <Tooltip content="Star diff"><Icon icon="star-empty"/></Tooltip>}
+                        <td className="cursor-pointer" onClick={() => handleStar(diff)}>
+                            {stars.has(getDiffUid(diff))
+                                ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar diff"/>
+                                : <IconWithTooltip icon="star-empty" title="Star diff"/>}
                         </td>
                         <td>
                             <a href={diff.url}>
