@@ -63,7 +63,7 @@ export default function SectionDialog({title, section, isOpen, isNew, onClose, o
                     >
                         <TextArea value={search} onChange={e => setSearch(e.target.value)} className="w-full" />
                     </FormGroup>
-                    <Checkbox checked={notified} label="Pull requests in this section add to the badge count" onChange={e => setNotified(e.currentTarget.checked)} />
+                    <Checkbox checked={notified} label="Diffs in this section add to the badge count" onChange={e => setNotified(e.currentTarget.checked)} />
                 </DialogBody>
                 <DialogFooter actions={
                     <>
