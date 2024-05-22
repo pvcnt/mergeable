@@ -11,13 +11,14 @@ export type Props = {
     isLast: boolean,
     isLoading: boolean,
     diffs: Diff[],
+    hasMore?: boolean,
     onMoveUp: () => void,
     onMoveDown: () => void,
     onChange: (config: Section) => void,
     onDelete: () => void,
 }
 
-export default function DashboardSection({isLoading, section, isFirst, isLast, diffs, onChange, onMoveUp, onMoveDown, onDelete}: Props) {
+export default function DashboardSection({isLoading, section, isFirst, isLast, diffs, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete}: Props) {
     const [isCollapsed, setCollapsed] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
@@ -34,7 +35,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                         <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
                         {(diffs.length > 0) && (
-                            <Tag round intent={Intent.NONE} className="ml-2">{diffs.length}</Tag>
+                            <Tag round intent={Intent.NONE} className="ml-2">{diffs.length}{hasMore ? '+' : ''}</Tag>
                         )}
                     </div>
                 </H5>

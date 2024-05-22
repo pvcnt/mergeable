@@ -1,9 +1,9 @@
 import { UseQueryResult, useQueries } from "@tanstack/react-query";
 import { Config } from "./config";
 import { getDiffs, getViewer } from "./github";
-import { Diff } from "./model";
+import { DiffList } from "./model";
 
-export const useDiffs = (config: Config): UseQueryResult<Diff[]>[] => {
+export const useDiffs = (config: Config): UseQueryResult<DiffList>[] => {
     const viewers = useQueries({
         queries: config.connections.map(connection => ({
             queryKey: ['viewer', connection.host],
@@ -18,7 +18,6 @@ export const useDiffs = (config: Config): UseQueryResult<Diff[]>[] => {
                 queryFn: () => getDiffs(connection, section.search, viewers[idx].data?.name || ""),
                 refetchInterval: 300_000,
                 refetchIntervalInBackground: true,
-                // refetchOnWindowFocus: false,
                 staleTime: 60_000,
                 enabled: viewers[idx].data !== undefined,
             }))

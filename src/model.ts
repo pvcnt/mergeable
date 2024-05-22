@@ -1,3 +1,9 @@
+export type DiffList = {
+    total: number
+    hasMore: boolean
+    diffs: Diff[]
+}
+
 export enum DiffState {
     Draft = 1,
     Pending,
@@ -27,7 +33,7 @@ export type User = {
 }
 
 export function getDiffUid(diff: Diff) {
-    return `${diff.host}/${diff.repository}/${diff.id}`
+    return `${diff.host}\\${diff.repository}\\${diff.id}`
 }
 
 // Comes from Prow: https://github.com/kubernetes/test-infra/blob/master/prow/plugins/size/size.go

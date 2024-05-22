@@ -1,9 +1,16 @@
 import { Octokit } from "@octokit/rest"
 import { Connection } from "./config"
-import { Diff, DiffState, User } from "./model"
+import { DiffList, DiffState, User } from "./model"
+
+const LIMIT = 50
 
 export function createClient(connection: Connection): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
+}
+
+type PullList = {
+    total: number
+    pulls: Pull[]
 }
 
 type Pull = {
@@ -61,9 +68,9 @@ export function getViewer(connection: Connection): Promise<User> {
         .then(user => ({name: user.login, avatarUrl: user.avatarUrl}))
 }
 
-export function getDiffs(connection: Connection, search: string, user: string): Promise<Diff[]> {
-    return getPulls(connection, search, user).then(pulls => {
-        return pulls.map(pull => ({
+export function getDiffs(connection: Connection, search: string, user: string): Promise<DiffList> {
+    return getPulls(connection, search, user).then(data => {
+        const diffs = data.pulls.map(pull => ({
             host: connection.host,
             repository: pull.repository.nameWithOwner,
             id: `${pull.number}`,
@@ -89,12 +96,13 @@ export function getDiffs(connection: Connection, search: string, user: string): 
                 avatarUrl: pull.author.avatarUrl,
             },
         }))
+        return {total: data.total, hasMore: data.total > LIMIT, diffs}
     })
 }
 
-export function getPulls(connection: Connection, search: string, user: string): Promise<Pull[]> {
+function getPulls(connection: Connection, search: string, user: string): Promise<PullList> {
     const query = `query dashboard($search: String!) {
-        search(query: $search, type: ISSUE, first: 50) {
+        search(query: $search, type: ISSUE, first: ${LIMIT}) {
           issueCount
           edges {
             node {
@@ -144,5 +152,8 @@ export function getPulls(connection: Connection, search: string, user: string): 
     const finalSearch = "type:pr " + search.replaceAll("{USER}", user)
 
     return createClient(connection).graphql<Data>(query, {search: finalSearch})
-        .then(data => data.search.edges.map(edge => edge.node))
+        .then(data => ({
+            total: data.search.issueCount,
+            pulls: data.search.edges.map(edge => edge.node)
+        }))
 }

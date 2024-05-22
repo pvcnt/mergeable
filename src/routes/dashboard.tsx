@@ -36,7 +36,7 @@ export default function Dashboard() {
 
     const count = sum(config.sections.map((section, idx) => {
         if (section.notified) {
-            return sum(diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.length || 0))
+            return sum(diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.diffs.length || 0))
         }
         return 0
     }))
@@ -110,7 +110,8 @@ export default function Dashboard() {
                         key={idx}
                         section={section}
                         isLoading={data.some(res => res.isLoading)}
-                        diffs={data.flatMap(res => (res.data || []).filter(v => matches(v, tokens)))}
+                        diffs={data.flatMap(res => (res.data?.diffs || []).filter(v => matches(v, tokens)))}
+                        hasMore={data.some(res => res.data?.hasMore)}
                         isFirst={idx === 0}
                         isLast={idx === config.sections.length - 1}
                         onChange={v => handleChange(idx, v)}
