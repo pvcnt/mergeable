@@ -41,7 +41,7 @@ export const defaultConfig: Config = {
         },
         {
             label: "Waiting for reviewers",
-            search: "is:open author:{USER} review:none",
+            search: "is:open author:{USER} review:none draft:false",
             notified: false,
         },
         {
