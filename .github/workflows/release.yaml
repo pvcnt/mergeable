@@ -42,16 +42,16 @@ jobs:
         id: meta
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: type=raw,value=${{ github.sha }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
           context: apps/web
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-            type=raw,value=${{ github.sha }}
-            type=raw,value=latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_COMMIT_SHA=${{ github.sha }}
