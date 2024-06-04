@@ -1,47 +1,49 @@
-# reviewer
+# Reviewer
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+Reviewer is an inbox for GitHub pull requests.
 
-A Helm chart for reviewer, an inbox for GitHub pull requests.
+**ℹ️ Please note that this project is still in its very early stage.**
 
-## Maintainers
+This project is an attempt at being better than GitHub when providing an overview of open pull requests needing my attention.
+Indeed, the "[Pull Requests](https://github.com/pulls)" page is not customisable at all.
+It comes with four tabs associated with pre-defined search queries, that we cannot change.
+Tabs are also inconvenient, as they requiring switching from one to another to see pull requests of interest.
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| pvcnt |  |  |
+Reviewer attempts to fill this gap by providing a single dashboard showing all pull requests one is interesting in at a glance.
+It even allows to track pull requests associated with different accounts and/or several instances of GitHub (e.g., GitHub Enterprise).
 
-## Values
+## Features
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| affinity | object | `{}` |  |
-| fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"ghcr.io/pvcnt/reviewer"` |  |
-| image.tag | string | `"latest"` |  |
-| imagePullSecrets | list | `[]` |  |
-| ingress.annotations | object | `{}` |  |
-| ingress.className | string | `""` |  |
-| ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"chart-example.local"` |  |
-| ingress.hosts[0].paths[0].path | string | `"/"` |  |
-| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
-| ingress.tls | list | `[]` |  |
-| nameOverride | string | `""` |  |
-| nodeSelector | object | `{}` |  |
-| podAnnotations | object | `{}` |  |
-| podLabels | object | `{}` |  |
-| podSecurityContext | object | `{}` |  |
-| replicaCount | int | `1` |  |
-| resources | object | `{}` |  |
-| securityContext | object | `{}` |  |
-| service.port | int | `80` |  |
-| service.type | string | `"ClusterIP"` |  |
-| serviceAccount.annotations | object | `{}` |  |
-| serviceAccount.automount | bool | `true` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `""` |  |
-| tolerations | list | `[]` |  |
-| volumeMounts | list | `[]` |  |
-| volumes | list | `[]` |  |
+Reviewer provides the following features:
+* Fully customisable sections.
+* Any number of GitHub instances can be connected (e.g., GitHub Enterprise).
+* Number of pending pull requests is shown in the page's title.
+* Local only, data is stored in your browser's storage.
+* Dark mode.
 
+You can use the demo instance hosted at [reviewer.pages.dev](https://reviewer.pages.dev/), or run your own instance.
+
+## Run locally
+
+This project is a simple SPA, built using [Vite](https://vitejs.dev/).
+It can be started locally with the following command:
+
+```bash
+npm run dev
+```
+
+# Self-host
+
+This project can be built with the following command:
+
+```bash
+npm run build
+```
+
+This will create a standard SPA website under the `dist/` directory.
+It can then be deployed to any Web server able to serve static content, e.g., [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/) or [Netlify](https://docs.netlify.com/integrations/frameworks/vite/).
+The only required configuration is that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
+
+## Docker
+
+A dockerfile is provided that compiles and runs a simple nginx server serving the static content.
