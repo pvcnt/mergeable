@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
       - name: Set up QEMU
@@ -27,21 +33,25 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build assets
+        run: pnpm install && pnpm build
+        env:
+          VITE_COMMIT_SHA: ${{ github.sha }}
       - name: Tag image
         uses: docker/metadata-action@v5
         id: meta
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=${{ github.sha }}
-            type=raw,value=latest
+          tags: type=raw,value=${{ github.sha }}
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: apps/web
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_COMMIT_SHA=${{ github.sha }}

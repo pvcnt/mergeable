@@ -1,0 +1,42 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --clearScreen false",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noemit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^5.10.3",
+    "@blueprintjs/icons": "^5.9.0",
+    "@octokit/core": "^6.1.2",
+    "@octokit/rest": "^20.1.1",
+    "@repo/types": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "^4.32.0",
+    "@tanstack/react-query-devtools": "^4.32.1",
+    "clsx": "^2.1.1",
+    "javascript-time-ago": "^2.5.10",
+    "localforage": "^1.10.0",
+    "normalize.css": "^8.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "less": "^4.2.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.12"
+  }
+}
