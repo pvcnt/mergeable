@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    branches: [main, turbo]
+    branches: [main]
 
 permissions:
   contents: read
@@ -49,12 +49,16 @@ jobs:
           context: apps/web
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_COMMIT_SHA=${{ github.sha }}
       - name: Sign image
-        run: cosign sign --yes --key env://COSIGN_PRIVATE_KEY  ghcr.io/${{ github.repository }}:${{ github.sha }}
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY  ghcr.io/${{ github.repository }}:${{ github.sha }}
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY  ghcr.io/${{ github.repository }}:latest
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
