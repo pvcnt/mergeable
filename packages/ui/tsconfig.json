@@ -1,9 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@repo/typescript-config/base.json",
-  "include": ["."],
-  "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
-  }
+  },
+  "include": ["src"],
 }

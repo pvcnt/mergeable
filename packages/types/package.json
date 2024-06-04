@@ -2,7 +2,7 @@
   "name": "@repo/types",
   "version": "0.0.0",
   "exports": {
-    ".": "./index.ts"
+    ".": "./src/index.ts"
   },
   "license": "MIT",
   "scripts": {

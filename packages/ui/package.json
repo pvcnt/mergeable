@@ -2,8 +2,8 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "exports": {
-    "./components/*": "./components/*.tsx",
-    "./utils/*": "./utils/*.ts"
+    "./components/*": "./src/components/*.tsx",
+    "./utils/*": "./src/utils/*.ts"
   },
   "license": "MIT",
   "scripts": {
