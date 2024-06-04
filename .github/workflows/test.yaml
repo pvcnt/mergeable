@@ -1,8 +1,9 @@
 name: test
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: [main]
+  pull_request: ~
 
 jobs:
   unit-tests:
@@ -16,7 +17,5 @@ jobs:
           node-version: 20
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
       - name: Test
         run: pnpm install && pnpm test
