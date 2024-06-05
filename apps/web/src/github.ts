@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest"
-import { Connection, DiffList, DiffState, User } from "@repo/types"
+import { Connection, PullList, PullState, User } from "@repo/types"
 
 const LIMIT = 50
 
@@ -7,12 +7,12 @@ export function createClient(connection: Connection): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
 }
 
-type PullList = {
+type GHPullList = {
     total: number
-    pulls: Pull[]
+    pulls: GHPull[]
 }
 
-type Pull = {
+type GHPull = {
     number: number,
     title: string,
     state: string,
@@ -67,24 +67,24 @@ export function getViewer(connection: Connection): Promise<User> {
         .then(user => ({name: user.login, avatarUrl: user.avatarUrl}))
 }
 
-export function getDiffs(connection: Connection, search: string, user: string): Promise<DiffList> {
-    return getPulls(connection, search, user).then(data => {
-        const diffs = data.pulls.map(pull => ({
+export function getPulls(connection: Connection, search: string, user: string): Promise<PullList> {
+    return getGHPulls(connection, search, user).then(data => {
+        const pulls = data.pulls.map(pull => ({
             host: connection.host,
             repository: pull.repository.nameWithOwner,
             id: `${pull.number}`,
             title: pull.title,
             state: pull.isDraft
-                ? DiffState.Draft
+                ? PullState.Draft
                 : pull.merged
-                ? DiffState.Merged
+                ? PullState.Merged
                 : pull.closed
-                ? DiffState.Closed
+                ? PullState.Closed
                 : pull.reviewDecision == "APPROVED"
-                ? DiffState.Approved
+                ? PullState.Approved
                 : pull.reviewDecision == "CHANGES_REQUESTED"
-                ? DiffState.ChangesRequested
-                : DiffState.Pending,
+                ? PullState.ChangesRequested
+                : PullState.Pending,
             createdAt: pull.createdAt,
             updatedAt: pull.updatedAt,
             url: pull.url,
@@ -95,11 +95,11 @@ export function getDiffs(connection: Connection, search: string, user: string): 
                 avatarUrl: pull.author.avatarUrl,
             },
         }))
-        return {total: data.total, hasMore: data.total > LIMIT, diffs}
+        return {total: data.total, hasMore: data.total > LIMIT, pulls}
     })
 }
 
-function getPulls(connection: Connection, search: string, user: string): Promise<PullList> {
+function getGHPulls(connection: Connection, search: string, user: string): Promise<GHPullList> {
     const query = `query dashboard($search: String!) {
         search(query: $search, type: ISSUE, first: ${LIMIT}) {
           issueCount
@@ -138,7 +138,7 @@ function getPulls(connection: Connection, search: string, user: string): Promise
         }
     }`
     type Edge = {
-        node: Pull,
+        node: GHPull,
     }
     type Data = {
         search: {

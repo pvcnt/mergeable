@@ -1,4 +1,4 @@
-import { Diff } from "@repo/types"
+import { Pull } from "@repo/types"
 
 // Comes from Prow: https://github.com/kubernetes/test-infra/blob/master/prow/plugins/size/size.go
 type Size = {label: string, changes: number};
@@ -12,8 +12,8 @@ const sizes: Size[] = [
 ]
 sizes.reverse()
   
-export function computeSize(diff: Diff): string {
-    const changes = diff.additions + diff.deletions;
+export function computeSize(pull: Pull): string {
+    const changes = pull.additions + pull.deletions;
     const size = sizes.find(s => changes >= s.changes) || sizes[sizes.length - 1];
     return size.label;
 }

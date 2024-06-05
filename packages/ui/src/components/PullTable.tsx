@@ -1,16 +1,16 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core"
 import ReactTimeAgo from "react-time-ago"
 
-import { Diff, DiffState } from "@repo/types"
+import { Pull, PullState } from "@repo/types"
 import IconWithTooltip from "./IconWithTooltip"
-import { getDiffUid } from "../utils/diff"
+import { getPullUid } from "../utils/pull"
 import { computeSize } from "../utils/size"
 
 
 export type Props = {
-    diffs: Diff[],
+    pulls: Pull[],
     stars: Set<string>,
-    onStar: (v: Diff) => void,
+    onStar: (v: Pull) => void,
 }
 
 const formatDate = (d: string)  => {
@@ -23,9 +23,9 @@ const formatDate = (d: string)  => {
     })
 }
 
-export default function DiffTable({diffs, stars, onStar}: Props) {
+export default function PullTable({pulls, stars, onStar}: Props) {
     return (
-        <HTMLTable interactive className="diff-table">
+        <HTMLTable interactive className="pull-table">
             <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -37,56 +37,56 @@ export default function DiffTable({diffs, stars, onStar}: Props) {
                 </tr>
             </thead>
             <tbody>
-                {diffs.map((diff, idx) => (
+                {pulls.map((pull, idx) => (
                     <tr key={idx}>
-                        <td className="cursor-pointer" onClick={() => onStar(diff)}>
-                            {stars.has(getDiffUid(diff))
-                                ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar diff"/>
-                                : <IconWithTooltip icon="star-empty" title="Star diff"/>}
+                        <td className="cursor-pointer" onClick={() => onStar(pull)}>
+                            {stars.has(getPullUid(pull))
+                                ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
+                                : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
                         </td>
                         <td>
-                            <a href={diff.url}>
-                                <div className="diff-author">
-                                    <Tooltip content={diff.author.name}>
-                                        {diff.author.avatarUrl ? <img src={diff.author.avatarUrl}/> : <Icon icon="user"/>}
+                            <a href={pull.url}>
+                                <div className="pull-author">
+                                    <Tooltip content={pull.author.name}>
+                                        {pull.author.avatarUrl ? <img src={pull.author.avatarUrl}/> : <Icon icon="user"/>}
                                     </Tooltip>
                                 </div>
                             </a>
                         </td>
                         <td>
-                            <a href={diff.url}>
-                                {diff.state == DiffState.Draft
+                            <a href={pull.url}>
+                                {pull.state == PullState.Draft
                                 ? <IconWithTooltip icon="document" title="Draft" color="#5F6B7C"/>
-                                : diff.state == DiffState.Merged
+                                : pull.state == PullState.Merged
                                 ? <IconWithTooltip icon="git-merge" title="Merged" color="#634DBF"/>
-                                : diff.state == DiffState.Closed
+                                : pull.state == PullState.Closed
                                 ? <IconWithTooltip icon="cross-circle" title="Closed" color="#AC2F33"/>
-                                : diff.state == DiffState.Approved
+                                : pull.state == PullState.Approved
                                 ? <IconWithTooltip icon="git-pull" title="Approved" color="#1C6E42"/>
-                                : diff.state == DiffState.ChangesRequested
+                                : pull.state == PullState.ChangesRequested
                                 ? <IconWithTooltip icon="issue" title="Changes requested" color="#C87619"/>
-                                : diff.state == DiffState.Pending
+                                : pull.state == PullState.Pending
                                 ? <IconWithTooltip icon="git-pull" title="Pending review" color="#C87619"/>
                                 : null}
                             </a>
                         </td>
                         <td>
-                            <a href={diff.url}>
-                                <Tooltip content={formatDate(diff.updatedAt)}>
-                                    <ReactTimeAgo date={new Date(diff.updatedAt)} tooltip={false} timeStyle="round"/>
+                            <a href={pull.url}>
+                                <Tooltip content={formatDate(pull.updatedAt)}>
+                                    <ReactTimeAgo date={new Date(pull.updatedAt)} tooltip={false} timeStyle="round"/>
                                 </Tooltip>
                             </a>
                         </td>
                         <td>
-                            <a href={diff.url}>
-                                <Tooltip content={<><span className="additions">+{diff.additions}</span> / <span className="deletions">-{diff.deletions}</span></>} openOnTargetFocus={false} usePortal={false}><Tag>{computeSize(diff)}</Tag></Tooltip>
+                            <a href={pull.url}>
+                                <Tooltip content={<><span className="additions">+{pull.additions}</span> / <span className="deletions">-{pull.deletions}</span></>} openOnTargetFocus={false} usePortal={false}><Tag>{computeSize(pull)}</Tag></Tooltip>
                             </a>
                         </td>
                         <td>
-                            <a href={diff.url}>
-                                <div className="font-semibold">{diff.title}</div>
+                            <a href={pull.url}>
+                                <div className="font-semibold">{pull.title}</div>
                                 <div className="text-sm">
-                                    {diff.host}:{diff.repository} #{diff.id}
+                                    {pull.host}:{pull.repository} #{pull.id}
                                 </div>
                             </a>
                         </td>
