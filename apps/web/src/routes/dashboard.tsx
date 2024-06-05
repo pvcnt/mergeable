@@ -5,13 +5,13 @@ import { Button } from "@blueprintjs/core"
 import { emptySectionConfig, ConfigContext } from "../config"
 import SectionDialog from "@repo/ui/components/SectionDialog"
 import DashboardSection from "@repo/ui/components/DashboardSection"
-import { Diff, Section } from "@repo/types"
+import { Pull, Section } from "@repo/types"
 import SearchInput from "@repo/ui/components/SearchInput"
-import { useDiffs } from "../queries"
-import { getDiffUid } from "@repo/ui/utils/diff"
+import { usePulls } from "../queries"
+import { getPullUid } from "@repo/ui/utils/pull"
 
-function matches(diff: Diff, tokens: string[]): boolean {
-    return tokens.length === 0 || tokens.every(tok => diff.title.toLowerCase().indexOf(tok) > -1 || diff.repository.indexOf(tok) > -1)
+function matches(pull: Pull, tokens: string[]): boolean {
+    return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
 }
 
 function sum(values: number[]): number {
@@ -25,32 +25,32 @@ export default function Dashboard() {
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [ newSection, setNewSection ] = useState(emptySectionConfig)
 
-    const diffs = useDiffs(config)
+    const pulls = usePulls(config)
 
     const refetchAll = useCallback(async () => {
-		await Promise.all(diffs.map(res => res.refetch()));
-	}, [diffs]);
+		await Promise.all(pulls.map(res => res.refetch()));
+	}, [pulls]);
 
-    const isFetching = diffs.some(res => res.isFetching)
+    const isFetching = pulls.some(res => res.isFetching)
 
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
 
     const count = sum(config.sections.map((section, idx) => {
         if (section.notified) {
-            return sum(diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.diffs.length || 0))
+            return sum(pulls.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.pulls.length || 0))
         }
         return 0
     }))
 
     const stars = new Set(config.stars)
-    const handleStar = (diff: Diff) => {
-        const uid = getDiffUid(diff)
+    const handleStar = (pull: Pull) => {
+        const uid = getPullUid(pull)
         setConfig(prev => prev.stars.indexOf(uid) > -1 
             ? {...prev, stars: prev.stars.filter(s => s != uid)} 
             : {...prev, stars: prev.stars.concat([uid])})
     }
 
-    // Change window's title to include number of diffs.
+    // Change window's title to include number of pull requests.
     useEffect(() => {
         if (count > 0) {
             document.title = `(${count}) Reviewer`
@@ -113,13 +113,13 @@ export default function Dashboard() {
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
             {config !== undefined && config.sections.map((section, idx) => {
-                const data = diffs.slice(idx * config.connections.length, (idx + 1) * config.connections.length)
+                const data = pulls.slice(idx * config.connections.length, (idx + 1) * config.connections.length)
                 return (
                     <DashboardSection
                         key={idx}
                         section={section}
                         isLoading={data.some(res => res.isLoading)}
-                        diffs={data.flatMap(res => (res.data?.diffs || []).filter(v => matches(v, tokens)))}
+                        pulls={data.flatMap(res => (res.data?.pulls || []).filter(v => matches(v, tokens)))}
                         stars={stars}
                         hasMore={data.some(res => res.data?.hasMore)}
                         isFirst={idx === 0}

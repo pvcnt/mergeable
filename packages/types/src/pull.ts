@@ -1,10 +1,10 @@
-export type DiffList = {
+export type PullList = {
     total: number
     hasMore: boolean
-    diffs: Diff[]
+    pulls: Pull[]
 }
 
-export enum DiffState {
+export enum PullState {
     Draft = 1,
     Pending,
     Approved,
@@ -13,12 +13,12 @@ export enum DiffState {
     Closed,
 }
 
-export type Diff = {
+export type Pull = {
     host: string,
     repository: string,
     id: string,
     title: string,
-    state: DiffState,
+    state: PullState,
     createdAt: string,
     updatedAt: string,
     url: string,

@@ -2,28 +2,28 @@ import { useCallback, useContext } from "react";
 import { Button, Card, H3, Spinner } from "@blueprintjs/core";
 
 import { ConfigContext } from "../config";
-import DiffTable from "@repo/ui/components/DiffTable";
-import { useDiffs } from "../queries";
-import { getDiffUid } from "@repo/ui/utils/diff";
-import { Diff } from "@repo/types";
+import PullTable from "@repo/ui/components/PullTable";
+import { usePulls } from "../queries";
+import { getPullUid } from "@repo/ui/utils/pull";
+import { Pull } from "@repo/types";
 
 
 export default function Stars() {
     const { config, setConfig } = useContext(ConfigContext)
-    const results = useDiffs(config)
+    const results = usePulls(config)
 
     const isLoading = results.some(res => res.isLoading)
     const isFetching = results.some(res => res.isFetching)
 
     const stars = new Set(config.stars)
-    const diffs = results.flatMap(res => res.data?.diffs || []).filter(diff => stars.has(getDiffUid(diff)))
+    const pulls = results.flatMap(res => res.data?.pulls || []).filter(pull => stars.has(getPullUid(pull)))
 
     const refetchAll = useCallback(async () => {
 		await Promise.all(results.map(res => res.refetch()));
 	}, [results]);
 
-    const handleStar = (diff: Diff) => {
-        const uid = getDiffUid(diff)
+    const handleStar = (pull: Pull) => {
+        const uid = getPullUid(pull)
         setConfig(prev => prev.stars.indexOf(uid) > -1 
             ? {...prev, stars: prev.stars.filter(s => s != uid)} 
             : {...prev, stars: prev.stars.concat([uid])})
@@ -32,7 +32,7 @@ export default function Stars() {
     return (
         <>
             <div className="flex mb-4">
-                <H3 className="grow">Starred diffs</H3>
+                <H3 className="grow">Starred pull requests</H3>
                 <Button
                     icon="refresh"
                     disabled={isFetching}
@@ -44,8 +44,8 @@ export default function Stars() {
             <Card className="mt-4">
             {isLoading 
                 ? <Spinner/>
-                : (diffs.length > 0)
-                ? <DiffTable diffs={diffs} stars={stars} onStar={handleStar}/>
+                : (pulls.length > 0)
+                ? <PullTable pulls={pulls} stars={stars} onStar={handleStar}/>
                 : <p className="no-results">No results</p>}
             </Card>
         </>

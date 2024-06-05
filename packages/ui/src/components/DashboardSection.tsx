@@ -1,25 +1,25 @@
 import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core"
 import { useState } from "react"
 import SectionDialog from "./SectionDialog";
-import { Diff, Section } from "@repo/types";
-import DiffTable from "./DiffTable";
+import { Pull, Section } from "@repo/types";
+import PullTable from "./PullTable";
 
 export type Props = {
     section: Section,
     isFirst: boolean,
     isLast: boolean,
     isLoading: boolean,
-    diffs: Diff[],
+    pulls: Pull[],
     stars: Set<string>,
     hasMore?: boolean,
     onMoveUp: () => void,
     onMoveDown: () => void,
     onChange: (config: Section) => void,
     onDelete: () => void,
-    onStar: (v: Diff) => void,
+    onStar: (v: Pull) => void,
 }
 
-export default function DashboardSection({isLoading, section, isFirst, isLast, diffs, stars, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
+export default function DashboardSection({isLoading, section, isFirst, isLast, pulls, stars, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
     const [isCollapsed, setCollapsed] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
@@ -35,8 +35,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
                     <div className="section-label">
                         <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
                         <span className="ml-2">{section.label}</span>
-                        {(diffs.length > 0) && (
-                            <Tag round intent={Intent.NONE} className="ml-2">{diffs.length}{hasMore ? '+' : ''}</Tag>
+                        {(pulls.length > 0) && (
+                            <Tag round intent={Intent.NONE} className="ml-2">{pulls.length}{hasMore ? '+' : ''}</Tag>
                         )}
                     </div>
                 </H5>
@@ -59,8 +59,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, d
             {isLoading 
                 ? <Spinner/>
                 : <Collapse isOpen={!isCollapsed}>
-                    {diffs.length > 0
-                        ? <DiffTable diffs={diffs} stars={stars} onStar={onStar} />
+                    {pulls.length > 0
+                        ? <PullTable pulls={pulls} stars={stars} onStar={onStar} />
                         : <p className="no-results">No results</p>}
                 </Collapse>}
         </Card>
