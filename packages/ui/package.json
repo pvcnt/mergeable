@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "type-check": "tsc --noemit",
+    "check-types": "tsc --noemit",
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "devDependencies": {

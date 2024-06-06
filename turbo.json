@@ -1,14 +1,21 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "type-check": {},
-    "lint": {},
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
+    "check-types": {
+      "dependsOn": ["^transit"]
+    },
+    "lint": {
+      "dependsOn": ["check-types"]
+    },
     "test": {
-      "dependsOn": ["lint", "type-check"]
+      "dependsOn": ["lint"]
     },
     "dev": {
       "cache": false,

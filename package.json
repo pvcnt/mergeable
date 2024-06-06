@@ -1,4 +1,5 @@
 {
+  "name": "reviewer",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -11,7 +12,7 @@
     "eslint": "^8.57.0",
     "@repo/eslint-config": "workspace:*",
     "prettier": "^3.2.5",
-    "turbo": "latest"
+    "turbo": "^2.0.1"
   },
   "packageManager": "pnpm@8.9.0"
 }
