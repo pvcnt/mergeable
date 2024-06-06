@@ -1,7 +1,7 @@
 import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core"
 import { useState } from "react"
 import SectionDialog from "./SectionDialog";
-import { Pull, Section, Star } from "@repo/types";
+import { Pull, Section } from "@repo/types";
 import PullTable from "./PullTable";
 
 export type Props = {
@@ -10,7 +10,7 @@ export type Props = {
     isLast: boolean,
     isLoading: boolean,
     pulls: Pull[],
-    stars: Star[],
+    isStarred: (v: Pull) => boolean,
     hasMore?: boolean,
     onMoveUp: (v: Section) => void,
     onMoveDown: (v: Section) => void,
@@ -19,7 +19,7 @@ export type Props = {
     onStar: (v: Pull) => void,
 }
 
-export default function DashboardSection({isLoading, section, isFirst, isLast, pulls, stars, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
+export default function DashboardSection({isLoading, section, isFirst, isLast, pulls, isStarred, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
     const [isCollapsed, setCollapsed] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
@@ -60,7 +60,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                 ? <Spinner/>
                 : <Collapse isOpen={!isCollapsed}>
                     {pulls.length > 0
-                        ? <PullTable pulls={pulls} stars={stars} onStar={onStar} />
+                        ? <PullTable pulls={pulls} isStarred={isStarred} onStar={onStar} />
                         : <p className="no-results">No results</p>}
                 </Collapse>}
         </Card>

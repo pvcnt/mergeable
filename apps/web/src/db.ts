@@ -127,7 +127,9 @@ export const moveSectionDown = (value: Section) => {
 
 export const useStars = () => {
     const data = useLiveQuery(() => db.stars.toArray());
-    return { isLoaded: data !== undefined, data: data || [] };
+    const uids = data !== undefined ? new Set(data.map(v => v.uid)) : new Set();
+    const isStarred = (pull: Pull) => uids.has(getPullUid(pull))
+    return { isLoaded: data !== undefined, data: data || [], isStarred };
 }
 
 export const toggleStar = (pull: Pull) => {

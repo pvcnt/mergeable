@@ -3,21 +3,19 @@ import { Button, Card, H3, Spinner } from "@blueprintjs/core";
 
 import PullTable from "@repo/ui/components/PullTable";
 import { usePulls } from "../queries";
-import { getPullUid } from "@repo/ui/utils/pull";
 import { toggleStar, useConnections, useSections, useStars } from "../db";
 
 
 export default function Stars() {
     const connections = useConnections()
     const sections = useSections()
-    const stars = useStars()
+    const { isStarred } = useStars()
     const results = usePulls(sections.data, connections.data)
 
     const isLoading = results.some(res => res.isLoading)
     const isFetching = results.some(res => res.isFetching)
 
-    const starUids = new Set(stars.data.map(v => v.uid))
-    const pulls = results.flatMap(res => res.data?.pulls || []).filter(pull => starUids.has(getPullUid(pull)))
+    const pulls = results.flatMap(res => res.data?.pulls || []).filter(pull => isStarred(pull))
 
     const refetchAll = useCallback(async () => {
 		await Promise.all(results.map(res => res.refetch()));
@@ -39,7 +37,7 @@ export default function Stars() {
             {isLoading 
                 ? <Spinner/>
                 : (pulls.length > 0)
-                ? <PullTable pulls={pulls} stars={stars.data} onStar={toggleStar}/>
+                ? <PullTable pulls={pulls} isStarred={isStarred} onStar={toggleStar}/>
                 : <p className="no-results">No results</p>}
             </Card>
         </>

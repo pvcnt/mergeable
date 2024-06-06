@@ -20,7 +20,7 @@ function sum(values: number[]): number {
 export default function Dashboard() {
     const connections = useConnections()
     const sections = useSections()
-    const stars = useStars()
+    const { isStarred } = useStars()
 
     const [ search, setSearch ] = useState("")
     const [ isEditing, setEditing ] = useState(false)
@@ -111,7 +111,7 @@ export default function Dashboard() {
                         section={section}
                         isLoading={data.some(res => res.isLoading)}
                         pulls={data.flatMap(res => (res.data?.pulls || []).filter(v => matches(v, tokens)))}
-                        stars={stars.data}
+                        isStarred={isStarred}
                         hasMore={data.some(res => res.data?.hasMore)}
                         isFirst={idx === 0}
                         isLast={idx === sections.data.length - 1}
