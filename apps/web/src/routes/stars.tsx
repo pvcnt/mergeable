@@ -6,11 +6,14 @@ import PullTable from "@repo/ui/components/PullTable";
 import { usePulls } from "../queries";
 import { getPullUid } from "@repo/ui/utils/pull";
 import { Pull } from "@repo/types";
+import { useConnections, useSections } from "../db";
 
 
 export default function Stars() {
     const { config, setConfig } = useContext(ConfigContext)
-    const results = usePulls(config)
+    const connections = useConnections()
+    const sections = useSections()
+    const results = usePulls(sections.data, connections.data)
 
     const isLoading = results.some(res => res.isLoading)
     const isFetching = results.some(res => res.isFetching)

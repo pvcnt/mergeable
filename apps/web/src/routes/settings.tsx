@@ -1,17 +1,21 @@
 import { Button, H3 } from "@blueprintjs/core"
 import ConnectionCard from "@repo/ui/components/ConnectionCard"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
-import { ConfigContext } from "../config"
 import { useQueries } from "@tanstack/react-query"
+import * as R from "remeda"
+
 import { getViewer } from "../github"
 import { Connection } from "@repo/types"
+import { db } from "@repo/storage"
+import { useConnections } from "../db"
+
 
 export default function Settings() {
     const [isEditing, setEditing] = useState(false)
-    const { config, setConfig } = useContext(ConfigContext)
+    const connections = useConnections()
     const viewers = useQueries({
-        queries: config.connections.map(connection => ({
+        queries: connections.data.map(connection => ({
             queryKey: ['viewer', connection.host],
             queryFn: () => getViewer(connection),
             staleTime: Infinity,
@@ -19,10 +23,15 @@ export default function Settings() {
     })
 
     const handleSubmit = (value: Connection) => {
-        setConfig(v => ({...v, connections: [...v.connections, value]}))
+        const doc = R.omit(value, ["id"]);
+        if (value.id.length === 0) {
+            db.connections.add(doc).catch(console.error);
+        } else {
+            db.connections.update(value.id, doc).catch(console.error);
+        }
     }
-    const handleDelete = (idx: number) => {
-        setConfig(v => ({...v, connections: [...v.connections.slice(0, idx), ...v.connections.slice(idx + 1)]}))
+    const handleDelete = (value: Connection) => {
+        db.connections.delete(value.id).catch(console.error)
     }
 
     return (
@@ -34,12 +43,13 @@ export default function Settings() {
 
             <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
             
-            {config.connections.map((connection, idx) => (
+            {connections.data.map((connection, idx) => (
                 <ConnectionCard
                     key={idx}
+                    className="mt-4"
                     connection={connection}
-                    user={viewers[idx]?.data}
-                    onDelete={() => handleDelete(idx)}/>
+                    viewer={viewers[idx]?.data}
+                    onDelete={() => handleDelete(connection)}/>
             ))}
         </div>
     )

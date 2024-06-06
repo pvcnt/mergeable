@@ -9,6 +9,7 @@ import { Pull, Section } from "@repo/types"
 import SearchInput from "@repo/ui/components/SearchInput"
 import { usePulls } from "../queries"
 import { getPullUid } from "@repo/ui/utils/pull"
+import { useConnections, useSections } from "../db"
 
 function matches(pull: Pull, tokens: string[]): boolean {
     return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
@@ -19,13 +20,15 @@ function sum(values: number[]): number {
 }
 
 export default function Dashboard() {
+    const connections = useConnections()
+    const sections = useSections()
     const { config, setConfig } = useContext(ConfigContext)
     const [ search, setSearch ] = useState("")
     const [ isEditing, setEditing ] = useState(false)
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [ newSection, setNewSection ] = useState(emptySectionConfig)
 
-    const pulls = usePulls(config)
+    const pulls = usePulls(sections.data, connections.data)
 
     const refetchAll = useCallback(async () => {
 		await Promise.all(pulls.map(res => res.refetch()));
@@ -35,9 +38,9 @@ export default function Dashboard() {
 
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
 
-    const count = sum(config.sections.map((section, idx) => {
+    const count = sum(sections.data.map((section, idx) => {
         if (section.notified) {
-            return sum(pulls.slice(idx * config.connections.length, (idx + 1) * config.connections.length).map(res => res.data?.pulls.length || 0))
+            return sum(pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length).map(res => res.data?.pulls.length || 0))
         }
         return 0
     }))
@@ -63,9 +66,9 @@ export default function Dashboard() {
     useEffect(() => {
         if (searchParams.get("action") === "share") {
             setNewSection({
+                ...emptySectionConfig,
                 label: searchParams.get("label") || emptySectionConfig.label,
                 search: searchParams.get("search") || emptySectionConfig.search,
-                notified: emptySectionConfig.notified
             })
             setEditing(true)
         }
@@ -112,8 +115,8 @@ export default function Dashboard() {
                 isNew={true}
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
-            {config !== undefined && config.sections.map((section, idx) => {
-                const data = pulls.slice(idx * config.connections.length, (idx + 1) * config.connections.length)
+            {sections.isLoaded && sections.data.map((section, idx) => {
+                const data = pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length)
                 return (
                     <DashboardSection
                         key={idx}
@@ -123,7 +126,7 @@ export default function Dashboard() {
                         stars={stars}
                         hasMore={data.some(res => res.data?.hasMore)}
                         isFirst={idx === 0}
-                        isLast={idx === config.sections.length - 1}
+                        isLast={idx === sections.data.length - 1}
                         onChange={v => handleChange(idx, v)}
                         onDelete={() => handleDelete(idx)}
                         onMoveUp={() => handleMoveUp(idx)}

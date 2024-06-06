@@ -1,48 +1,56 @@
-import { Config } from "@repo/types"
+import { Config, Section } from "@repo/types"
 import localforage from "localforage"
 import { createContext } from "react"
 
 const configKey = "config"
 
+export const defaultSections: Section[] = [
+    {
+        id: "",
+        label: "Needs your review",
+        search: "is:open review-requested:{USER} -review:approved -reviewed-by:{USER}",
+        notified: true,
+    },
+    {
+        id: "",
+        label: "Changes requested",
+        search: "is:open author:{USER} review:changes_requested",
+        notified: true,
+    },
+    {
+        id: "",
+        label: "Approved",
+        search: "is:open author:{USER} review:approved",
+        notified: false,
+    },
+    {
+        id: "",
+        label: "Waiting for reviewers",
+        search: "is:open author:{USER} review:none draft:false",
+        notified: false,
+    },
+    {
+        id: "",
+        label: "Waiting for the author",
+        search: "is:open review-requested:{USER} review:changes_requested",
+        notified: false,
+    },
+    {
+        id: "",
+        label: "Draft",
+        search: "is:open author:{USER} draft:true",
+        notified: false,
+    }
+];
+
 export const defaultConfig: Config = {
-    sections: [
-        {
-            label: "Needs your review",
-            search: "is:open review-requested:{USER} -review:approved -reviewed-by:{USER}",
-            notified: true,
-        },
-        {
-            label: "Changes requested",
-            search: "is:open author:{USER} review:changes_requested",
-            notified: true,
-        },
-        {
-            label: "Approved",
-            search: "is:open author:{USER} review:approved",
-            notified: false,
-        },
-        {
-            label: "Waiting for reviewers",
-            search: "is:open author:{USER} review:none draft:false",
-            notified: false,
-        },
-        {
-            label: "Waiting for the author",
-            search: "is:open review-requested:{USER} review:changes_requested",
-            notified: false,
-        },
-        {
-            label: "Draft",
-            search: "is:open author:{USER} draft:true",
-            notified: false,
-        }
-    ],
+    sections: defaultSections,
     connections: [],
     stars: [],
 }
 
 export const emptyConfig = {sections: [], connections: []}
-export const emptySectionConfig = {label: "", search: "", notified: false}
+export const emptySectionConfig: Section = {id: "", label: "", search: "", notified: false}
 
 export function readConfig(): Promise<Config> {
     return localforage.getItem<Config>(configKey)

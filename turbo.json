@@ -6,9 +6,11 @@
       "outputs": ["dist/**"]
     },
     "type-check": {},
-    "lint": {},
+    "lint": {
+      "dependsOn": ["type-check"]
+    },
     "test": {
-      "dependsOn": ["lint", "type-check"]
+      "dependsOn": ["lint"]
     },
     "dev": {
       "cache": false,

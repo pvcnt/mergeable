@@ -28,7 +28,7 @@ export default function SectionDialog({title, section, isOpen, isNew, onClose, o
     }
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({label, search, notified})
+            onSubmit({id: "", label: label.trim(), search, notified})
             onClose()
         }
     }

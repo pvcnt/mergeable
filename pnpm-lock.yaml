@@ -35,6 +35,9 @@ importers:
       '@octokit/rest':
         specifier: ^20.1.1
         version: 20.1.1
+      '@repo/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -50,6 +53,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dexie-react-hooks:
+        specifier: ^1.1.7
+        version: 1.1.7(@types/react@18.3.3)(dexie@4.0.7)(react@18.3.1)
       javascript-time-ago:
         specifier: ^2.5.10
         version: 2.5.10
@@ -68,6 +74,9 @@ importers:
       react-router-dom:
         specifier: ^6.23.1
         version: 6.23.1(react-dom@18.3.1)(react@18.3.1)
+      remeda:
+        specifier: ^2.0.5
+        version: 2.0.5
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -112,6 +121,28 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
 
+  packages/storage:
+    dependencies:
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
+      dexie:
+        specifier: ^4.0.7
+        version: 4.0.7
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   packages/types:
     devDependencies:
       '@repo/eslint-config':
@@ -140,6 +171,9 @@ importers:
       '@repo/types':
         specifier: workspace:*
         version: link:../types
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1521,6 +1555,22 @@ packages:
     resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
     dev: false
 
+  /dexie-react-hooks@1.1.7(@types/react@18.3.3)(dexie@4.0.7)(react@18.3.1):
+    resolution: {integrity: sha512-Lwv5W0Hk+uOW3kGnsU9GZoR1er1B7WQ5DSdonoNG+focTNeJbHW6vi6nBoX534VKI3/uwHebYzSw1fwY6a7mTw==}
+    peerDependencies:
+      '@types/react': '>=16'
+      dexie: ^3.2 || ^4.0.1-alpha
+      react: '>=16'
+    dependencies:
+      '@types/react': 18.3.3
+      dexie: 4.0.7
+      react: 18.3.1
+    dev: false
+
+  /dexie@4.0.7:
+    resolution: {integrity: sha512-M+Lo6rk4pekIfrc2T0o2tvVJwL6EAAM/B78DNfb8aaxFVoI1f8/rz5KTxuAnApkwqTSuxx7T5t0RKH7qprapGg==}
+    dev: false
+
   /dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
@@ -2396,6 +2446,12 @@ packages:
     resolution: {integrity: sha512-aCv3juQw4hT1/P/OrVltKWLlp15eW1GRcwP1XdxHrPdZE9MtgqFpegjnTjLhi2m2WI9MT/hQQtE+tjEWG1hgkQ==}
     dev: false
 
+  /remeda@2.0.5:
+    resolution: {integrity: sha512-2+6w6XBjWk0Lysfss4QFo4LKjQ1SAW0wIEjQfp2MJjBs6BbiGQKzNli1xmUk/bHK7CBCdPS1KqjrWojgdruv0A==}
+    dependencies:
+      type-fest: 4.19.0
+    dev: false
+
   /remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
     dev: false
@@ -2650,6 +2706,11 @@ packages:
   /type-fest@0.20.2:
     resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
     engines: {node: '>=10'}
+
+  /type-fest@4.19.0:
+    resolution: {integrity: sha512-CN2l+hWACRiejlnr68vY0/7734Kzu+9+TOslUXbSCQ1ruY9XIHDBSceVXCcHm/oXrdzhtLMMdJEKfemf1yXiZQ==}
+    engines: {node: '>=16'}
+    dev: false
 
   /typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}

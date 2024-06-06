@@ -7,20 +7,20 @@ import Sidebar from '@repo/ui/components/Sidebar';
 import { ConfigContext, defaultConfig, readConfig, writeConfig } from './config';
 import Footer from '@repo/ui/components/Footer';
 import { Config } from '@repo/types';
+import { useConnections } from './db';
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
         // Read the isDark value from local storage (or false if it's not set)
         return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
     });
-    const [isLoaded, setLoaded] = useState(false)
     const [config, setConfig] = useState<Config>(defaultConfig)
+    const { data: connections, isLoaded } = useConnections()
 
     useEffect(() => {
         readConfig()
             .then(config => {
                 setConfig(config)
-                setLoaded(true)
                 console.log("Loaded configuration from local storage")
             })
             .catch(console.error)
@@ -42,7 +42,7 @@ export default function App() {
                 <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
                 <main>
                     <div>
-                        {(isLoaded && config.connections.length === 0) &&
+                        {(isLoaded && connections.length === 0) &&
                             <Card className="announcement">
                                 No connections are configured. Please go to <Link to="/settings">the settings page</Link> to add a new connection.
                             </Card>}

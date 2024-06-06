@@ -5,14 +5,16 @@ export type Config = {
 }
 
 export type Section = {
+    id: string,
     label: string,
     search: string,
     notified: boolean,
 }
 
 export type Connection = {
-    name?: string,
+    id: string,
+    label: string,
     host: string,
     baseUrl: string,
-    auth: string,
+    token: string,
 }
