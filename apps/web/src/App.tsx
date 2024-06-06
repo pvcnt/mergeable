@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
 import { Card } from '@blueprintjs/core'
+import * as R from "remeda"
 
 import Sidebar from '@repo/ui/components/Sidebar';
 import { ConfigContext, defaultConfig, readConfig, writeConfig } from './config';
 import Footer from '@repo/ui/components/Footer';
 import { Config } from '@repo/types';
 import { useConnections } from './db';
+import { db } from '@repo/storage';
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
@@ -15,7 +17,7 @@ export default function App() {
         return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
     });
     const [config, setConfig] = useState<Config>(defaultConfig)
-    const { data: connections, isLoaded } = useConnections()
+    const connections = useConnections()
 
     useEffect(() => {
         readConfig()
@@ -32,6 +34,16 @@ export default function App() {
     }, [config])
 
     useEffect(() => {
+        // Migration connections from the legacy format to the new format.
+        if (connections.isLoaded && connections.data.length === 0 && config.connections.length > 0) {
+            console.log("Copying legacy connections into IndexedDB");
+            config.connections.forEach(v => {
+                db.connections.add({label: v.name || "", baseUrl: v.baseUrl, host: v.host, token: v.auth}).catch(console.error)
+            })
+        }
+    }, [config, connections]);
+
+    useEffect(() => {
         // Write the isDark value to local storage whenever it changes
         localStorage.setItem('isDark', JSON.stringify(isDark));
     }, [isDark]);
@@ -42,7 +54,7 @@ export default function App() {
                 <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
                 <main>
                     <div>
-                        {(isLoaded && connections.length === 0) &&
+                        {(connections.isLoaded && connections.data.length === 0) &&
                             <Card className="announcement">
                                 No connections are configured. Please go to <Link to="/settings">the settings page</Link> to add a new connection.
                             </Card>}
