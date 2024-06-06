@@ -1,20 +1,9 @@
-export type Config = {
-    connections: LegacyConnection[],
-    stars: string[],
-}
-
 export type Section = {
     id: string,
     label: string,
     search: string,
     notified: boolean,
-}
-
-export type LegacyConnection = {
-    name?: string,
-    host: string,
-    baseUrl: string,
-    auth: string,
+    position: number,
 }
 
 export type Connection = {
@@ -23,4 +12,8 @@ export type Connection = {
     host: string,
     baseUrl: string,
     token: string,
+}
+
+export type Star = {
+    uid: string,
 }

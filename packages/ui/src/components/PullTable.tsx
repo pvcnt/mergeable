@@ -1,7 +1,7 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core"
 import ReactTimeAgo from "react-time-ago"
 
-import { Pull, PullState } from "@repo/types"
+import { Pull, PullState, Star } from "@repo/types"
 import IconWithTooltip from "./IconWithTooltip"
 import { getPullUid } from "../utils/pull"
 import { computeSize } from "../utils/size"
@@ -9,7 +9,7 @@ import { computeSize } from "../utils/size"
 
 export type Props = {
     pulls: Pull[],
-    stars: Set<string>,
+    stars: Star[],
     onStar: (v: Pull) => void,
 }
 
@@ -24,6 +24,7 @@ const formatDate = (d: string)  => {
 }
 
 export default function PullTable({pulls, stars, onStar}: Props) {
+    const starUids = new Set(stars.map(v => v.uid))
     return (
         <HTMLTable interactive className="pull-table">
             <thead>
@@ -40,7 +41,7 @@ export default function PullTable({pulls, stars, onStar}: Props) {
                 {pulls.map((pull, idx) => (
                     <tr key={idx}>
                         <td className="cursor-pointer" onClick={() => onStar(pull)}>
-                            {stars.has(getPullUid(pull))
+                            {starUids.has(getPullUid(pull))
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
                                 : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
                         </td>

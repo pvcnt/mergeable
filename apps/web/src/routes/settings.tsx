@@ -3,12 +3,9 @@ import ConnectionCard from "@repo/ui/components/ConnectionCard"
 import { useState } from "react"
 import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
 import { useQueries } from "@tanstack/react-query"
-import * as R from "remeda"
 
 import { getViewer } from "../github"
-import { Connection } from "@repo/types"
-import { db } from "@repo/storage"
-import { useConnections } from "../db"
+import { deleteConnection, saveConnection, useConnections } from "../db"
 
 
 export default function Settings() {
@@ -22,18 +19,6 @@ export default function Settings() {
         })),
     })
 
-    const handleSubmit = (value: Connection) => {
-        const doc = R.omit(value, ["id"]);
-        if (value.id.length === 0) {
-            db.connections.add(doc).catch(console.error);
-        } else {
-            db.connections.update(value.id, doc).catch(console.error);
-        }
-    }
-    const handleDelete = (value: Connection) => {
-        db.connections.delete(value.id).catch(console.error)
-    }
-
     return (
         <div className="container-lg">
             <div className="flex mb-4">
@@ -41,7 +26,7 @@ export default function Settings() {
                 <Button text="New connection" icon="plus" onClick={() => setEditing(true)}/>
             </div>
 
-            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
+            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={saveConnection} />
             
             {connections.data.map((connection, idx) => (
                 <ConnectionCard
@@ -49,7 +34,7 @@ export default function Settings() {
                     className="mt-4"
                     connection={connection}
                     viewer={viewers[idx]?.data}
-                    onDelete={() => handleDelete(connection)}/>
+                    onDelete={deleteConnection}/>
             ))}
         </div>
     )

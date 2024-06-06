@@ -1,7 +1,7 @@
 import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core"
 import { useState } from "react"
 import SectionDialog from "./SectionDialog";
-import { Pull, Section } from "@repo/types";
+import { Pull, Section, Star } from "@repo/types";
 import PullTable from "./PullTable";
 
 export type Props = {
@@ -10,12 +10,12 @@ export type Props = {
     isLast: boolean,
     isLoading: boolean,
     pulls: Pull[],
-    stars: Set<string>,
+    stars: Star[],
     hasMore?: boolean,
-    onMoveUp: () => void,
-    onMoveDown: () => void,
-    onChange: (config: Section) => void,
-    onDelete: () => void,
+    onMoveUp: (v: Section) => void,
+    onMoveDown: (v: Section) => void,
+    onChange: (v: Section) => void,
+    onDelete: (v: Section) => void,
     onStar: (v: Pull) => void,
 }
 
@@ -41,8 +41,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                     </div>
                 </H5>
                 <div className="ml-auto">
-                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={onMoveUp}/>
-                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={onMoveDown}/>
+                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={() => onMoveUp(section)}/>
+                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={() => onMoveDown(section)}/>
                     <Button icon="edit" minimal onClick={() => setEditing(true)}/>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                 isNew={false}
                 onClose={() => setEditing(false)}
                 onSubmit={onChange}
-                onDelete={onDelete}/>
+                onDelete={() => onDelete(section)}/>
 
             {isLoading 
                 ? <Spinner/>

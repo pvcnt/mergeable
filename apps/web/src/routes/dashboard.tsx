@@ -1,15 +1,13 @@
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@blueprintjs/core"
 
-import { emptySectionConfig, ConfigContext } from "../config"
 import SectionDialog from "@repo/ui/components/SectionDialog"
 import DashboardSection from "@repo/ui/components/DashboardSection"
 import { Pull, Section } from "@repo/types"
 import SearchInput from "@repo/ui/components/SearchInput"
 import { usePulls } from "../queries"
-import { getPullUid } from "@repo/ui/utils/pull"
-import { useConnections, useSections } from "../db"
+import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useConnections, useSections, useStars } from "../db"
 
 function matches(pull: Pull, tokens: string[]): boolean {
     return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
@@ -22,11 +20,19 @@ function sum(values: number[]): number {
 export default function Dashboard() {
     const connections = useConnections()
     const sections = useSections()
-    const { config, setConfig } = useContext(ConfigContext)
+    const stars = useStars()
+
     const [ search, setSearch ] = useState("")
     const [ isEditing, setEditing ] = useState(false)
     const [ searchParams, setSearchParams ] = useSearchParams()
-    const [ newSection, setNewSection ] = useState(emptySectionConfig)
+
+    const [ newSection, setNewSection ] = useState<Section>({
+        id: "",
+        label: "",
+        search: "",
+        position: sections.data.length,
+        notified: false,
+    });
 
     const pulls = usePulls(sections.data, connections.data)
 
@@ -45,14 +51,6 @@ export default function Dashboard() {
         return 0
     }))
 
-    const stars = new Set(config.stars)
-    const handleStar = (pull: Pull) => {
-        const uid = getPullUid(pull)
-        setConfig(prev => prev.stars.indexOf(uid) > -1 
-            ? {...prev, stars: prev.stars.filter(s => s != uid)} 
-            : {...prev, stars: prev.stars.concat([uid])})
-    }
-
     // Change window's title to include number of pull requests.
     useEffect(() => {
         if (count > 0) {
@@ -64,36 +62,26 @@ export default function Dashboard() {
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
-        if (searchParams.get("action") === "share") {
+        if (sections.isLoaded && searchParams.get("action") === "share") {
             setNewSection({
-                ...emptySectionConfig,
-                label: searchParams.get("label") || emptySectionConfig.label,
-                search: searchParams.get("search") || emptySectionConfig.search,
+                id: "",
+                label: searchParams.get("label") || "",
+                search: searchParams.get("search") || "",
+                position: sections.data.length,
+                notified: false,
             })
             setEditing(true)
         }
-    }, [searchParams])
+    }, [searchParams, sections.isLoaded, sections.data.length])
 
-    const handleSubmit = (config: Section) => {
-        setConfig(v => ({...v, sections: [config, ...v.sections]}))
+    const handleSubmit = (section: Section) => {
+        saveSection(section)
 
         // Remove sharing parameters from URL if they were defined once the new section
         // has been created from those parameters.
         if (searchParams.get("action") === "share") {
             setSearchParams({})
         }
-    }
-    const handleChange = (idx: number, value: Section) => {
-        setConfig(v => ({...v, sections: [...v.sections.slice(0, idx), value, ...v.sections.slice(idx + 1)]}))
-    }
-    const handleMoveUp = (idx: number) => {
-        setConfig(v => ({...v, sections: [...v.sections.slice(0, idx - 1), v.sections[idx], v.sections[idx - 1], ...v.sections.slice(idx + 1)]}))
-    }
-    const handleMoveDown = (idx: number) => {
-        setConfig(v => ({...v, sections: [...v.sections.slice(0, idx), v.sections[idx + 1], v.sections[idx], ...v.sections.slice(idx + 1)]}))
-    }
-    const handleDelete = (idx: number) => {
-        setConfig(v => ({...v, sections: [...v.sections.slice(0, idx), ...v.sections.slice(idx + 1)]}))
     }
 
     return (
@@ -111,7 +99,7 @@ export default function Dashboard() {
             <SectionDialog
                 section={newSection}
                 title="New section"
-                isOpen={isEditing}
+                isOpen={sections.isLoaded && isEditing}
                 isNew={true}
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
@@ -123,15 +111,15 @@ export default function Dashboard() {
                         section={section}
                         isLoading={data.some(res => res.isLoading)}
                         pulls={data.flatMap(res => (res.data?.pulls || []).filter(v => matches(v, tokens)))}
-                        stars={stars}
+                        stars={stars.data}
                         hasMore={data.some(res => res.data?.hasMore)}
                         isFirst={idx === 0}
                         isLast={idx === sections.data.length - 1}
-                        onChange={v => handleChange(idx, v)}
-                        onDelete={() => handleDelete(idx)}
-                        onMoveUp={() => handleMoveUp(idx)}
-                        onMoveDown={() => handleMoveDown(idx)}
-                        onStar={handleStar}/>
+                        onChange={saveSection}
+                        onDelete={deleteSection}
+                        onMoveUp={moveSectionUp}
+                        onMoveDown={moveSectionDown}
+                        onStar={toggleStar}/>
                 )
             })}
         </>

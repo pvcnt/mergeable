@@ -8,7 +8,7 @@ type Props = {
     connection: Connection,
     viewer?: User,
     className?: string,
-    onDelete: () => void,
+    onDelete: (v: Connection) => void,
 }
 
 const isBlank = (value: string | null | undefined) => value == null || value === ''
@@ -25,7 +25,7 @@ export default function ConnectionCard({connection, viewer, className, onDelete}
                 </div>
                 <Button text="Delete" minimal intent={Intent.DANGER} onClick={() => setDeleting(true)}></Button>
             </Card>
-            <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={onDelete}>
+            <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={() => onDelete(connection)}>
                 Are you sure you want to delete connection to <em>{connection.host}</em>?
             </ConfirmDialog>
         </>
