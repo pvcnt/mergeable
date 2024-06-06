@@ -41,8 +41,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                     </div>
                 </H5>
                 <div className="ml-auto">
-                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={() => onMoveUp()}/>
-                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={() => onMoveDown()}/>
+                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={onMoveUp}/>
+                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={onMoveDown}/>
                     <Button icon="edit" minimal onClick={() => setEditing(true)}/>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                 isNew={false}
                 onClose={() => setEditing(false)}
                 onSubmit={onChange}
-                onDelete={() => onDelete()}/>
+                onDelete={onDelete}/>
 
             {isLoading 
                 ? <Spinner/>
