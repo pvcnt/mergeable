@@ -25,18 +25,23 @@ export const deleteConnection = (value: Connection) => {
 export const useSections = () => {
     const data = useLiveQuery(() => db.sections.orderBy("position").toArray());
     const isLoaded = data !== undefined;
+
     if (isLoaded && data.length === 0) {
-        console.log("Populating default sections");
+        // If data was successfully loaded but we have no sections, populate with
+        // default sections, to avoid starting with an empty dashboard. This is
+        // a one-time operation, those sections will then behave as regular sections.
         db.transaction("rw", db.sections, async () => {
             const count = await db.sections.count();
             if (count > 0) {
                 return;
             }
+            console.log("Populating default sections");
             for (const section of defaultSections) {
                 await db.sections.add(omit(section, ["id"]));
             }
         }).catch(console.error);
     }
+
     return { isLoaded, data: data || [] };
 }
 
