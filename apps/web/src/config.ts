@@ -8,37 +8,37 @@ export const defaultSections: Section[] = [
     {
         id: "",
         label: "Needs your review",
-        search: "is:open review-requested:{USER} -review:approved -reviewed-by:{USER}",
+        search: "is:open review-requested:@me -review:approved -reviewed-by:@me",
         notified: true,
     },
     {
         id: "",
         label: "Changes requested",
-        search: "is:open author:{USER} review:changes_requested",
+        search: "is:open author:@me review:changes_requested",
         notified: true,
     },
     {
         id: "",
         label: "Approved",
-        search: "is:open author:{USER} review:approved",
+        search: "is:open author:@me review:approved",
         notified: false,
     },
     {
         id: "",
         label: "Waiting for reviewers",
-        search: "is:open author:{USER} review:none draft:false",
+        search: "is:open author:@me review:none draft:false",
         notified: false,
     },
     {
         id: "",
         label: "Waiting for the author",
-        search: "is:open review-requested:{USER} review:changes_requested",
+        search: "is:open review-requested:@me review:changes_requested",
         notified: false,
     },
     {
         id: "",
         label: "Draft",
-        search: "is:open author:{USER} draft:true",
+        search: "is:open author:@me draft:true",
         notified: false,
     }
 ];

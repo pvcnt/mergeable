@@ -1,6 +1,4 @@
 export type Config = {
-    sections: Section[],
-    connections: Connection[],
     stars: string[],
 }
 
