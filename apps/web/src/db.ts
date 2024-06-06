@@ -1,6 +1,5 @@
 import { db } from "@repo/storage";
 import { useLiveQuery } from "dexie-react-hooks";
-import { defaultSections } from "./config";
 import { Connection, Pull, Section } from "@repo/types";
 import { omit } from "remeda"
 import { getPullUid } from "@repo/ui/utils/pull";
@@ -21,6 +20,51 @@ export const saveConnection = (value: Connection) => {
 export const deleteConnection = (value: Connection) => {
     db.connections.delete(value.id).catch(console.error)
 }
+
+const defaultSections: Section[] = [
+    {
+        id: "",
+        label: "Needs your review",
+        search: "is:open review-requested:@me -review:approved -reviewed-by:@me",
+        notified: true,
+        position: 0,
+    },
+    {
+        id: "",
+        label: "Changes requested",
+        search: "is:open author:@me review:changes_requested",
+        notified: true,
+        position: 1,
+    },
+    {
+        id: "",
+        label: "Approved",
+        search: "is:open author:@me review:approved",
+        notified: false,
+        position: 2,
+    },
+    {
+        id: "",
+        label: "Waiting for reviewers",
+        search: "is:open author:@me review:none draft:false",
+        notified: false,
+        position: 3,
+    },
+    {
+        id: "",
+        label: "Waiting for the author",
+        search: "is:open review-requested:@me review:changes_requested",
+        notified: false,
+        position: 4,
+    },
+    {
+        id: "",
+        label: "Draft",
+        search: "is:open author:@me draft:true",
+        notified: false,
+        position: 5,
+    }
+];
 
 export const useSections = () => {
     const data = useLiveQuery(() => db.sections.orderBy("position").toArray());
