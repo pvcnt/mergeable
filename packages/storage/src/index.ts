@@ -8,7 +8,7 @@ export const db = new Dexie("reviewer") as Dexie & {
 };
 
 db.version(1).stores({
-    connections: "++id, label, host, baseUrl, token",
+    connections: "++id, label, host, baseUrl, auth",
     sections: "++id, label, search, notified, position",
     stars: "uid",
 });

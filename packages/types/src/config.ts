@@ -11,7 +11,7 @@ export type Connection = {
     label: string,
     host: string,
     baseUrl: string,
-    token: string,
+    auth: string,
 }
 
 export type Star = {

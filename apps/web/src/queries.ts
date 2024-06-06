@@ -13,7 +13,7 @@ export const usePulls = (sections: Section[], connections: Connection[]): UseQue
     return useQueries({
         queries: sections.flatMap(section => {
             return connections.map((connection, idx) => ({
-                queryKey: ['pulls', connection.host, connection.token, section.search],
+                queryKey: ['pulls', connection.host, connection.auth, section.search],
                 queryFn: () => getPulls(connection, section.search, viewers[idx].data?.name || ""),
                 refetchInterval: 300_000,
                 refetchIntervalInBackground: true,

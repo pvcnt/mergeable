@@ -12,22 +12,22 @@ export type Props = {
 export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
     const [label, setLabel] = useState("")
     const [baseUrl, setBaseUrl] = useState("")
-    const [token, setToken] = useState("")
+    const [auth, setAuth] = useState("")
 
     const handleOpening = () => {
         setLabel("")
         setBaseUrl("")
-        setToken("")
+        setAuth("")
     }
     const handleSubmit = () => {
         if (isValid()) {
             const url = new URL(baseUrl)
             const host = (url.hostname == "api.github.com") ? "github.com" : url.hostname
-            onSubmit({id: "", label: label.trim(), baseUrl, host, token})
+            onSubmit({id: "", label, baseUrl, host, auth})
             onClose()
         }
     }
-    const isValid = () => baseUrl.startsWith("https://") && token.length > 0
+    const isValid = () => baseUrl.startsWith("https://") && auth.length > 0
 
     return (
         <>
@@ -46,8 +46,8 @@ export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
                     </FormGroup>
                     <FormGroup label="Access token" labelInfo="(required)">
                         <InputGroup
-                            value={token}
-                            onChange={e => setToken(e.target.value)}/>
+                            value={auth}
+                            onChange={e => setAuth(e.target.value)}/>
                     </FormGroup>
                 </DialogBody>
                 <DialogFooter actions={

@@ -4,7 +4,7 @@ import { Connection, PullList, PullState, User } from "@repo/types"
 const LIMIT = 50
 
 export function createClient(connection: Connection): Octokit {
-    return new Octokit({auth: connection.token, baseUrl: connection.baseUrl})
+    return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
 }
 
 type GHPullList = {
