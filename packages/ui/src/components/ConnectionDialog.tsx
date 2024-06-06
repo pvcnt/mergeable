@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent } from "@blueprintjs/core"
+import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent } from "@blueprintjs/core"
 import { useState } from "react"
 import { Connection } from "@repo/types"
 
@@ -7,9 +7,10 @@ export type Props = {
     isOpen: boolean,
     onClose: () => void,
     onSubmit: (connection: Connection) => void,
+    allowedUrls?: string[],
 }
 
-export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
+export default function ConnectionDialog({isOpen, onClose, onSubmit, allowedUrls}: Props) {
     const [label, setLabel] = useState("")
     const [baseUrl, setBaseUrl] = useState("")
     const [auth, setAuth] = useState("")
@@ -36,18 +37,23 @@ export default function ConnectionDialog({isOpen, onClose, onSubmit}: Props) {
                     <FormGroup label="Connection Label">
                         <InputGroup
                             value={label}
-                            onChange={e => setLabel(e.target.value)} />
+                            onChange={e => setLabel(e.currentTarget.value)} />
                     </FormGroup>
                     <FormGroup label="Base URL" labelInfo="(required)">
-                        <InputGroup
-                            value={baseUrl}
-                            onChange={e => setBaseUrl(e.target.value)}
-                            placeholder="https://api.github.com" />
+                        {allowedUrls
+                            ? <HTMLSelect
+                                  options={allowedUrls}
+                                  value={baseUrl}
+                                  onChange={e => setBaseUrl(e.currentTarget.value)}/>
+                            : <InputGroup
+                                  value={baseUrl}
+                                  onChange={e => setBaseUrl(e.currentTarget.value)}
+                                  placeholder="https://api.github.com" />}
                     </FormGroup>
                     <FormGroup label="Access token" labelInfo="(required)">
                         <InputGroup
                             value={auth}
-                            onChange={e => setAuth(e.target.value)}/>
+                            onChange={e => setAuth(e.currentTarget.value)}/>
                     </FormGroup>
                 </DialogBody>
                 <DialogFooter actions={

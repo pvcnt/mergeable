@@ -6,6 +6,7 @@ import { useQueries } from "@tanstack/react-query"
 
 import { getViewer } from "../github"
 import { deleteConnection, saveConnection, useConnections } from "../db"
+import { isTruthy } from "remeda"
 
 
 export default function Settings() {
@@ -19,6 +20,10 @@ export default function Settings() {
         })),
     })
 
+    const allowedUrls = isTruthy(import.meta.env.VITE_GITHUB_URLS) 
+        ? import.meta.env.VITE_GITHUB_URLS.split(",") 
+        : undefined;
+
     return (
         <div className="container-lg">
             <div className="flex mb-4">
@@ -26,7 +31,11 @@ export default function Settings() {
                 <Button text="New connection" icon="plus" onClick={() => setEditing(true)}/>
             </div>
 
-            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={saveConnection} />
+            <ConnectionDialog
+                allowedUrls={allowedUrls}
+                isOpen={isEditing}
+                onClose={() => setEditing(false)}
+                onSubmit={saveConnection} />
             
             {connections.data.map((connection, idx) => (
                 <ConnectionCard

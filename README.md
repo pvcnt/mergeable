@@ -44,6 +44,15 @@ This will create a standard SPA website under the `apps/web/dist` directory.
 It can then be deployed to any Web server able to serve static content, e.g., [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/) or [Netlify](https://docs.netlify.com/integrations/frameworks/vite/).
 The only required configuration is that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
 
+## Build variables
+
+The following environment variables may be defined to customise the build:
+
+| Variable name | Description | Example |
+|---------------|-------------|---------|
+| VITE_COMMIT_SHA | sha1 of the commit from which the app has been built. Displayed in the footer. | `4584210` |
+| VITE_GITHUB_URLS | Comma-separated list of allowed GitHub base URLs. When configured, a dropdown will be displayed instead of a text input when creating a new connection. | `https://api.github.com,https://git.mycompany.com/api/v3` |
+
 ## Docker
 
 A Dockerfile is provided that runs a simple nginx server serving the static content.
