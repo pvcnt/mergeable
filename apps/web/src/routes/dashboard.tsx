@@ -116,9 +116,9 @@ export default function Dashboard() {
                         isFirst={idx === 0}
                         isLast={idx === sections.data.length - 1}
                         onChange={saveSection}
-                        onDelete={deleteSection}
-                        onMoveUp={moveSectionUp}
-                        onMoveDown={moveSectionDown}
+                        onDelete={() => deleteSection(section)}
+                        onMoveUp={() => moveSectionUp(section)}
+                        onMoveDown={() => moveSectionDown(section)}
                         onStar={toggleStar}/>
                 )
             })}

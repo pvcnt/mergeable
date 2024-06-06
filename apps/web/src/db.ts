@@ -79,7 +79,6 @@ export const useSections = () => {
             if (count > 0) {
                 return;
             }
-            console.log("Populating default sections");
             for (const section of defaultSections) {
                 await db.sections.add(omit(section, ["id"]));
             }

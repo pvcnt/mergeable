@@ -12,10 +12,10 @@ export type Props = {
     pulls: Pull[],
     isStarred: (v: Pull) => boolean,
     hasMore?: boolean,
-    onMoveUp: (v: Section) => void,
-    onMoveDown: (v: Section) => void,
+    onMoveUp: () => void,
+    onMoveDown: () => void,
     onChange: (v: Section) => void,
-    onDelete: (v: Section) => void,
+    onDelete: () => void,
     onStar: (v: Pull) => void,
 }
 
@@ -41,8 +41,8 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                     </div>
                 </H5>
                 <div className="ml-auto">
-                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={() => onMoveUp(section)}/>
-                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={() => onMoveDown(section)}/>
+                    <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={() => onMoveUp()}/>
+                    <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={() => onMoveDown()}/>
                     <Button icon="edit" minimal onClick={() => setEditing(true)}/>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                 isNew={false}
                 onClose={() => setEditing(false)}
                 onSubmit={onChange}
-                onDelete={() => onDelete(section)}/>
+                onDelete={() => onDelete()}/>
 
             {isLoading 
                 ? <Spinner/>
