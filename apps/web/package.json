@@ -15,17 +15,20 @@
     "@blueprintjs/icons": "^5.9.0",
     "@octokit/core": "^6.1.2",
     "@octokit/rest": "^20.1.1",
+    "@repo/storage": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^4.32.0",
     "@tanstack/react-query-devtools": "^4.32.1",
     "clsx": "^2.1.1",
+    "dexie-react-hooks": "^1.1.7",
     "javascript-time-ago": "^2.5.10",
     "localforage": "^1.10.0",
     "normalize.css": "^8.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "remeda": "^2.0.5"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

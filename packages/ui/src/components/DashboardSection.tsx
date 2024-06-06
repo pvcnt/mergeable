@@ -10,16 +10,16 @@ export type Props = {
     isLast: boolean,
     isLoading: boolean,
     pulls: Pull[],
-    stars: Set<string>,
+    isStarred: (v: Pull) => boolean,
     hasMore?: boolean,
     onMoveUp: () => void,
     onMoveDown: () => void,
-    onChange: (config: Section) => void,
+    onChange: (v: Section) => void,
     onDelete: () => void,
     onStar: (v: Pull) => void,
 }
 
-export default function DashboardSection({isLoading, section, isFirst, isLast, pulls, stars, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
+export default function DashboardSection({isLoading, section, isFirst, isLast, pulls, isStarred, hasMore = false, onChange, onMoveUp, onMoveDown, onDelete, onStar}: Props) {
     const [isCollapsed, setCollapsed] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
@@ -60,7 +60,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
                 ? <Spinner/>
                 : <Collapse isOpen={!isCollapsed}>
                     {pulls.length > 0
-                        ? <PullTable pulls={pulls} stars={stars} onStar={onStar} />
+                        ? <PullTable pulls={pulls} isStarred={isStarred} onStar={onStar} />
                         : <p className="no-results">No results</p>}
                 </Collapse>}
         </Card>

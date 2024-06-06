@@ -11,7 +11,7 @@ export type Props = {
     isOpen: boolean,
     isNew: boolean;
     onClose: () => void,
-    onSubmit: (value: Section) => void,
+    onSubmit: (v: Section) => void,
     onDelete?: () => void,
 }
 
@@ -28,7 +28,7 @@ export default function SectionDialog({title, section, isOpen, isNew, onClose, o
     }
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({label, search, notified})
+            onSubmit({...section, label, search, notified})
             onClose()
         }
     }

@@ -1,18 +1,19 @@
-export type Config = {
-    sections: Section[],
-    connections: Connection[],
-    stars: string[],
-}
-
 export type Section = {
+    id: string,
     label: string,
     search: string,
     notified: boolean,
+    position: number,
 }
 
 export type Connection = {
-    name?: string,
+    id: string,
+    label: string,
     host: string,
     baseUrl: string,
     auth: string,
+}
+
+export type Star = {
+    uid: string,
 }

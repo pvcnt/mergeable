@@ -1,29 +1,23 @@
 import { Button, H3 } from "@blueprintjs/core"
 import ConnectionCard from "@repo/ui/components/ConnectionCard"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
-import { ConfigContext } from "../config"
 import { useQueries } from "@tanstack/react-query"
+
 import { getViewer } from "../github"
-import { Connection } from "@repo/types"
+import { deleteConnection, saveConnection, useConnections } from "../db"
+
 
 export default function Settings() {
     const [isEditing, setEditing] = useState(false)
-    const { config, setConfig } = useContext(ConfigContext)
+    const connections = useConnections()
     const viewers = useQueries({
-        queries: config.connections.map(connection => ({
+        queries: connections.data.map(connection => ({
             queryKey: ['viewer', connection.host],
             queryFn: () => getViewer(connection),
             staleTime: Infinity,
         })),
     })
-
-    const handleSubmit = (value: Connection) => {
-        setConfig(v => ({...v, connections: [...v.connections, value]}))
-    }
-    const handleDelete = (idx: number) => {
-        setConfig(v => ({...v, connections: [...v.connections.slice(0, idx), ...v.connections.slice(idx + 1)]}))
-    }
 
     return (
         <div className="container-lg">
@@ -32,14 +26,15 @@ export default function Settings() {
                 <Button text="New connection" icon="plus" onClick={() => setEditing(true)}/>
             </div>
 
-            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={handleSubmit} />
+            <ConnectionDialog isOpen={isEditing} onClose={() => setEditing(false)} onSubmit={saveConnection} />
             
-            {config.connections.map((connection, idx) => (
+            {connections.data.map((connection, idx) => (
                 <ConnectionCard
                     key={idx}
+                    className="mt-4"
                     connection={connection}
-                    user={viewers[idx]?.data}
-                    onDelete={() => handleDelete(idx)}/>
+                    viewer={viewers[idx]?.data}
+                    onDelete={deleteConnection}/>
             ))}
         </div>
     )

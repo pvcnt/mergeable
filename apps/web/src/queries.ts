@@ -1,18 +1,18 @@
 import { UseQueryResult, useQueries } from "@tanstack/react-query";
-import { Config, PullList } from "@repo/types";
+import { Connection, PullList, Section } from "@repo/types";
 import { getPulls, getViewer } from "./github";
 
-export const usePulls = (config: Config): UseQueryResult<PullList>[] => {
+export const usePulls = (sections: Section[], connections: Connection[]): UseQueryResult<PullList>[] => {
     const viewers = useQueries({
-        queries: config.connections.map(connection => ({
+        queries: connections.map(connection => ({
             queryKey: ['viewer', connection.host],
             queryFn: () => getViewer(connection),
             staleTime: Infinity,
         })),
     })
     return useQueries({
-        queries: config.sections.flatMap(section => {
-            return config.connections.map((connection, idx) => ({
+        queries: sections.flatMap(section => {
+            return connections.map((connection, idx) => ({
                 queryKey: ['pulls', connection.host, connection.auth, section.search],
                 queryFn: () => getPulls(connection, section.search, viewers[idx].data?.name || ""),
                 refetchInterval: 300_000,
