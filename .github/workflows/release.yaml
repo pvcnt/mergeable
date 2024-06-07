@@ -94,6 +94,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update image tag in values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: production/helm/reviewer/values.yaml
+          propertyPath: image.tag
+          value: ${{ github.sha }}
+          commitChange: false
       - name: Package chart
         run: helm package production/helm/reviewer --version 0.0.${{ github.run_number }} --destination dist
       - name: Push chart
