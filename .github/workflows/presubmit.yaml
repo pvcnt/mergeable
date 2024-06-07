@@ -1,4 +1,4 @@
-name: build
+name: presubmit
 
 on:
   push:
