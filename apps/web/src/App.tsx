@@ -6,7 +6,9 @@ import localforage from "localforage"
 
 import Sidebar from '@repo/ui/components/Sidebar';
 import Footer from '@repo/ui/components/Footer';
-import { saveConnection, useConnections } from './db';
+import { saveConnection, useConnections, useSections } from './db';
+import { usePulls } from './queries'
+import { sum } from 'remeda'
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
@@ -14,6 +16,7 @@ export default function App() {
         return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
     });
     const connections = useConnections()
+    const sections = useSections()
 
     useEffect(() => {
         // Migrate connections from the legacy format.
@@ -33,6 +36,23 @@ export default function App() {
         // Write the isDark value to local storage whenever it changes
         localStorage.setItem('isDark', JSON.stringify(isDark));
     }, [isDark]);
+
+    const pulls = usePulls(sections.data, connections.data);
+    const count = sum(sections.data.map((section, idx) => {
+        if (section.notified) {
+            return sum(pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length).map(res => res.data?.pulls.length || 0));
+        }
+        return 0;
+    }));
+
+    // Change window's title to include number of pull requests.
+    useEffect(() => {
+        if (count > 0) {
+            document.title = `(${count}) Reviewer`
+        } else {
+            document.title = "Reviewer"
+        }
+    }, [count])
 
     return (
         <div className={clsx("app", isDark && "bp5-dark")}>

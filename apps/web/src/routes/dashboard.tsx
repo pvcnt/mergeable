@@ -13,10 +13,6 @@ function matches(pull: Pull, tokens: string[]): boolean {
     return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
 }
 
-function sum(values: number[]): number {
-    return values.reduce((acc, v) => acc + v, 0)
-}
-
 export default function Dashboard() {
     const connections = useConnections()
     const sections = useSections()
@@ -43,22 +39,6 @@ export default function Dashboard() {
     const isFetching = pulls.some(res => res.isFetching)
 
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
-
-    const count = sum(sections.data.map((section, idx) => {
-        if (section.notified) {
-            return sum(pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length).map(res => res.data?.pulls.length || 0))
-        }
-        return 0
-    }))
-
-    // Change window's title to include number of pull requests.
-    useEffect(() => {
-        if (count > 0) {
-            document.title = `(${count}) Reviewer`
-        } else {
-            document.title = "Reviewer"
-        }
-    }, [count])
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
