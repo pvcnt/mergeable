@@ -34,17 +34,24 @@ pnpm dev
 
 # Self-host
 
-This project can be built with the following command:
+This project is designed from the beginning to be easy to self-host.
+
+## Helm Chart
+
+A Helm Chart is continuously published for every commit to the main branch.
+It can be deployed to a Kubernetes cluster with the following command:
+
+```bash
+helm install reviewer oci://ghcr.io/pvcnt/helm/reviewer
+```
+
+## Custom build
+
+If you need further customisation you may need to build this project by yourself, with the following command:
 
 ```bash
 pnpm build
 ```
-
-This will create a standard SPA website under the `apps/web/dist` directory.
-It can then be deployed to any Web server able to serve static content, e.g., [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/) or [Netlify](https://docs.netlify.com/integrations/frameworks/vite/).
-The only required configuration is that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
-
-## Build variables
 
 The following environment variables may be defined to customise the build:
 
@@ -52,6 +59,10 @@ The following environment variables may be defined to customise the build:
 |---------------|-------------|---------|
 | VITE_COMMIT_SHA | sha1 of the commit from which the app has been built. Displayed in the footer. | `4584210` |
 | VITE_GITHUB_URLS | Comma-separated list of allowed GitHub base URLs. When configured, a dropdown will be displayed instead of a text input when creating a new connection. | `https://api.github.com,https://git.mycompany.com/api/v3` |
+
+This will create a standard SPA website under the `apps/web/dist` directory.
+It can then be deployed to any Web server able to serve static content, e.g., [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/) or [Netlify](https://docs.netlify.com/integrations/frameworks/vite/).
+The only required configuration is that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
 
 ## Docker
 
