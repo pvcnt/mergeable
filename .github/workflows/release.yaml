@@ -11,7 +11,7 @@ permissions:
   id-token: write 
 
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,27 +22,6 @@ jobs:
           node-version: 20
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Build assets
-        run: pnpm install && pnpm build
-        env:
-          VITE_COMMIT_SHA: ${{ github.sha }}
-      - name: Upload assets
-        uses: actions/upload-artifact@v4
-        with:
-          name: assets
-          path: apps/web/dist
-          retention-days: 7
-  release-docker:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Download assets
-        uses: actions/download-artifact@v4
-        with:
-          name: assets
-          path: apps/web/dist
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
       - name: Set up QEMU
@@ -55,6 +34,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build assets
+        run: pnpm install && pnpm build
+        env:
+          VITE_COMMIT_SHA: ${{ github.sha }}
       - name: Tag image
         uses: docker/metadata-action@v5
         id: meta
@@ -80,9 +63,9 @@ jobs:
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-  release-helm:
+  helm:
     runs-on: ubuntu-latest
-    needs: [release-docker]
+    needs: [docker]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -105,20 +88,28 @@ jobs:
         run: helm package production/helm/reviewer --version 0.0.${{ github.run_number }} --destination dist
       - name: Push chart
         run: helm push dist/*.tgz oci://ghcr.io/pvcnt/helm
-  publish-cloudflare:
+  cloudflare:
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
-      - name: Download assets
-        uses: actions/download-artifact@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          name: assets
-          path: dist
+          node-version: 20
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Build assets
+        run: pnpm install && pnpm build
+        env:
+          VITE_COMMIT_SHA: ${{ github.sha }}
+          VITE_GITHUB_URLS: https://api.github.com
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           accountId: 1f74b8302712fd67d5eddea8c96eb776
           projectName: reviewer
+          workingDirectory: apps/web
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
