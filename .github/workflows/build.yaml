@@ -18,4 +18,4 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Test
-        run: pnpm install && pnpm test
+        run: pnpm install && pnpm lint && pnpm test
