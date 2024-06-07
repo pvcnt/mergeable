@@ -4,9 +4,10 @@ import { computeSize } from "./size";
 
 test("computeSize returns size of a pull request", () => {
     const pull = {
+        uid: "github.com,pvcnt/reviewer/1",
         host: "github.com",
         repository: "pvcnt/reviewer",
-        id: "1",
+        number: 1,
         title: "Title",
         state: PullState.Approved,
         createdAt: "now",

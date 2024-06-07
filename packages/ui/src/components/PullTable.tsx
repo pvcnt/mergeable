@@ -85,7 +85,7 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
                             <a href={pull.url}>
                                 <div className="font-semibold">{pull.title}</div>
                                 <div className="text-sm">
-                                    {pull.host}:{pull.repository} #{pull.id}
+                                    {pull.host}:{pull.repository} #{pull.number}
                                 </div>
                             </a>
                         </td>

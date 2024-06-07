@@ -14,9 +14,10 @@ export enum PullState {
 }
 
 export type Pull = {
+    uid: string,
     host: string,
     repository: string,
-    id: string,
+    number: number,
     title: string,
     state: PullState,
     createdAt: string,

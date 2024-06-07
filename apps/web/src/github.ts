@@ -7,11 +7,6 @@ export function createClient(connection: Connection): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
 }
 
-type GHPullList = {
-    total: number
-    pulls: GHPull[]
-}
-
 type GHPull = {
     number: number,
     title: string,
@@ -67,39 +62,7 @@ export function getViewer(connection: Connection): Promise<User> {
         .then(user => ({name: user.login, avatarUrl: user.avatarUrl}))
 }
 
-export function getPulls(connection: Connection, search: string, user: string): Promise<PullList> {
-    return getGHPulls(connection, search, user).then(data => {
-        const pulls = data.pulls.map(pull => ({
-            host: connection.host,
-            repository: pull.repository.nameWithOwner,
-            id: `${pull.number}`,
-            title: pull.title,
-            state: pull.isDraft
-                ? PullState.Draft
-                : pull.merged
-                ? PullState.Merged
-                : pull.closed
-                ? PullState.Closed
-                : pull.reviewDecision == "APPROVED"
-                ? PullState.Approved
-                : pull.reviewDecision == "CHANGES_REQUESTED"
-                ? PullState.ChangesRequested
-                : PullState.Pending,
-            createdAt: pull.createdAt,
-            updatedAt: pull.updatedAt,
-            url: pull.url,
-            additions: pull.additions,
-            deletions: pull.deletions,
-            author: {
-                name: pull.author.login,
-                avatarUrl: pull.author.avatarUrl,
-            },
-        }))
-        return {total: data.total, hasMore: data.total > LIMIT, pulls}
-    })
-}
-
-function getGHPulls(connection: Connection, search: string, user: string): Promise<GHPullList> {
+export function getPulls(connection: Connection, search: string): Promise<PullList> {
     const query = `query dashboard($search: String!) {
         search(query: $search, type: ISSUE, first: ${LIMIT}) {
           issueCount
@@ -147,12 +110,36 @@ function getGHPulls(connection: Connection, search: string, user: string): Promi
         },
         rateLimit: RateLimit,
     }
-
-    const finalSearch = "type:pr " + search.replaceAll("{USER}", user)
-
-    return createClient(connection).graphql<Data>(query, {search: finalSearch})
-        .then(data => ({
-            total: data.search.issueCount,
-            pulls: data.search.edges.map(edge => edge.node)
-        }))
+    return createClient(connection).graphql<Data>(query, {search: `type:pr ${search}`})
+        .then(data => {
+            const total = data.search.issueCount;
+            const pulls = data.search.edges.map(edge => edge.node).map(pull => ({
+                uid: `${connection.host},${pull.repository.nameWithOwner},${pull.number}`,
+                host: connection.host,
+                repository: pull.repository.nameWithOwner,
+                number: pull.number,
+                title: pull.title,
+                state: pull.isDraft
+                    ? PullState.Draft
+                    : pull.merged
+                    ? PullState.Merged
+                    : pull.closed
+                    ? PullState.Closed
+                    : pull.reviewDecision == "APPROVED"
+                    ? PullState.Approved
+                    : pull.reviewDecision == "CHANGES_REQUESTED"
+                    ? PullState.ChangesRequested
+                    : PullState.Pending,
+                createdAt: pull.createdAt,
+                updatedAt: pull.updatedAt,
+                url: pull.url,
+                additions: pull.additions,
+                deletions: pull.deletions,
+                author: {
+                    name: pull.author.login,
+                    avatarUrl: pull.author.avatarUrl,
+                },
+            }))
+            return {total, hasMore: total > LIMIT, pulls}
+        })
 }

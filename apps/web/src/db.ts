@@ -2,7 +2,6 @@ import { db } from "@repo/storage";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Connection, Pull, Section } from "@repo/types";
 import { omit } from "remeda"
-import { getPullUid } from "@repo/ui/utils/pull";
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
@@ -127,18 +126,17 @@ export const moveSectionDown = (value: Section) => {
 export const useStars = () => {
     const data = useLiveQuery(() => db.stars.toArray());
     const uids = data !== undefined ? new Set(data.map(v => v.uid)) : new Set();
-    const isStarred = (pull: Pull) => uids.has(getPullUid(pull))
+    const isStarred = (pull: Pull) => uids.has(pull.uid)
     return { isLoaded: data !== undefined, data: data || [], isStarred };
 }
 
 export const toggleStar = (pull: Pull) => {
-    const uid = getPullUid(pull);
     db.transaction("rw", db.stars, async () => {
-        const star = await db.stars.get(uid);
+        const star = await db.stars.get(pull.uid);
         if (star === undefined) {
-            await db.stars.add({uid});
+            await db.stars.add({uid: pull.uid});
         } else {
-            await db.stars.delete(uid);
+            await db.stars.delete(pull.uid);
         }
     }).catch(console.error);
 }
