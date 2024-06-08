@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/rest"
-import { Connection, PullList, PullState, User } from "@repo/types"
+import { Connection, ConnectionValue, PullList, PullState, User } from "@repo/types"
 
 const LIMIT = 50
 
-export function createClient(connection: Connection): Octokit {
+export function createClient(connection: ConnectionValue): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
 }
 
@@ -39,7 +39,7 @@ type RateLimit = {
     resetAt: number,
 }
 
-export function getViewer(connection: Connection): Promise<User> {
+export function getViewer(connection: ConnectionValue): Promise<User> {
     const query = `query {
         viewer {
             login
