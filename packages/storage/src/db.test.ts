@@ -2,7 +2,7 @@ import { test, expect } from "@jest/globals";
 import { db } from "./db";
 
 test("db should save a connection", async () => {
-    const connection = { id: "", label: "Connection", baseUrl: "https://api.github.com", host: "github.com", auth: "ghp_xxx" };
+    const connection = { id: "", label: "Connection", baseUrl: "https://api.github.com", host: "github.com", auth: "ghp_xxx", "viewer": "pvcnt" };
     const id = await db.connections.add(connection);
     await expect(db.connections.get(id)).resolves.toEqual(connection);
 });

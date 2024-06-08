@@ -26,7 +26,7 @@ export default function App() {
 
             localforage.getItem<LegacyConfig>("config").then(config => {
                 config && config.connections.forEach(v => {
-                    saveConnection({id: "", label: v.name || "", baseUrl: v.baseUrl, host: v.host, auth: v.auth})
+                    saveConnection({id: "", label: v.name || "", baseUrl: v.baseUrl, host: v.host, auth: v.auth, viewer: ""})
                 })
             }).catch(console.error)
         }

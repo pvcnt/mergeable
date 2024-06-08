@@ -2,27 +2,38 @@ import { Button, H3 } from "@blueprintjs/core"
 import ConnectionCard from "@repo/ui/components/ConnectionCard"
 import { useState } from "react"
 import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
-import { useQueries } from "@tanstack/react-query"
 
 import { getViewer } from "../github"
 import { deleteConnection, saveConnection, useConnections } from "../db"
 import { isTruthy } from "remeda"
+import { Connection, ConnectionValue } from "@repo/types"
 
 
 export default function Settings() {
     const [isEditing, setEditing] = useState(false)
     const connections = useConnections()
-    const viewers = useQueries({
-        queries: connections.data.map(connection => ({
-            queryKey: ['viewer', connection.host],
-            queryFn: () => getViewer(connection),
-            staleTime: Infinity,
-        })),
-    })
 
     const allowedUrls = isTruthy(import.meta.env.VITE_GITHUB_URLS) 
         ? import.meta.env.VITE_GITHUB_URLS.split(",") 
         : undefined;
+    
+    const getHost = (baseUrl: string) => {
+        const url = new URL(baseUrl);
+        return (url.hostname == "api.github.com") ? "github.com" : url.hostname;
+    }
+    
+    const handleNew = async (value: ConnectionValue) => {
+        const viewer = (await getViewer(value)).name;
+        const host = getHost(value.baseUrl);
+        saveConnection({...value, id: "", host, viewer});
+    };
+
+    const handleEdit = async (previous: Connection, value: ConnectionValue) => {
+        // Only query for a new viewer if the token did change (or if there is no existing viewer).
+        const viewer = (!isTruthy(previous.viewer) || value.auth !== previous.auth) ? (await getViewer(value)).name : previous.viewer;
+        // Base URL cannot be modified, hence host cannot change either.
+        saveConnection({... previous, ...value, viewer});
+    };
 
     return (
         <div className="container-lg">
@@ -32,18 +43,19 @@ export default function Settings() {
             </div>
 
             <ConnectionDialog
+                title="New connection"
                 allowedUrls={allowedUrls}
                 isOpen={isEditing}
                 onClose={() => setEditing(false)}
-                onSubmit={saveConnection} />
+                onSubmit={v => handleNew(v)} />
             
             {connections.data.map((connection, idx) => (
                 <ConnectionCard
                     key={idx}
                     className="mt-4"
                     connection={connection}
-                    viewer={viewers[idx]?.data}
-                    onDelete={deleteConnection}/>
+                    onSubmit={v => handleEdit(connection, v)}
+                    onDelete={() => deleteConnection(connection)}/>
             ))}
         </div>
     )
