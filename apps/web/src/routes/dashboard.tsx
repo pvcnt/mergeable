@@ -61,10 +61,6 @@ export default function Dashboard() {
                 <SearchInput value={search} onChange={setSearch} className="grow"/>
                 <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
                 <Button
-                    icon="filter"
-                    text="3"
-                    className="ml-4"/>
-                <Button
                     icon="refresh"
                     disabled={isFetching}
                     loading={isFetching}
