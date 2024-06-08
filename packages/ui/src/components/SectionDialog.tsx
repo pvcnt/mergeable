@@ -8,21 +8,22 @@ type Props = {
     title: string,
     isOpen: boolean,
     section?: SectionValue,
+    newSection?: SectionValue,
     onClose: () => void,
     onSubmit: (v: SectionValue) => void,
     onDelete?: () => void,
 }
 
-export default function SectionDialog({title, section, isOpen, onClose, onSubmit, onDelete}: Props) {    
+export default function SectionDialog({title, section, newSection, isOpen, onClose, onSubmit, onDelete}: Props) {    
     const [label, setLabel] = useState("");
     const [search, setSearch] = useState("");
     const [notified, setNotified] = useState(false);
     const [isDeleting, setDeleting] = useState(false);
 
     const handleOpening = () => {
-        setLabel(section ? section.label : "");
-        setSearch(section ? section.search : "");
-        setNotified(section ? section.notified : false);
+        setLabel(section ? section.label : newSection ? newSection.label : "");
+        setSearch(section ? section.search : newSection ? newSection.search : "");
+        setNotified(section ? section.notified : newSection ? newSection.notified : false);
     }
     const handleSubmit = () => {
         if (isValid()) {

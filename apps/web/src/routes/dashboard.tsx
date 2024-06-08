@@ -68,7 +68,7 @@ export default function Dashboard() {
                     onClick={refetchAll}/>
             </div>
             <SectionDialog
-                section={newSection}
+                newSection={newSection}
                 title="New section"
                 isOpen={sections.isLoaded && isEditing}
                 onClose={() => setEditing(false)}
