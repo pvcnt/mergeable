@@ -1,9 +1,12 @@
-import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent } from "@blueprintjs/core"
+import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent, MenuItem } from "@blueprintjs/core"
+import { MultiSelect, type ItemRenderer } from "@blueprintjs/select";
 import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
 import { Connection, ConnectionValue } from "@repo/types";
 import { isTruthy } from "remeda";
 import { AppToaster } from "../utils/toaster";
+
+import "@blueprintjs/select/lib/css/blueprint-select.css";
 
 type Props = {
     title: string,
@@ -19,7 +22,16 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
     const [label, setLabel] = useState("");
     const [baseUrl, setBaseUrl] = useState("");
     const [auth, setAuth] = useState("");
+    const [orgs, setOrgs] = useState<string[]>([]);
     const [isDeleting, setDeleting] = useState(false);
+    
+    const renderOrg: ItemRenderer<string> = (org, props) => {
+        if (!props.modifiers.matchesPredicate) {
+            return null;
+        }
+        return <MenuItem text={org}/>;
+    }
+    const renderTag = (org: string) => org;
 
     const handleOpening = () => {
         setLabel(connection ? connection.label : "");
@@ -74,6 +86,13 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                             aria-label="Access token"
                             onChange={e => setAuth(e.currentTarget.value)}/>
                     </FormGroup>
+                    <MultiSelect<string>
+                        itemRenderer={renderOrg}
+                        tagRenderer={renderTag}
+                        items={orgs}
+                        selectedItems={[]}
+                        onItemSelect={() => }
+                        disabled={!isTruthy(auth)}/>
                 </DialogBody>
                 <DialogFooter actions={
                     <>
