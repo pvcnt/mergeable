@@ -22,7 +22,7 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
 
     const handleOpening = () => {
         setLabel(connection ? connection.label : "");
-        setBaseUrl(connection ? connection.baseUrl : "");
+        setBaseUrl(connection ? connection.baseUrl : allowedUrls ? allowedUrls[0] : "");
         setAuth(connection ? connection.auth : "");
     };
     const handleSubmit = () => {
@@ -67,7 +67,7 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                 </DialogBody>
                 <DialogFooter actions={
                     <>
-                        <Button intent={Intent.PRIMARY} text="Submit" onClick={handleSubmit} disabled={!isValid()} />
+                        <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isValid()} />
                         <Button text="Cancel" onClick={onClose} />
                     </>
                 }>
