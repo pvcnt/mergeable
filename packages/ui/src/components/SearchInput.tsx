@@ -31,7 +31,8 @@ export default function SearchInput({value, onChange, className}: Props) {
                 className={className}
                 value={value}
                 inputRef={inputRef}
-                onChange={e => onChange(e.target.value)}/>
+                onChange={e => onChange(e.target.value)}
+                onKeyDown={e => e.code === 'Escape' && inputRef.current?.blur()}/>
         </HotkeysTarget2>
     )
 }
