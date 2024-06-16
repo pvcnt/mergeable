@@ -8,8 +8,8 @@ type Props = {
     title: string,
     isOpen: boolean,
     connection?: Connection,
-    onClose: () => void,
-    onSubmit: (connection: ConnectionValue) => void,
+    onClose?: () => void,
+    onSubmit?: (connection: ConnectionValue) => void,
     onDelete?: () => void,
     allowedUrls?: string[],
 }
@@ -27,13 +27,13 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
     };
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({label, baseUrl, auth});
-            onClose();
+            onSubmit && onSubmit({label, baseUrl, auth});
+            onClose && onClose();
         }
     }
     const handleDelete = () => {
         onDelete && onDelete();
-        onClose();
+        onClose && onClose();
     }
     const isValid = () => baseUrl.startsWith("https://") && auth.length > 0;
 
@@ -44,6 +44,7 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                     <FormGroup label="Connection label">
                         <InputGroup
                             value={label}
+                            aria-label="Connection label"
                             onChange={e => setLabel(e.currentTarget.value)} />
                     </FormGroup>
                     <FormGroup label="Base URL" labelInfo="(required)">
@@ -51,10 +52,12 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                             ? <HTMLSelect
                                   options={allowedUrls}
                                   value={baseUrl}
+                                  aria-label="Base URL"
                                   disabled={isTruthy(connection)}
                                   onChange={e => setBaseUrl(e.currentTarget.value)}/>
                             : <InputGroup
                                   value={baseUrl}
+                                  aria-label="Base URL"
                                   disabled={isTruthy(connection)}
                                   onChange={e => setBaseUrl(e.currentTarget.value)}
                                   placeholder="https://api.github.com" />}
@@ -62,16 +65,17 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                     <FormGroup label="Access token" labelInfo="(required)">
                         <InputGroup
                             value={auth}
+                            aria-label="Access token"
                             onChange={e => setAuth(e.currentTarget.value)}/>
                     </FormGroup>
                 </DialogBody>
                 <DialogFooter actions={
                     <>
                         <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isValid()} />
-                        <Button text="Cancel" onClick={onClose} />
+                        <Button text="Cancel" aria-label="Cancel" onClick={onClose} />
                     </>
                 }>
-                    {connection && <Button intent={Intent.DANGER} text="Delete" minimal onClick={() => setDeleting(true)} />}
+                    {connection && <Button intent={Intent.DANGER} text="Delete" aria-label="Delete" minimal onClick={() => setDeleting(true)} />}
                 </DialogFooter>
             </Dialog>
             {connection && <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={handleDelete}>
