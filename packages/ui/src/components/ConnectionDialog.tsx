@@ -3,13 +3,14 @@ import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
 import { Connection, ConnectionValue } from "@repo/types";
 import { isTruthy } from "remeda";
+import { AppToaster } from "../utils/toaster";
 
 type Props = {
     title: string,
     isOpen: boolean,
     connection?: Connection,
     onClose?: () => void,
-    onSubmit?: (connection: ConnectionValue) => void,
+    onSubmit?: (v: ConnectionValue) => Promise<void>,
     onDelete?: () => void,
     allowedUrls?: string[],
 }
@@ -25,17 +26,22 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
         setBaseUrl(connection ? connection.baseUrl : allowedUrls ? allowedUrls[0] : "");
         setAuth(connection ? connection.auth : "");
     };
-    const handleSubmit = () => {
-        if (isValid()) {
-            onSubmit && onSubmit({label, baseUrl, auth});
-            onClose && onClose();
+    const handleSubmit = async () => {
+        if (isFilled()) {
+            try {
+                onSubmit && await onSubmit({label, baseUrl, auth});
+                onClose && onClose();
+            } catch (e) {
+                const message = `Something went wrong: ${(e as Error).message}`;
+                (await AppToaster).show({message, intent: Intent.DANGER})
+            }
         }
     }
     const handleDelete = () => {
         onDelete && onDelete();
         onClose && onClose();
     }
-    const isValid = () => baseUrl.startsWith("https://") && auth.length > 0;
+    const isFilled = () => baseUrl.length> 0  && auth.length > 0;
 
     return (
         <>
@@ -71,7 +77,7 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                 </DialogBody>
                 <DialogFooter actions={
                     <>
-                        <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isValid()} />
+                        <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isFilled()} />
                         <Button text="Cancel" aria-label="Cancel" onClick={onClose} />
                     </>
                 }>

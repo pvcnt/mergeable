@@ -9,7 +9,7 @@ import ConnectionDialog from "./ConnectionDialog"
 type Props = {
     connection: Connection,
     className?: string,
-    onSubmit: (v: ConnectionValue) => void,
+    onSubmit: (v: ConnectionValue) => Promise<void>,
     onDelete: () => void,
 }
 
