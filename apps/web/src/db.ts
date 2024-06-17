@@ -1,11 +1,14 @@
 import { db } from "@repo/storage";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Connection, Pull, Section } from "@repo/types";
+import type { Connection, Pull, Section } from "@repo/types";
 import { omit } from "remeda"
+
+// Defaults to populate after adding new fields.
+const connectionDefaults = {orgs: [], viewer: ""};
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
-    return { isLoaded: data !== undefined, data: data || [] };
+    return { isLoaded: data !== undefined, data: data?.map(v => ({...connectionDefaults, ...v})) || [] };
 }
 
 export const saveConnection = (value: Connection) => {

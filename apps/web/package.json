@@ -13,6 +13,7 @@
   "dependencies": {
     "@blueprintjs/core": "^5.10.3",
     "@blueprintjs/icons": "^5.9.0",
+    "@blueprintjs/select": "^5.1.5",
     "@repo/github": "workspace:*",
     "@repo/storage": "workspace:*",
     "@repo/types": "workspace:*",

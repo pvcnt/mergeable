@@ -6,6 +6,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
 import { AppToaster } from "../utils/toaster";
+import { ConnectionValue } from "@repo/types";
 
 describe("connection dialog", () => {
     const connection = {
@@ -14,7 +15,8 @@ describe("connection dialog", () => {
         baseUrl: "https://api.github.com",
         host: "github.com",
         auth: "ghp_foo",
-        viewer: "pvcnt"
+        viewer: "pvcnt",
+        orgs: ["pvcnt"],
     };
     let user: UserEvent|undefined;
 
@@ -22,20 +24,51 @@ describe("connection dialog", () => {
         user = userEvent.setup();
     })
 
+    const typeText = async (name: string, text: string) => {
+        await user?.type(screen.getByRole("textbox", { name }), text);
+    }
+    const selectOptions = async (name: string, value: string|string[]) => {
+        await user?.selectOptions(screen.getByRole("combobox", { name }), value);
+    }
+    const clickButton = async (name: string) => {
+        await user?.click(screen.getByRole("button", { name }));
+    }
+
+    test("be submitted", async () => {
+        // GIVEN an empty dialog.
+        const state: {submitted?: ConnectionValue} = {submitted: undefined};
+        const handleSubmit = (v: ConnectionValue) => {
+            state.submitted = v;
+            return Promise.resolve();
+        }
+        render(
+            <ConnectionDialog
+            title="New connection"
+            isOpen={true}
+            onSubmit={handleSubmit}/>
+        );
+
+        // WHEN filling the form and submitting it.
+        await typeText("Base URL", "https://api.github.com");
+        await typeText("Access token", "ghp_foo");
+        await typeText("Connection label", "Some label");        
+        await clickButton("Submit");
+
+        // THEN the form should be submitted with its current values.
+        expect(state.submitted).toEqual({label: "Some label", baseUrl: "https://api.github.com", auth: "ghp_foo", orgs: []});
+    });
+
     test("submit button is disabled before base URL input and token are filled", async () => {
         // GIVEN an empty dialog.
         render(<ConnectionDialog title="New connection" isOpen={true}/>);
-
-        const submitButton = screen.getByRole("button", { name: "Submit" });
-        const baseURLInput = screen.getByRole("textbox", { name: "Base URL" });
-        const tokenInput = screen.getByRole("textbox", { name: "Access token" });
     
         // THEN the submit button must be disabled.
+        const submitButton = screen.getByRole("button", { name: "Submit" });
         expect(submitButton.getAttribute("disabled")).toBe("");
     
         // WHEN the user types a URL and a token.
-        await user?.type(baseURLInput, "https://api.github.com");
-        await user?.type(tokenInput, "ghp_foo");
+        await typeText("Base URL", "https://api.github.com");
+        await typeText("Access token", "ghp_foo");
         
         // THEN the submit button must be enabled.
         expect(submitButton.getAttribute("disabled")).toBeNull();
@@ -50,22 +83,19 @@ describe("connection dialog", () => {
             allowedUrls={["https://api.github.com", "https://github.corp.com/api/v3"]}/>
         );
     
-        const submitButton = screen.getByRole("button", { name: "Submit" });
-        const baseURLInput = screen.getByRole("combobox", { name: "Base URL" });
-        const tokenInput = screen.getByRole("textbox", { name: "Access token" });
-    
         // THEN the submit button must be disabled.
+        const submitButton = screen.getByRole("button", { name: "Submit" });
         expect(submitButton.getAttribute("disabled")).toBe("");
     
         // WHEN the user types a token.
-        await user?.type(tokenInput, "ghp_foo");
+        await typeText("Access token", "ghp_foo");
         
         // THEN the submit button must be enabled (since the first option is selected).
         // expect(baseURLInput).toHaveV
         expect(submitButton.getAttribute("disabled")).toBeNull();
 
         // WHEN the user selects another option.
-        await user?.selectOptions(baseURLInput, "https://github.corp.com/api/v3")
+        await selectOptions("Base URL", "https://github.corp.com/api/v3")
 
         // THEN the submit button must still be enabled.
         expect(submitButton.getAttribute("disabled")).toBeNull();
@@ -74,21 +104,17 @@ describe("connection dialog", () => {
     test("should be closed after successful submission", async () => {
         // GIVEN a pre-filled dialog.
         const state = {closed: false};
-        const handleSubmit = () => Promise.resolve();
         const handleClose = () => state.closed = true;
         render(
             <ConnectionDialog
             title="Edit connection"
             isOpen={true}
             connection={connection}
-            onSubmit={handleSubmit}
             onClose={handleClose}/>
         );
 
-        const submitButton = screen.getByRole("button", { name: "Submit" });
-
         // WHEN clicking on the submit button.
-        await user?.click(submitButton);
+        await clickButton("Submit");
 
         // THEN it should close the dialog.
         expect(state.closed).toBe(true);
@@ -108,10 +134,8 @@ describe("connection dialog", () => {
             onClose={handleClose}/>
         );
 
-        const submitButton = screen.getByRole("button", { name: "Submit" });
-
         // WHEN clicking on the submit button.
-        await user?.click(submitButton);
+        await clickButton("Submit");
 
         // THEN it should display a toast.
         expect((await AppToaster).getToasts()).toHaveLength(1);

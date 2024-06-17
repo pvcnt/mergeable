@@ -1,7 +1,7 @@
-import { Button, H3 } from "@blueprintjs/core"
-import ConnectionCard from "@repo/ui/components/ConnectionCard"
+import { Button, Card, H3 } from "@blueprintjs/core"
 import { useState } from "react"
 import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
+import ConnectionTable from "@repo/ui/components/ConnectionTable"
 import { getViewer } from "@repo/github"
 
 import { deleteConnection, saveConnection, useConnections } from "../db"
@@ -10,21 +10,26 @@ import { Connection, ConnectionValue } from "@repo/types"
 
 
 export default function Settings() {
-    const [isEditing, setEditing] = useState(false)
-    const connections = useConnections()
+    const [isEditing, setEditing] = useState(false);
+    const connections = useConnections();
 
     const allowedUrls = isTruthy(import.meta.env.VITE_GITHUB_URLS) 
         ? import.meta.env.VITE_GITHUB_URLS.split(",") 
         : undefined;
     
     const getHost = (baseUrl: string) => {
+        if (!baseUrl.startsWith("https://") && !baseUrl.startsWith("http://")) {
+            throw new Error("Invalid URL");
+        }
         const url = new URL(baseUrl);
+        // Special case to identify github.com's host. For GHE instances, the
+        // API is mounted under /api and not under a subdomain.
         return (url.hostname == "api.github.com") ? "github.com" : url.hostname;
     }
-    
+
     const handleNew = async (value: ConnectionValue) => {
-        const viewer = (await getViewer(value)).name;
         const host = getHost(value.baseUrl);
+        const viewer = (await getViewer(value)).name;
         saveConnection({...value, id: "", host, viewer});
     };
 
@@ -49,14 +54,12 @@ export default function Settings() {
                 onClose={() => setEditing(false)}
                 onSubmit={v => handleNew(v)} />
             
-            {connections.data.map((connection, idx) => (
-                <ConnectionCard
-                    key={idx}
-                    className="mt-4"
-                    connection={connection}
-                    onSubmit={v => handleEdit(connection, v)}
-                    onDelete={() => deleteConnection(connection)}/>
-            ))}
+            <Card>
+                <ConnectionTable
+                    connections={connections.data}
+                    onSubmit={handleEdit}
+                    onDelete={deleteConnection}/>
+            </Card>
         </div>
     )
 }

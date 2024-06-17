@@ -106,7 +106,11 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
         },
         rateLimit: RateLimit,
     }
-    return createClient(connection).graphql<Data>(query, {search: `type:pr ${search}`})
+    // Enforce searching for PRs, and filter by org as required by the connection.
+    search = `type:pr ${search} ` + connection.orgs.map(org => `org:${org}`).join(" ");
+    console.log(search);
+    
+    return createClient(connection).graphql<Data>(query, {search})
         .then(data => {
             const total = data.search.issueCount;
             const pulls = data.search.edges.map(edge => edge.node).map(pull => ({
