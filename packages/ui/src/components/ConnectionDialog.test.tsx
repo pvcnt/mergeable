@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { describe, it, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
@@ -22,58 +22,56 @@ describe("connection dialog", () => {
         user = userEvent.setup();
     })
 
-    describe("submit button", () => {
-        it("enabled when base URL input and token are filled", async () => {
-            // GIVEN an empty dialog.
-            render(<ConnectionDialog title="New connection" isOpen={true}/>);
+    test("submit button is disabled before base URL input and token are filled", async () => {
+        // GIVEN an empty dialog.
+        render(<ConnectionDialog title="New connection" isOpen={true}/>);
 
-            const submitButton = screen.getByRole("button", { name: "Submit" });
-            const baseURLInput = screen.getByRole("textbox", { name: "Base URL" });
-            const tokenInput = screen.getByRole("textbox", { name: "Access token" });
+        const submitButton = screen.getByRole("button", { name: "Submit" });
+        const baseURLInput = screen.getByRole("textbox", { name: "Base URL" });
+        const tokenInput = screen.getByRole("textbox", { name: "Access token" });
+    
+        // THEN the submit button must be disabled.
+        expect(submitButton.getAttribute("disabled")).toBe("");
+    
+        // WHEN the user types a URL and a token.
+        await user?.type(baseURLInput, "https://api.github.com");
+        await user?.type(tokenInput, "ghp_foo");
         
-            // THEN the submit button must be disabled.
-            expect(submitButton.getAttribute("disabled")).toBe("");
+        // THEN the submit button must be enabled.
+        expect(submitButton.getAttribute("disabled")).toBeNull();
+    });
+    
+    test("submit button is disabled before base URL option and token are filled", async () => {
+        // GIVEN an empty dialog with a set of allowed URLs.
+        render(
+            <ConnectionDialog
+            title="New connection"
+            isOpen={true}
+            allowedUrls={["https://api.github.com", "https://github.corp.com/api/v3"]}/>
+        );
+    
+        const submitButton = screen.getByRole("button", { name: "Submit" });
+        const baseURLInput = screen.getByRole("combobox", { name: "Base URL" });
+        const tokenInput = screen.getByRole("textbox", { name: "Access token" });
+    
+        // THEN the submit button must be disabled.
+        expect(submitButton.getAttribute("disabled")).toBe("");
+    
+        // WHEN the user types a token.
+        await user?.type(tokenInput, "ghp_foo");
         
-            // WHEN the user types a URL and a token.
-            await user?.type(baseURLInput, "https://api.github.com");
-            await user?.type(tokenInput, "ghp_foo");
-            
-            // THEN the submit button must be enabled.
-            expect(submitButton.getAttribute("disabled")).toBeNull();
-        });
-        
-        it("enabled when base URL option and token are filled", async () => {
-            // GIVEN an empty dialog with a set of allowed URLs.
-            render(
-                <ConnectionDialog
-                title="New connection"
-                isOpen={true}
-                allowedUrls={["https://api.github.com", "https://github.corp.com/api/v3"]}/>
-            );
-        
-            const submitButton = screen.getByRole("button", { name: "Submit" });
-            const baseURLInput = screen.getByRole("combobox", { name: "Base URL" });
-            const tokenInput = screen.getByRole("textbox", { name: "Access token" });
-        
-            // THEN the submit button must be disabled.
-            expect(submitButton.getAttribute("disabled")).toBe("");
-        
-            // WHEN the user types a token.
-            await user?.type(tokenInput, "ghp_foo");
-            
-            // THEN the submit button must be enabled (since the first option is selected).
-            // expect(baseURLInput).toHaveV
-            expect(submitButton.getAttribute("disabled")).toBeNull();
+        // THEN the submit button must be enabled (since the first option is selected).
+        // expect(baseURLInput).toHaveV
+        expect(submitButton.getAttribute("disabled")).toBeNull();
 
-            // WHEN the user selects another option.
-            await user?.selectOptions(baseURLInput, "https://github.corp.com/api/v3")
+        // WHEN the user selects another option.
+        await user?.selectOptions(baseURLInput, "https://github.corp.com/api/v3")
 
-            // THEN the submit button must still be enabled.
-            expect(submitButton.getAttribute("disabled")).toBeNull();
-        });
+        // THEN the submit button must still be enabled.
+        expect(submitButton.getAttribute("disabled")).toBeNull();
     });
 
-    it("closed after successful submission", async () => {
+    test("should be closed after successful submission", async () => {
         // GIVEN a pre-filled dialog.
         const state = {closed: false};
         const handleSubmit = () => Promise.resolve();
@@ -96,7 +94,7 @@ describe("connection dialog", () => {
         expect(state.closed).toBe(true);
     });
 
-    it("not closed with a toast after failed submission", async () => {
+    test("should not closed with a toast after failed submission", async () => {
         // GIVEN a pre-filled dialog that will fail to submit.
         const state = {closed: false};
         const handleSubmit = () => Promise.reject({message: "Bad credentials"});
