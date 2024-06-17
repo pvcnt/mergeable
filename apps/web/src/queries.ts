@@ -1,6 +1,6 @@
 import { UseQueryResult, useQueries } from "@tanstack/react-query";
 import { Connection, PullList, Section } from "@repo/types";
-import { getPulls } from "./github";
+import { getPulls } from "@repo/github";
 
 export const usePulls = (sections: Section[], connections: Connection[]): UseQueryResult<PullList>[] => {
     return useQueries({

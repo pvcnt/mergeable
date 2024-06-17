@@ -1,0 +1,23 @@
+{
+  "name": "@repo/github",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "check-types": "tsc --noemit",
+    "lint": "eslint \"**/*.ts\""
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@octokit/core": "^6.1.2",
+    "@octokit/rest": "^20.1.1",
+    "@repo/types": "workspace:*"
+  }
+}

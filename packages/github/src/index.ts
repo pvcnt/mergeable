@@ -1,11 +1,7 @@
-import { Octokit } from "@octokit/rest"
-import { Connection, ConnectionValue, PullList, PullState, User } from "@repo/types"
+import { Octokit } from "@octokit/rest";
+import { Connection, ConnectionValue, PullList, PullState, User } from "@repo/types";
 
-const LIMIT = 50
-
-export function createClient(connection: ConnectionValue): Octokit {
-    return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl})
-}
+const LIMIT = 50;
 
 type GHPull = {
     number: number,
@@ -51,15 +47,15 @@ export function getViewer(connection: ConnectionValue): Promise<User> {
             remaining
             resetAt
         }
-    }`
+    }`;
     type Data = {
         viewer: GHUser,
         rateLimit: RateLimit,
-    }
+    };
 
     return createClient(connection).graphql<Data>(query)
         .then(data => data.viewer)
-        .then(user => ({name: user.login, avatarUrl: user.avatarUrl}))
+        .then(user => ({name: user.login, avatarUrl: user.avatarUrl}));
 }
 
 export function getPulls(connection: Connection, search: string): Promise<PullList> {
@@ -99,17 +95,17 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
             remaining
             resetAt
         }
-    }`
+    }`;
     type Edge = {
         node: GHPull,
-    }
+    };
     type Data = {
         search: {
             issueCount: number,
             edges: Edge[],
         },
         rateLimit: RateLimit,
-    }
+    };
     return createClient(connection).graphql<Data>(query, {search: `type:pr ${search}`})
         .then(data => {
             const total = data.search.issueCount;
@@ -141,5 +137,9 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
                 },
             }))
             return {total, hasMore: total > LIMIT, pulls}
-        })
+        });
+}
+
+function createClient(connection: ConnectionValue): Octokit {
+    return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl});
 }

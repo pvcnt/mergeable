@@ -29,12 +29,9 @@ importers:
       '@blueprintjs/icons':
         specifier: ^5.9.0
         version: 5.9.0(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
-      '@octokit/core':
-        specifier: ^6.1.2
-        version: 6.1.2
-      '@octokit/rest':
-        specifier: ^20.1.1
-        version: 20.1.1
+      '@repo/github':
+        specifier: workspace:*
+        version: link:../../packages/github
       '@repo/storage':
         specifier: workspace:*
         version: link:../../packages/storage
@@ -120,6 +117,31 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
+
+  packages/github:
+    dependencies:
+      '@octokit/core':
+        specifier: ^6.1.2
+        version: 6.1.2
+      '@octokit/rest':
+        specifier: ^20.1.1
+        version: 20.1.1
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
 
   packages/storage:
     dependencies:

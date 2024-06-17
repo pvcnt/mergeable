@@ -13,8 +13,7 @@
   "dependencies": {
     "@blueprintjs/core": "^5.10.3",
     "@blueprintjs/icons": "^5.9.0",
-    "@octokit/core": "^6.1.2",
-    "@octokit/rest": "^20.1.1",
+    "@repo/github": "workspace:*",
     "@repo/storage": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
