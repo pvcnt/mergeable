@@ -5,6 +5,8 @@ import { Pull, PullState } from "@repo/types"
 import IconWithTooltip from "./IconWithTooltip"
 import { computeSize } from "../utils/size"
 
+import "./PullTable.less"
+
 
 export type Props = {
     pulls: Pull[],

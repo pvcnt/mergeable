@@ -1,0 +1,49 @@
+@import "@blueprintjs/core/lib/less/variables";
+
+.pull-table {
+    width: 100%;
+    thead th {
+        color: @pt-text-color-disabled;
+        font-size: @pt-font-size-small;
+    }
+    tbody td {
+        overflow: hidden;
+        vertical-align: middle !important;
+    }
+    tbody td:nth-child(1) { /* Star */
+        text-align: center;
+        width: 25px;
+    }
+    tbody td:nth-child(2) { /* Author */
+        text-align: center;
+        width: 50px;
+    }
+    tbody td:nth-child(3) { /* Status */
+        text-align: center;
+        width: 50px;
+    }
+    tbody td:nth-child(4) { /* Last Action */
+        width: 200px;
+    }
+    tbody td:nth-child(5) { /* Size */
+        text-align: center;
+        width: 50px;
+    }
+    tbody td a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: @pt-text-color;
+
+        &:hover {
+            text-decoration: none;
+        }
+        &:focus {
+            outline: 0;
+        }
+    }
+    .pull-author img {
+        border-radius: 5rem;
+        height: 32px;
+    }
+}
