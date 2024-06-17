@@ -1,0 +1,54 @@
+import { Button, HTMLTable } from "@blueprintjs/core"
+import { useState } from "react"
+import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
+
+import type { Connection, ConnectionValue } from "@repo/types"
+
+import "./ConnectionTable.less"
+
+
+export type Props = {
+    connections: Connection[],
+    onSubmit: (prev: Connection, v: ConnectionValue) => Promise<void>,
+    onDelete: (v: Connection) => void,
+}
+
+export default function ConnectionTable({ connections, onSubmit, onDelete }: Props) {
+    const [connection, setConnection] = useState<Connection|undefined>(undefined);
+    return (
+        <>
+            <HTMLTable className="connection-table">
+                <thead>
+                    <tr>
+                        <th>Host</th>
+                        <th>Label</th>
+                        <th>Viewer</th>
+                        <th>Organizations</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {connections.map((connection, idx) => (
+                    <tr key={idx}>
+                    <td><a href={`https://${connection.host}`}>{connection.host}</a></td>
+                        <td>{connection.label || "–"}</td>
+                        <td>{connection.viewer || <i>Unknown</i>}</td>
+                        <td>{connection.orgs.join(", ")}
+                        </td>
+                        <td>
+                            <Button text="Edit" minimal onClick={() => setConnection(connection)}></Button>
+                        </td>
+                    </tr>
+                    ))}
+                </tbody>
+            </HTMLTable>
+            <ConnectionDialog
+                connection={connection}
+                title="Edit connection"
+                isOpen={connection !== undefined}
+                onClose={() => setConnection(undefined)}
+                onSubmit={connection && (v => onSubmit(connection, v))}
+                onDelete={connection && (() => onDelete(connection))}/>
+        </>
+    )
+}

@@ -29,6 +29,9 @@ importers:
       '@blueprintjs/icons':
         specifier: ^5.9.0
         version: 5.9.0(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+      '@blueprintjs/select':
+        specifier: ^5.1.5
+        version: 5.1.5(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
       '@repo/github':
         specifier: workspace:*
         version: link:../../packages/github
@@ -202,6 +205,9 @@ importers:
       '@blueprintjs/icons':
         specifier: ^5.9.0
         version: 5.9.0(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+      '@blueprintjs/select':
+        specifier: ^5.1.5
+        version: 5.1.5(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
       '@repo/types':
         specifier: workspace:*
         version: link:../types
@@ -686,6 +692,25 @@ packages:
     dependencies:
       '@types/react': 18.3.3
       change-case: 4.1.2
+      classnames: 2.5.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tslib: 2.6.2
+    dev: false
+
+  /@blueprintjs/select@5.1.5(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-7oSO6fmZ9lZpzPpAuxoIzgczTWvyNmUOxDUAzO5LltcKL5jNg9V8L/wADNvRTrr9MAw8IbVwEw5fPDeZ8iP3Vg==}
+    peerDependencies:
+      '@types/react': ^16.14.41 || 17 || 18
+      react: ^16.8 || 17 || 18
+      react-dom: ^16.8 || 17 || 18
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@blueprintjs/core': 5.10.3(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+      '@blueprintjs/icons': 5.9.0(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+      '@types/react': 18.3.3
       classnames: 2.5.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

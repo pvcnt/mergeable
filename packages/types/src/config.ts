@@ -19,6 +19,7 @@ export type ConnectionValue = {
     label: string,
     baseUrl: string,
     auth: string,
+    orgs: string[],
 }
 
 export type Connection = ConnectionValue & {

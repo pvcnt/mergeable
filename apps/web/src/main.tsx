@@ -16,6 +16,7 @@ import Settings from './routes/settings.tsx'
 import 'normalize.css/normalize.css'
 import '@blueprintjs/icons/lib/css/blueprint-icons.css'
 import '@blueprintjs/core/lib/css/blueprint.css'
+import '@blueprintjs/select/lib/css/blueprint-select.css'
 import './styles/index.less'
 import Stars from './routes/stars.tsx'
 

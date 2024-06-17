@@ -1,9 +1,11 @@
 import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent } from "@blueprintjs/core"
 import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
-import { Connection, ConnectionValue } from "@repo/types";
+import type { Connection, ConnectionValue } from "@repo/types";
 import { isTruthy } from "remeda";
 import { AppToaster } from "../utils/toaster";
+
+import OrgSelector from "./OrgSelector";
 
 type Props = {
     title: string,
@@ -19,17 +21,19 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
     const [label, setLabel] = useState("");
     const [baseUrl, setBaseUrl] = useState("");
     const [auth, setAuth] = useState("");
+    const [orgs, setOrgs] = useState<string[]>([]);
     const [isDeleting, setDeleting] = useState(false);
 
     const handleOpening = () => {
         setLabel(connection ? connection.label : "");
         setBaseUrl(connection ? connection.baseUrl : allowedUrls ? allowedUrls[0] : "");
         setAuth(connection ? connection.auth : "");
+        setOrgs(connection ? connection.orgs : []);
     };
     const handleSubmit = async () => {
         if (isFilled()) {
             try {
-                onSubmit && await onSubmit({label, baseUrl, auth});
+                onSubmit && await onSubmit({label, baseUrl, auth, orgs: orgs});
                 onClose && onClose();
             } catch (e) {
                 const message = `Something went wrong: ${(e as Error).message}`;
@@ -73,6 +77,9 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                             value={auth}
                             aria-label="Access token"
                             onChange={e => setAuth(e.currentTarget.value)}/>
+                    </FormGroup>
+                    <FormGroup label="Filter organizations" subLabel="Only pull requests from selected organizations will be considered.">
+                        <OrgSelector selected={orgs} onChange={setOrgs}/>
                     </FormGroup>
                 </DialogBody>
                 <DialogFooter actions={
