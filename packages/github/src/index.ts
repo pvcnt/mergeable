@@ -108,7 +108,6 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
     search = `type:pr ${search} ` + connection.orgs.map(org => `org:${org}`).join(" ");
-    console.log(search);
     
     return createClient(connection).graphql<Data>(query, {search})
         .then(data => {
