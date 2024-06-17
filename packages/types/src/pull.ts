@@ -8,7 +8,6 @@ export enum PullState {
     Draft = 1,
     Pending,
     Approved,
-    ChangesRequested,
     Merged,
     Closed,
 }

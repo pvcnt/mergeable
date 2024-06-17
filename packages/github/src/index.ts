@@ -51,7 +51,7 @@ export function getViewer(connection: ConnectionValue): Promise<User> {
     type Data = {
         viewer: GHUser,
         rateLimit: RateLimit,
-    };
+    }
 
     return createClient(connection).graphql<Data>(query)
         .then(data => data.viewer)
@@ -98,14 +98,14 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
     }`;
     type Edge = {
         node: GHPull,
-    };
+    }
     type Data = {
         search: {
             issueCount: number,
             edges: Edge[],
         },
         rateLimit: RateLimit,
-    };
+    }
     return createClient(connection).graphql<Data>(query, {search: `type:pr ${search}`})
         .then(data => {
             const total = data.search.issueCount;
@@ -123,8 +123,6 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
                     ? PullState.Closed
                     : pull.reviewDecision == "APPROVED"
                     ? PullState.Approved
-                    : pull.reviewDecision == "CHANGES_REQUESTED"
-                    ? PullState.ChangesRequested
                     : PullState.Pending,
                 createdAt: pull.createdAt,
                 updatedAt: pull.updatedAt,

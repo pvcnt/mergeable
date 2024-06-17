@@ -61,10 +61,8 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
                             ? <IconWithTooltip icon="cross-circle" title="Closed" color="#AC2F33"/>
                             : pull.state == PullState.Approved
                             ? <IconWithTooltip icon="git-pull" title="Approved" color="#1C6E42"/>
-                            : pull.state == PullState.ChangesRequested
-                            ? <IconWithTooltip icon="issue" title="Changes requested" color="#C87619"/>
                             : pull.state == PullState.Pending
-                            ? <IconWithTooltip icon="git-pull" title="Pending review" color="#C87619"/>
+                            ? <IconWithTooltip icon="git-pull" title="Pending" color="#C87619"/>
                             : null}
                         </td>
                         <td>
