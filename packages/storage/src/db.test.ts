@@ -28,7 +28,7 @@ test("db should save a section", async () => {
 });
 
 test("db should save a star", async () => {
-    const star = { uid: "github.com,pvcnt/reviewer,1" };
+    const star = { uid: "github.com,pvcnt/mergeable,1" };
     const id = await db.stars.add(star);
     await expect(db.stars.get(id)).resolves.toEqual(star);
 });

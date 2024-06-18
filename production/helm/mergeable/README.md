@@ -1,8 +1,8 @@
-# reviewer
+# mergeable
 
 ![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
-A Helm chart for reviewer, an inbox for GitHub pull requests.
+A Helm chart for Mergeable, a better inbox for GitHub pull requests.
 
 ## Maintainers
 
@@ -17,7 +17,7 @@ A Helm chart for reviewer, an inbox for GitHub pull requests.
 | affinity | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"ghcr.io/pvcnt/reviewer"` |  |
+| image.repository | string | `"ghcr.io/pvcnt/mergeable"` |  |
 | image.tag | string | `"latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |

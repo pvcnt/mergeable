@@ -1,10 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/pvcnt/reviewer
+  repository: ghcr.io/pvcnt/mergeable
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  # check the available tags at https://github.com/pvcnt/reviewer/pkgs/container/reviewer
+  # Tag is overridden when the Helm Chart is published by Actions.
   tag: "latest"
 
 imagePullSecrets: []

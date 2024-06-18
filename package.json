@@ -1,5 +1,5 @@
 {
-  "name": "reviewer",
+  "name": "mergeable",
   "private": true,
   "scripts": {
     "build": "turbo build",

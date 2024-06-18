@@ -1,0 +1,8 @@
+apiVersion: v2
+name: mergeable
+description: A Helm chart for Mergeable, a better inbox for GitHub pull requests.
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+maintainers:
+  - name: pvcnt

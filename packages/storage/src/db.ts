@@ -1,7 +1,7 @@
 import type { Connection, Section, Star } from "@repo/types";
 import Dexie, { type EntityTable } from "dexie";
 
-export const db = new Dexie("reviewer") as Dexie & {
+export const db = new Dexie("webapp") as Dexie & {
     connections: EntityTable<Connection, "id">;
     sections: EntityTable<Section, "id">;
     stars: EntityTable<Star, "uid">;
