@@ -109,7 +109,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           accountId: 1f74b8302712fd67d5eddea8c96eb776
-          projectName: reviewer
+          projectName: mergeable
           workingDirectory: apps/web
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

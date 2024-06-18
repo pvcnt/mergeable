@@ -19,7 +19,7 @@ Mergeable provides the following features:
 * Local only, data is stored in your browser's storage.
 * Dark mode.
 
-You can use the demo instance hosted at [reviewer.pages.dev](https://reviewer.pages.dev/), or run your own instance.
+You can use the demo instance hosted at [mergeable.pages.dev](https://mergeable.pages.dev/), or run your own instance.
 
 ## Run locally
 
