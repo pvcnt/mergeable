@@ -4,15 +4,15 @@ import { computeSize } from "./size";
 
 test("computeSize returns size of a pull request", () => {
     const pull = {
-        uid: "github.com,pvcnt/reviewer/1",
+        uid: "github.com,pvcnt/mergeable/1",
         host: "github.com",
-        repository: "pvcnt/reviewer",
+        repository: "pvcnt/mergeable",
         number: 1,
         title: "Title",
         state: PullState.Approved,
         createdAt: "now",
         updatedAt: "now",
-        url: "https://github.com/pvcnt/reviewer/1",
+        url: "https://github.com/pvcnt/mergeable/1",
         additions: 0,
         deletions: 0,
         author: {name: "pvcnt", avatarUrl: ""},

@@ -48,9 +48,9 @@ export default function App() {
     // Change window's title to include number of pull requests.
     useEffect(() => {
         if (count > 0) {
-            document.title = `(${count}) Reviewer`
+            document.title = `(${count}) Mergeable`
         } else {
-            document.title = "Reviewer"
+            document.title = "Mergeable"
         }
     }, [count])
 
