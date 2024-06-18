@@ -80,12 +80,12 @@ jobs:
       - name: Update image tag in values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
-          valueFile: production/helm/reviewer/values.yaml
+          valueFile: production/helm/mergeable/values.yaml
           propertyPath: image.tag
           value: ${{ github.sha }}
           commitChange: false
       - name: Package chart
-        run: helm package production/helm/reviewer --version 0.0.${{ github.run_number }} --destination dist
+        run: helm package production/helm/mergeable --version 0.0.${{ github.run_number }} --destination dist
       - name: Push chart
         run: helm push dist/*.tgz oci://ghcr.io/pvcnt/helm
   cloudflare:
