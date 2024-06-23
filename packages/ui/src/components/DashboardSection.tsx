@@ -4,6 +4,8 @@ import SectionDialog from "./SectionDialog";
 import { Pull, Section } from "@repo/types";
 import PullTable from "./PullTable";
 
+import styles from "./DashboardSection.module.scss";
+
 export type Props = {
     section: Section,
     isFirst: boolean,
@@ -29,18 +31,16 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
     }
 
     return (
-        <Card className="mt-4">
-            <div className="flex">
-                <H5 onClick={(e) => handleTitleClick(e)}>
-                    <div className="section-label">
-                        <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
-                        <span className="ml-2">{section.label}</span>
-                        {(pulls.length > 0) && (
-                            <Tag round intent={Intent.NONE} className="ml-2">{pulls.length}{hasMore ? '+' : ''}</Tag>
-                        )}
-                    </div>
+        <Card className={styles.section}>
+            <div className={styles.header}>
+                <H5 onClick={(e) => handleTitleClick(e)} className={styles.title}>
+                    <Icon icon={isCollapsed ? "chevron-down" : "chevron-up"} color="text"/>
+                    <span>{section.label}</span>
+                    {(pulls.length > 0) && (
+                        <Tag round intent={Intent.NONE}>{pulls.length}{hasMore ? '+' : ''}</Tag>
+                    )}
                 </H5>
-                <div className="ml-auto">
+                <div className={styles.actions}>
                     <Button icon="symbol-triangle-up" minimal disabled={isFirst} onClick={onMoveUp}/>
                     <Button icon="symbol-triangle-down" minimal disabled={isLast} onClick={onMoveDown}/>
                     <Button icon="edit" minimal onClick={() => setEditing(true)}/>
@@ -58,9 +58,7 @@ export default function DashboardSection({isLoading, section, isFirst, isLast, p
             {isLoading 
                 ? <Spinner/>
                 : <Collapse isOpen={!isCollapsed}>
-                    {pulls.length > 0
-                        ? <PullTable pulls={pulls} isStarred={isStarred} onStar={onStar} />
-                        : <p className="no-results">No results</p>}
+                    <PullTable pulls={pulls} isStarred={isStarred} onStar={onStar} />
                 </Collapse>}
         </Card>
     )

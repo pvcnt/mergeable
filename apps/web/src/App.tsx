@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
-import { Card } from '@blueprintjs/core'
 import localforage from "localforage"
 
 import Sidebar from '@repo/ui/components/Sidebar';
@@ -9,6 +8,9 @@ import Footer from '@repo/ui/components/Footer';
 import { saveConnection, useConnections, useSections } from './db';
 import { usePulls } from './queries'
 import { sum } from 'remeda'
+
+import styles from "./App.module.scss";
+import { Card } from '@blueprintjs/core';
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
@@ -55,12 +57,12 @@ export default function App() {
     }, [count])
 
     return (
-        <div className={clsx("app", isDark && "bp5-dark")}>
+        <div className={clsx(styles.app, isDark && "bp5-dark")}>
             <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
-            <main>
+            <main className={styles.main}>
                 <div>
                     {(connections.isLoaded && connections.data.length === 0) &&
-                        <Card className="announcement">
+                        <Card className={styles.announcement}>
                             No connections are configured. Please go to <Link to="/settings">the settings page</Link> to add a new connection.
                         </Card>}
                     <Outlet/>

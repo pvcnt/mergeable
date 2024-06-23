@@ -3,6 +3,7 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
   },
   "include": ["src/**/*", "*.ts"],
 }

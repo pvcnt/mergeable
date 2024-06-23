@@ -4,7 +4,7 @@ import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
 
 import type { Connection, ConnectionValue } from "@repo/types"
 
-import "./ConnectionTable.less"
+import styles from "./ConnectionTable.module.scss";
 
 
 export type Props = {
@@ -17,7 +17,7 @@ export default function ConnectionTable({ connections, onSubmit, onDelete }: Pro
     const [connection, setConnection] = useState<Connection|undefined>(undefined);
     return (
         <>
-            <HTMLTable className="connection-table">
+            <HTMLTable className={styles.table}>
                 <thead>
                     <tr>
                         <th>Host</th>
