@@ -9,6 +9,8 @@ import SearchInput from "@repo/ui/components/SearchInput"
 import { usePulls } from "../queries"
 import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useConnections, useSections, useStars } from "../db"
 
+import styles from "./dashboard.module.scss";
+
 function matches(pull: Pull, tokens: string[]): boolean {
     return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
 }
@@ -57,14 +59,13 @@ export default function Dashboard() {
 
     return (
         <>
-            <div className="flex w-full">
-                <SearchInput value={search} onChange={setSearch} className="grow"/>
-                <Button text="New section" icon="plus" onClick={() => setEditing(true)} className="ml-4"/>
+            <div className={styles.header}>
+                <SearchInput value={search} onChange={setSearch} className={styles.search}/>
+                <Button text="New section" icon="plus" onClick={() => setEditing(true)}/>
                 <Button
                     icon="refresh"
                     disabled={isFetching}
                     loading={isFetching}
-                    className="ml-4"
                     onClick={refetchAll}/>
             </div>
             <SectionDialog

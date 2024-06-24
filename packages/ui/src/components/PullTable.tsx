@@ -5,7 +5,7 @@ import { Pull, PullState } from "@repo/types"
 import IconWithTooltip from "./IconWithTooltip"
 import { computeSize } from "../utils/size"
 
-import "./PullTable.less"
+import styles from "./PullTable.module.scss";
 
 
 export type Props = {
@@ -25,8 +25,11 @@ const formatDate = (d: string)  => {
 }
 
 export default function PullTable({pulls, isStarred, onStar}: Props) {
+    if (pulls.length === 0) {
+        return <p className={styles.empty}>No results</p>;
+    }
     return (
-        <HTMLTable interactive className="pull-table">
+        <HTMLTable interactive className={styles.table}>
             <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -40,13 +43,13 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
             <tbody>
                 {pulls.map((pull, idx) => (
                     <tr key={idx} onClick={() => window.location.href = pull.url}>
-                        <td className="cursor-pointer" onClick={(e) => { onStar(pull); e.stopPropagation(); }}>
+                        <td onClick={(e) => { onStar(pull); e.stopPropagation(); }}>
                             {isStarred(pull)
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
                                 : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
                         </td>
                         <td>
-                            <div className="pull-author">
+                            <div className={styles.author}>
                                 <Tooltip content={pull.author.name}>
                                     {pull.author.avatarUrl ? <img src={pull.author.avatarUrl}/> : <Icon icon="user"/>}
                                 </Tooltip>
@@ -71,11 +74,11 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
                             </Tooltip>
                         </td>
                         <td>
-                            <Tooltip content={<><span className="additions">+{pull.additions}</span> / <span className="deletions">-{pull.deletions}</span></>} openOnTargetFocus={false} usePortal={false}><Tag>{computeSize(pull)}</Tag></Tooltip>
+                            <Tooltip content={<><span className={styles.additions}>+{pull.additions}</span> / <span className={styles.deletions}>-{pull.deletions}</span></>} openOnTargetFocus={false} usePortal={false}><Tag>{computeSize(pull)}</Tag></Tooltip>
                         </td>
                         <td>
-                            <div className="font-semibold">{pull.title}</div>
-                            <div className="text-sm">
+                            <div className={styles.title}>{pull.title}</div>
+                            <div className={styles.source}>
                                 {pull.host}:{pull.repository} #{pull.number}
                             </div>
                         </td>

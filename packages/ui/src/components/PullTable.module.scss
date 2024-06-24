@@ -1,10 +1,10 @@
-@import "@blueprintjs/core/lib/less/variables";
+@import "@blueprintjs/core/lib/scss/variables";
 
-.pull-table {
+.table {
     width: 100%;
     thead th {
-        color: @pt-text-color-disabled;
-        font-size: @pt-font-size-small;
+        color: $pt-text-color-disabled;
+        font-size: $pt-font-size-small;
     }
     tbody td {
         overflow: hidden;
@@ -29,21 +29,30 @@
         text-align: center;
         width: 50px;
     }
-    tbody td a {
-        display: block;
-        width: 100%;
-        height: 100%;
-        color: @pt-text-color;
+}
 
-        &:hover {
-            text-decoration: none;
-        }
-        &:focus {
-            outline: 0;
-        }
-    }
-    .pull-author img {
-        border-radius: 5rem;
-        height: 32px;
-    }
+.title {
+    font-weight: 600;
+}
+
+.source {
+    font-size: $pt-font-size-small;
+}
+
+.author img {
+    border-radius: 5rem;
+    height: 32px;
+}
+
+.additions {
+    color: $green4;
+}
+
+.deletions {
+    color: $red4;
+}
+
+.empty {
+    color: $dark-gray5;
+    margin: 0;
 }

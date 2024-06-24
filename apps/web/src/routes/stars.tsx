@@ -5,6 +5,7 @@ import PullTable from "@repo/ui/components/PullTable";
 import { usePulls } from "../queries";
 import { toggleStar, useConnections, useSections, useStars } from "../db";
 
+import styles from "./stars.module.scss";
 
 export default function Stars() {
     const connections = useConnections()
@@ -23,22 +24,19 @@ export default function Stars() {
 
     return (
         <>
-            <div className="flex mb-4">
-                <H3 className="grow">Starred pull requests</H3>
+            <div className={styles.header}>
+                <H3 className={styles.title}>Starred pull requests</H3>
                 <Button
                     icon="refresh"
                     disabled={isFetching}
                     loading={isFetching}
-                    className="ml-4"
                     onClick={refetchAll}/>
             </div>
 
-            <Card className="mt-4">
+            <Card>
             {isLoading 
                 ? <Spinner/>
-                : (pulls.length > 0)
-                ? <PullTable pulls={pulls} isStarred={isStarred} onStar={toggleStar}/>
-                : <p className="no-results">No results</p>}
+                : <PullTable pulls={pulls} isStarred={isStarred} onStar={toggleStar}/>}
             </Card>
         </>
     )

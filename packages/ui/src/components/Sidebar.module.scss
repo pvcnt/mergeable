@@ -1,0 +1,24 @@
+@import "@blueprintjs/core/lib/scss/variables";
+
+.sidebar {
+    width: 4rem;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    gap: 0.5rem;
+    border-right: 1px solid $gray3;
+}
+
+.logo {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.bottom {
+    margin-top: auto;
+}

@@ -8,6 +8,7 @@ import { deleteConnection, saveConnection, useConnections } from "../db"
 import { isTruthy } from "remeda"
 import { Connection, ConnectionValue } from "@repo/types"
 
+import styles from "./settings.module.scss";
 
 export default function Settings() {
     const [isEditing, setEditing] = useState(false);
@@ -41,9 +42,9 @@ export default function Settings() {
     };
 
     return (
-        <div className="container-lg">
-            <div className="flex mb-4">
-                <H3 className="grow">Connections</H3>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <H3 className={styles.title}>Connections</H3>
                 <Button text="New connection" icon="plus" onClick={() => setEditing(true)}/>
             </div>
 

@@ -1,0 +1,16 @@
+.container {
+    max-width: 1080px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+.header {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.title {
+    flex-grow: 1;
+}

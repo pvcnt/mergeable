@@ -58,7 +58,7 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
                         labelInfo="(required)"
                         helperText={<a href="https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests" target="_blank">Documentation on search syntax</a>}
                     >
-                        <TextArea value={search} onChange={e => setSearch(e.target.value)} className="w-full" />
+                        <TextArea value={search} onChange={e => setSearch(e.target.value)} fill/>
                     </FormGroup>
                     <Checkbox checked={notified} label="Pull requests in this section add to the badge count" onChange={e => setNotified(e.currentTarget.checked)} />
                 </DialogBody>

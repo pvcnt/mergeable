@@ -1,10 +1,10 @@
-@import "@blueprintjs/core/lib/less/variables";
+@import "@blueprintjs/core/lib/scss/variables";
 
-.connection-table {
+.table {
     width: 100%;
     thead th {
-        color: @pt-text-color-disabled;
-        font-size: @pt-font-size-small;
+        color: $pt-text-color-disabled;
+        font-size: $pt-font-size-small;
     }
     tbody td {
         overflow: hidden;
