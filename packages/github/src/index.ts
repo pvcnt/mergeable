@@ -107,7 +107,7 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
         rateLimit: RateLimit,
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
-    search = `type:pr ${search} ` + connection.orgs.map(org => `org:${org}`).join(" ");
+    search = `type:pr sort:updated ${search} ` + connection.orgs.map(org => `org:${org}`).join(" ");
     
     return createClient(connection).graphql<Data>(query, {search})
         .then(data => {
