@@ -19,6 +19,11 @@
     }
 }
 
+.content {
+    width: 100%;
+    flex-grow: 1;
+}
+
 .announcement {
     background-color: $pt-intent-warning !important;
     color: white;

@@ -60,14 +60,14 @@ export default function App() {
         <div className={clsx(styles.app, isDark && "bp5-dark")}>
             <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
             <main className={styles.main}>
-                <div>
+                <div className={styles.content}>
                     {(connections.isLoaded && connections.data.length === 0) &&
                         <Card className={styles.announcement}>
                             No connections are configured. Please go to <Link to="/settings">the settings page</Link> to add a new connection.
                         </Card>}
                     <Outlet/>
-                    <Footer commit={import.meta.env.VITE_COMMIT_SHA}/>
                 </div>
+                <Footer commit={import.meta.env.VITE_COMMIT_SHA}/>
             </main>
         </div>
     )
