@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { Connection, ConnectionValue, PullList, PullState, User } from "@repo/types";
+import { SearchQuery } from "./search";
 
 const LIMIT = 50;
 
@@ -107,9 +108,24 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
         rateLimit: RateLimit,
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
-    search = `type:pr sort:updated ${search} ` + connection.orgs.map(org => `org:${org}`).join(" ");
+    const q = new SearchQuery(search);
+    q.set("type", "pr");
+    q.set("sort", "updated");
+    q.setAll("org", connection.orgs);
+
+    if (q.has("org") && q.has("repo")) {
+        // GitHub API does not seem to support having both terms with an "org"
+        // and "repo" qualifier in a given query. In this situation, the term 
+        // with the "repo" qualifier is apparently ignored. We remediate to this
+        // situation by keeping droping terms with the "org" qualifier, and
+        // keeping the more precise "repo" qualifier.
+        //
+        // Note: We ignore the situation where the targeted repo(s) are not within
+        // the originally targeted org(s).
+        q.delete("org");
+    }
     
-    return createClient(connection).graphql<Data>(query, {search})
+    return createClient(connection).graphql<Data>(query, {search: q.toString()})
         .then(data => {
             const total = data.search.issueCount;
             const pulls = data.search.edges.map(edge => edge.node).map(pull => ({
