@@ -5,5 +5,5 @@
     "lib": ["ESNext", "DOM"],
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
   },
-  "include": ["src/**/*", "*.ts"],
+  "include": ["src", "*.ts"],
 }
