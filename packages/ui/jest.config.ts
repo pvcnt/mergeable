@@ -1,9 +1,7 @@
-import type { JestConfigWithTsJest } from 'ts-jest';
-import defaults from "@repo/jest-config";
+import { defineConfig, type Config } from "@repo/jest-config";
 
-const config: JestConfigWithTsJest = {
-  ...defaults,
+const config: Config = defineConfig({
   setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
-};
+});
 
 export default config;

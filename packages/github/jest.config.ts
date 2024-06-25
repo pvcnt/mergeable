@@ -1,3 +1,5 @@
-import defaults from "@repo/jest-config";
+import { defineConfig, type Config } from "@repo/jest-config";
 
-export default defaults;
+const config: Config = defineConfig();
+
+export default config;

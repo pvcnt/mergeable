@@ -1,6 +1,8 @@
 import type { JestConfigWithTsJest } from 'ts-jest';
 
-const config: JestConfigWithTsJest = {
+export type Config = JestConfigWithTsJest;
+
+const defaultConfig: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   moduleNameMapper: {
@@ -8,4 +10,6 @@ const config: JestConfigWithTsJest = {
   },
 };
 
-export default config;
+export function defineConfig(params?: Config): Config {
+  return {...defaultConfig, ...params};
+}
