@@ -7,7 +7,7 @@
     "dev": "vite --clearScreen false",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "check-types": "tsc --noemit",
+    "typecheck": "tsc --noemit",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "jest"
   },

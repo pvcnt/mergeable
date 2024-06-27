@@ -8,11 +8,11 @@
     "transit": {
       "dependsOn": ["^transit"]
     },
-    "check-types": {
+    "typecheck": {
       "dependsOn": ["^transit"]
     },
     "lint": {
-      "dependsOn": ["check-types"]
+      "dependsOn": ["typecheck"]
     },
     "test": {},
     "dev": {
