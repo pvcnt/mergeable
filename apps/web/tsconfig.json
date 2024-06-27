@@ -1,5 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@repo/typescript-config/vite.json",
-  "include": ["src"]
+  "compilerOptions": {
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "paths": {
+      "@/*": ["./src/*"],
+    }
+  },
+  "include": ["src", "*.ts"],
 }

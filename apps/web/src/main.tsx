@@ -7,7 +7,7 @@ import TimeAgo from 'javascript-time-ago'
 import timeAgoEnLocale from 'javascript-time-ago/locale/en.json'
 import { Intent, BlueprintProvider } from '@blueprintjs/core'
 
-import { AppToaster}  from '@repo/ui/utils/toaster'
+import { AppToaster}  from './lib/toaster.ts'
 import App from './App.tsx'
 import ErrorPage from './error-page.tsx'
 import Dashboard from './routes/dashboard.tsx'

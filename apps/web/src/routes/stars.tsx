@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Button, Card, H3, Spinner } from "@blueprintjs/core";
 
-import PullTable from "@repo/ui/components/PullTable";
+import PullTable from "@/components/PullTable";
 import { usePulls } from "../queries";
 import { toggleStar, useConnections, useSections, useStars } from "../db";
 

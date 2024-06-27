@@ -1,7 +1,7 @@
 import { Button, Card, H3 } from "@blueprintjs/core"
 import { useState } from "react"
-import ConnectionDialog from "@repo/ui/components/ConnectionDialog"
-import ConnectionTable from "@repo/ui/components/ConnectionTable"
+import ConnectionDialog from "@/components/ConnectionDialog"
+import ConnectionTable from "@/components/ConnectionTable"
 import { getViewer } from "@repo/github"
 
 import { deleteConnection, saveConnection, useConnections } from "../db"

@@ -1,6 +1,6 @@
 import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGroup, Intent, TextArea } from "@blueprintjs/core";
 import { useState } from "react";
-import { AppToaster } from "../utils/toaster"
+import { AppToaster } from "../lib/toaster"
 import ConfirmDialog from "./ConfirmDialog";
 import { SectionValue } from "@repo/types";
 

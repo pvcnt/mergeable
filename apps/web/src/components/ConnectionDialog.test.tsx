@@ -5,7 +5,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
-import { AppToaster } from "../utils/toaster";
+import { AppToaster } from "../lib/toaster";
 import { ConnectionValue } from "@repo/types";
 
 describe("connection dialog", () => {

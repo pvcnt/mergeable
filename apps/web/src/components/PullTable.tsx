@@ -3,7 +3,7 @@ import ReactTimeAgo from "react-time-ago"
 
 import { Pull, PullState } from "@repo/types"
 import IconWithTooltip from "./IconWithTooltip"
-import { computeSize } from "../utils/size"
+import { computeSize } from "../lib/size"
 
 import styles from "./PullTable.module.scss";
 

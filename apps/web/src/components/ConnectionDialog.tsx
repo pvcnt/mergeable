@@ -3,7 +3,7 @@ import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
 import type { Connection, ConnectionValue } from "@repo/types";
 import { isTruthy } from "remeda";
-import { AppToaster } from "../utils/toaster";
+import { AppToaster } from "../lib/toaster";
 
 import OrgSelector from "./OrgSelector";
 

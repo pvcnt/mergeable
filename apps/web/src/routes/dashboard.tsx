@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@blueprintjs/core"
 
-import SectionDialog from "@repo/ui/components/SectionDialog"
-import DashboardSection from "@repo/ui/components/DashboardSection"
+import SectionDialog from "@/components/SectionDialog"
+import DashboardSection from "@/components/DashboardSection"
 import { Pull, SectionValue } from "@repo/types"
-import SearchInput from "@repo/ui/components/SearchInput"
+import SearchInput from "@/components/SearchInput"
 import { usePulls } from "../queries"
 import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useConnections, useSections, useStars } from "../db"
 

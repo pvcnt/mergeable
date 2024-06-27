@@ -3,8 +3,8 @@ import { Link, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
 import localforage from "localforage"
 
-import Sidebar from '@repo/ui/components/Sidebar';
-import Footer from '@repo/ui/components/Footer';
+import Sidebar from '@/components/Sidebar';
+import Footer from '@/components/Footer';
 import { saveConnection, useConnections, useSections } from './db';
 import { usePulls } from './queries'
 import { sum } from 'remeda'
