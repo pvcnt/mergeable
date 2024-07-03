@@ -34,9 +34,18 @@ pnpm dev
 
 This project is designed from the beginning to be easy to self-host.
 
+## Docker
+
+A Docker image is continuously published at every commit to the main branch.
+It can be started with the following command:
+
+```bash
+docker run -p 8080:80 ghcr.io/pvcnt/mergeable
+```
+
 ## Helm Chart
 
-A Helm Chart is continuously published for every commit to the main branch.
+A Helm Chart is continuously published at every commit to the main branch.
 It can be deployed to a Kubernetes cluster with the following command:
 
 ```bash
