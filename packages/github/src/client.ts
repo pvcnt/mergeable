@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { Connection, ConnectionValue, PullList, PullState, User } from "@repo/types";
+import { Connection, ConnectionValue, PullState, PullValue, User } from "@repo/types";
 import { SearchQuery } from "./search";
 
 const LIMIT = 50;
@@ -14,6 +14,7 @@ type GHPull = {
     url: string,
     additions: number,
     deletions: number,
+    totalCommentsCount: number,
     repository: {
         nameWithOwner: string,
     },
@@ -36,30 +37,13 @@ type RateLimit = {
     resetAt: number,
 }
 
-export function getViewer(connection: ConnectionValue): Promise<User> {
-    const query = `query {
-        viewer {
-            login
-            avatarUrl
-        }
-        rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-        }
-    }`;
-    type Data = {
-        viewer: GHUser,
-        rateLimit: RateLimit,
-    }
-
-    return createClient(connection).graphql<Data>(query)
-        .then(data => data.viewer)
-        .then(user => ({name: user.login, avatarUrl: user.avatarUrl}));
+export async function getViewer(connection: ConnectionValue): Promise<User> {
+    const client = createClient(connection);
+    const user = await client.rest.users.getAuthenticated()
+    return {name: user.data.login, avatarUrl: user.data.avatar_url};
 }
 
-export function getPulls(connection: Connection, search: string): Promise<PullList> {
+export async function getPulls(connection: Connection, search: string): Promise<PullValue[]> {
     const query = `query dashboard($search: String!) {
         search(query: $search, type: ISSUE, first: ${LIMIT}) {
           issueCount
@@ -86,6 +70,7 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
                 reviewDecision
                 additions
                 deletions
+                totalCommentsCount
               }
             }
           }
@@ -125,36 +110,33 @@ export function getPulls(connection: Connection, search: string): Promise<PullLi
         q.delete("org");
     }
     
-    return createClient(connection).graphql<Data>(query, {search: q.toString()})
-        .then(data => {
-            const total = data.search.issueCount;
-            const pulls = data.search.edges.map(edge => edge.node).map(pull => ({
-                uid: `${connection.host},${pull.repository.nameWithOwner},${pull.number}`,
-                host: connection.host,
-                repository: pull.repository.nameWithOwner,
-                number: pull.number,
-                title: pull.title,
-                state: pull.isDraft
-                    ? PullState.Draft
-                    : pull.merged
-                    ? PullState.Merged
-                    : pull.closed
-                    ? PullState.Closed
-                    : pull.reviewDecision == "APPROVED"
-                    ? PullState.Approved
-                    : PullState.Pending,
-                createdAt: pull.createdAt,
-                updatedAt: pull.updatedAt,
-                url: pull.url,
-                additions: pull.additions,
-                deletions: pull.deletions,
-                author: {
-                    name: pull.author.login,
-                    avatarUrl: pull.author.avatarUrl,
-                },
-            }))
-            return {total, hasMore: total > LIMIT, pulls}
-        });
+    const client = createClient(connection);
+    const data = await client.graphql<Data>(query, {search: q.toString()});
+    return data.search.edges.map(edge => edge.node).map(pull => ({
+        host: connection.host,
+        repo: pull.repository.nameWithOwner,
+        number: pull.number,
+        title: pull.title,
+        state: pull.isDraft
+            ? PullState.Draft
+            : pull.merged
+            ? PullState.Merged
+            : pull.closed
+            ? PullState.Closed
+            : pull.reviewDecision == "APPROVED"
+            ? PullState.Approved
+            : PullState.Pending,
+        createdAt: pull.createdAt,
+        updatedAt: pull.updatedAt,
+        url: pull.url,
+        additions: pull.additions,
+        deletions: pull.deletions,
+        comments: pull.totalCommentsCount,
+        author: {
+            name: pull.author.login,
+            avatarUrl: pull.author.avatarUrl,
+        },
+    }));
 }
 
 function createClient(connection: ConnectionValue): Octokit {

@@ -1,2 +1,2 @@
-export * from "./pull";
 export * from "./config";
+export * from "./pull";

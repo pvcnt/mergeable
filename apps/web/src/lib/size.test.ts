@@ -4,9 +4,8 @@ import { computeSize } from "./size";
 
 test("computeSize returns size of a pull request", () => {
     const pull = {
-        uid: "github.com,pvcnt/mergeable/1",
         host: "github.com",
-        repository: "pvcnt/mergeable",
+        repo: "pvcnt/mergeable",
         number: 1,
         title: "Title",
         state: PullState.Approved,
@@ -16,6 +15,7 @@ test("computeSize returns size of a pull request", () => {
         additions: 0,
         deletions: 0,
         author: {name: "pvcnt", avatarUrl: ""},
+        comments: 0,
     };
 
     expect(computeSize({...pull, additions: 1})).toBe("XS");

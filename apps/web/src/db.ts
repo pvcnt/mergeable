@@ -1,7 +1,7 @@
 import { db } from "@repo/storage";
 import { useLiveQuery } from "dexie-react-hooks";
 import type { Connection, Pull, Section } from "@repo/types";
-import { omit } from "remeda"
+import { omit } from "remeda";
 
 // Defaults to populate after adding new fields.
 const connectionDefaults = {orgs: [], viewer: ""};
@@ -126,20 +126,28 @@ export const moveSectionDown = (value: Section) => {
     }).catch(console.error);
 }
 
-export const useStars = () => {
-    const data = useLiveQuery(() => db.stars.toArray());
-    const uids = data !== undefined ? new Set(data.map(v => v.uid)) : new Set();
-    const isStarred = (pull: Pull) => uids.has(pull.uid)
-    return { isLoaded: data !== undefined, data: data || [], isStarred };
+export const toggleStar = async (pull: Pull) => {
+    if (pull.starred) {
+        await db.stars.delete(pull.uid).catch(console.error);
+        await db.pulls.update(pull.uid, {starred: 0});
+    } else {
+        await db.stars.add({uid: pull.uid});
+        await db.pulls.update(pull.uid, {starred: 1});
+    };
 }
 
-export const toggleStar = (pull: Pull) => {
-    db.transaction("rw", db.stars, async () => {
-        const star = await db.stars.get(pull.uid);
-        if (star === undefined) {
-            await db.stars.add({uid: pull.uid});
-        } else {
-            await db.stars.delete(pull.uid);
-        }
-    }).catch(console.error);
+type PullQuery = {
+    starred?: number,
+}
+
+export const usePulls = (q?: PullQuery) => {
+    const where = (q !== undefined)
+        ? Object.fromEntries(Object.entries(q).filter(kv => kv[1] !== undefined))
+        : undefined;
+    const data = useLiveQuery(() => {
+        const coll = where !== undefined ? db.pulls.where(where) : db.pulls.toCollection();
+        return coll.reverse().sortBy("updatedAt");
+    });
+    const isLoading = data === undefined;
+    return { isLoading, data: data || [] };
 }

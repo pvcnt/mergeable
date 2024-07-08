@@ -5,20 +5,24 @@ import localforage from "localforage"
 
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { saveConnection, useConnections, useSections } from './db';
-import { usePulls } from './queries'
+import { saveConnection, useConnections, usePulls, useSections } from '@/db';
 import { sum } from 'remeda'
 
 import styles from "./App.module.scss";
 import { Card } from '@blueprintjs/core';
+import { getWorker } from './worker/client';
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
         // Read the isDark value from local storage (or false if it's not set)
         return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
     });
-    const connections = useConnections()
-    const sections = useSections()
+    const connections = useConnections();
+    const sections = useSections();
+    const pulls = usePulls();
+
+
+    getWorker();
 
     useEffect(() => {
         // Migrate connections from the legacy format.
@@ -39,13 +43,11 @@ export default function App() {
         localStorage.setItem('isDark', JSON.stringify(isDark));
     }, [isDark]);
 
-    const pulls = usePulls(sections.data, connections.data);
-    const count = sum(sections.data.map((section, idx) => {
-        if (section.notified) {
-            return sum(pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length).map(res => res.data?.pulls.length || 0));
-        }
-        return 0;
-    }));
+    const count = sum(
+        sections.data
+            .filter(section => section.notified)
+            .map(section => pulls.data.filter(pull => pull.sections.indexOf(section.id) > -1).length)
+    );
 
     // Change window's title to include number of pull requests.
     useEffect(() => {

@@ -5,17 +5,16 @@ export type PullList = {
 }
 
 export enum PullState {
-    Draft = 1,
+    Draft,
     Pending,
     Approved,
     Merged,
     Closed,
 }
 
-export type Pull = {
-    uid: string,
+export type PullValue = {
     host: string,
-    repository: string,
+    repo: string,
     number: number,
     title: string,
     state: PullState,
@@ -24,10 +23,18 @@ export type Pull = {
     url: string,
     additions: number,
     deletions: number,
+    comments: number,
     author: User,
 }
 
 export type User = {
     name: string,
     avatarUrl: string,
+}
+
+export type Pull = PullValue & {
+    uid: string,
+    fetchedAt: Date,
+    starred: number,  // boolean is not indexable.
+    sections: string[],
 }

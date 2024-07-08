@@ -1,40 +1,42 @@
-import { useCallback, useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
-import { Button } from "@blueprintjs/core"
-
-import SectionDialog from "@/components/SectionDialog"
-import DashboardSection from "@/components/DashboardSection"
-import { Pull, SectionValue } from "@repo/types"
-import SearchInput from "@/components/SearchInput"
-import { usePulls } from "../queries"
-import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useConnections, useSections, useStars } from "../db"
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Button } from "@blueprintjs/core";
+import SectionDialog from "@/components/SectionDialog";
+import DashboardSection from "@/components/DashboardSection";
+import { PullValue, SectionValue } from "@repo/types";
+import SearchInput from "@/components/SearchInput";
+import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "@/db";
+import { getWorker } from "@/worker/client";
 
 import styles from "./dashboard.module.scss";
 
-function matches(pull: Pull, tokens: string[]): boolean {
-    return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repository.indexOf(tok) > -1)
+function matches(pull: PullValue, tokens: string[]): boolean {
+    return tokens.length === 0 || tokens.every(tok => pull.title.toLowerCase().indexOf(tok) > -1 || pull.repo.indexOf(tok) > -1)
 }
 
 export default function Dashboard() {
-    const connections = useConnections()
-    const sections = useSections()
-    const { isStarred } = useStars()
+    const sections = useSections();
+    const pulls = usePulls();
 
-    const [ search, setSearch ] = useState("")
-    const [ isEditing, setEditing ] = useState(false)
-    const [ searchParams, setSearchParams ] = useSearchParams()
-
+    const [ search, setSearch ] = useState("");
+    const [ isEditing, setEditing ] = useState(false);
+    const [ isRefreshing, setRefreshing ] = useState(false);
+    const [ searchParams, setSearchParams ] = useSearchParams();
     const [ newSection, setNewSection ] = useState<SectionValue>({label: "", search: "", notified: false});
 
-    const pulls = usePulls(sections.data, connections.data)
-
-    const refetchAll = useCallback(async () => {
-		await Promise.all(pulls.map(res => res.refetch()));
-	}, [pulls]);
-
-    const isFetching = pulls.some(res => res.isFetching)
-
     const tokens = search.split(" ").map(tok => tok.toLowerCase())
+    const pullsBySection = sections.data.map(section => pulls.data
+            .filter(pull => pull.sections.indexOf(section.id) > -1)
+            .filter(v => matches(v, tokens)));
+
+    const worker = getWorker();
+
+    const handleRefresh = () => {
+        setRefreshing(true);
+        worker.refresh()
+            .then(() => setRefreshing(false))
+            .catch(console.error);
+    }
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
@@ -64,9 +66,9 @@ export default function Dashboard() {
                 <Button text="New section" icon="plus" onClick={() => setEditing(true)}/>
                 <Button
                     icon="refresh"
-                    disabled={isFetching}
-                    loading={isFetching}
-                    onClick={refetchAll}/>
+                    disabled={isRefreshing}
+                    loading={isRefreshing}
+                    onClick={handleRefresh}/>
             </div>
             <SectionDialog
                 newSection={newSection}
@@ -75,15 +77,13 @@ export default function Dashboard() {
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
             {sections.isLoaded && sections.data.map((section, idx) => {
-                const data = pulls.slice(idx * connections.data.length, (idx + 1) * connections.data.length)
                 return (
                     <DashboardSection
                         key={idx}
                         section={section}
-                        isLoading={data.some(res => res.isLoading)}
-                        pulls={data.flatMap(res => (res.data?.pulls || []).filter(v => matches(v, tokens)))}
-                        isStarred={isStarred}
-                        hasMore={data.some(res => res.data?.hasMore)}
+                        isLoading={pulls.isLoading}
+                        pulls={pullsBySection[idx]}
+                        hasMore={false}
                         isFirst={idx === 0}
                         isLast={idx === sections.data.length - 1}
                         onChange={saveSection}

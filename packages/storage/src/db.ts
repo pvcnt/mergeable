@@ -1,14 +1,22 @@
-import type { Connection, Section, Star } from "@repo/types";
+import type { Connection, Pull, Section, Star } from "@repo/types";
 import Dexie, { type EntityTable } from "dexie";
 
 export const db = new Dexie("webapp") as Dexie & {
+    // Config.
     connections: EntityTable<Connection, "id">;
     sections: EntityTable<Section, "id">;
     stars: EntityTable<Star, "uid">;
+
+    // Cache.
+    pulls: EntityTable<Pull, "uid">,
 };
 
 db.version(1).stores({
-    connections: "++id, label, host, baseUrl, auth, viewer, orgs",
-    sections: "++id, label, search, notified, position",
+    // Config.
+    connections: "++id",
+    sections: "++id, position",
     stars: "uid",
+
+    // Cache.
+    pulls: "uid, host, repo, number, starred, *sections",
 });

@@ -1,16 +1,14 @@
-import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core"
-import ReactTimeAgo from "react-time-ago"
+import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core";
+import ReactTimeAgo from "react-time-ago";
 
-import { Pull, PullState } from "@repo/types"
-import IconWithTooltip from "./IconWithTooltip"
-import { computeSize } from "../lib/size"
+import { type Pull, PullState } from "@repo/types";
+import IconWithTooltip from "./IconWithTooltip";
+import { computeSize } from "../lib/size";
 
 import styles from "./PullTable.module.scss";
 
-
 export type Props = {
     pulls: Pull[],
-    isStarred: (v: Pull) => boolean,
     onStar: (v: Pull) => void,
 }
 
@@ -21,10 +19,10 @@ const formatDate = (d: string)  => {
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric'
-    })
+    });
 }
 
-export default function PullTable({pulls, isStarred, onStar}: Props) {
+export default function PullTable({ pulls, onStar }: Props) {
     if (pulls.length === 0) {
         return <p className={styles.empty}>No results</p>;
     }
@@ -44,7 +42,7 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
                 {pulls.map((pull, idx) => (
                     <tr key={idx} onClick={() => window.location.href = pull.url}>
                         <td onClick={(e) => { onStar(pull); e.stopPropagation(); }}>
-                            {isStarred(pull)
+                            {pull.starred
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
                                 : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
                         </td>
@@ -79,7 +77,7 @@ export default function PullTable({pulls, isStarred, onStar}: Props) {
                         <td>
                             <div className={styles.title}>{pull.title}</div>
                             <div className={styles.source}>
-                                {pull.host}:{pull.repository} #{pull.number}
+                                {pull.host}:{pull.repo} #{pull.number}
                             </div>
                         </td>
                     </tr>

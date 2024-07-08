@@ -1,42 +1,37 @@
-import { useCallback } from "react";
+import { useState } from "react";
 import { Button, Card, H3, Spinner } from "@blueprintjs/core";
-
 import PullTable from "@/components/PullTable";
-import { usePulls } from "../queries";
-import { toggleStar, useConnections, useSections, useStars } from "../db";
+import { toggleStar, usePulls } from "@/db";
+import { getWorker } from "@/worker/client";
 
 import styles from "./stars.module.scss";
 
 export default function Stars() {
-    const connections = useConnections()
-    const sections = useSections()
-    const { isStarred } = useStars()
-    const results = usePulls(sections.data, connections.data)
+    const [ isRefreshing, setRefreshing ] = useState(false);
+    const pulls = usePulls({starred: 1});
+    const worker = getWorker();
 
-    const isLoading = results.some(res => res.isLoading)
-    const isFetching = results.some(res => res.isFetching)
-
-    const pulls = results.flatMap(res => res.data?.pulls || []).filter(pull => isStarred(pull))
-
-    const refetchAll = useCallback(async () => {
-		await Promise.all(results.map(res => res.refetch()));
-	}, [results]);
-
+    const handleRefresh = () => {
+        setRefreshing(true);
+        worker.refresh()
+            .then(() => setRefreshing(false))
+            .catch(console.error);
+    }
     return (
         <>
             <div className={styles.header}>
                 <H3 className={styles.title}>Starred pull requests</H3>
                 <Button
                     icon="refresh"
-                    disabled={isFetching}
-                    loading={isFetching}
-                    onClick={refetchAll}/>
+                    disabled={isRefreshing}
+                    loading={isRefreshing}
+                    onClick={handleRefresh}/>
             </div>
 
             <Card>
-            {isLoading 
+            {pulls.isLoading 
                 ? <Spinner/>
-                : <PullTable pulls={pulls} isStarred={isStarred} onStar={toggleStar}/>}
+                : <PullTable pulls={pulls.data} onStar={toggleStar}/>}
             </Card>
         </>
     )
