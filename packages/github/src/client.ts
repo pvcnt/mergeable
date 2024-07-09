@@ -98,6 +98,12 @@ export async function getPulls(connection: Connection, search: string): Promise<
     q.set("sort", "updated");
     q.setAll("org", connection.orgs);
 
+    if (!q.has("archived")) {
+        // Unless the query explicitely allows PRs from archived repositories, exclude
+        // them by default as we cannot act on them anymore.
+        q.set("archived", "false");
+    }
+
     if (q.has("org") && q.has("repo")) {
         // GitHub API does not seem to support having both terms with an "org"
         // and "repo" qualifier in a given query. In this situation, the term 
