@@ -33,10 +33,15 @@ async function syncPullsOnce() {
         }))
     ).flat();
 
-    const pulls = Object.values(groupBy(rawPulls, pull => pull.uid))
+    const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
         .map(vs => ({ ...vs[0], sections: vs.flatMap(v => v.sections) }));
 
     await db.pulls.bulkPut(pulls);
+
+    // Remove extraneous items, i.e., pull requests that are not anymore included in any sections.
+    const keys = new Set(await db.pulls.toCollection().primaryKeys());
+    pulls.forEach(pull => keys.delete(pull.uid));
+    await db.pulls.bulkDelete(Array.from(keys));
 
     console.log(`Fetched ${pulls.length} pull requests [${connections.length} connections, ${sections.length} sections]`);
 }
