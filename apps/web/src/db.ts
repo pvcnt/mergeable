@@ -27,7 +27,7 @@ const defaultSections: Section[] = [
     {
         id: "",
         label: "Needs your review",
-        search: "is:open review-requested:@me -review:approved -reviewed-by:@me",
+        search: "is:open review-requested:@me -review:approved -reviewed-by:@me draft:false",
         notified: true,
         position: 0,
     },
