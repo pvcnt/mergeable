@@ -26,6 +26,14 @@ export default function PullTable({ pulls, onStar }: Props) {
     if (pulls.length === 0) {
         return <p className={styles.empty}>No results</p>;
     }
+    const handleClick = (e: React.MouseEvent, pull: Pull) => {
+        // Manually reproduce the behaviour of CTRL+click.
+        if (e.metaKey || e.ctrlKey) {
+            window.open(pull.url);
+        } else {
+            window.location.href = pull.url;
+        }
+    }
     return (
         <HTMLTable interactive className={styles.table}>
             <thead>
@@ -40,7 +48,7 @@ export default function PullTable({ pulls, onStar }: Props) {
             </thead>
             <tbody>
                 {pulls.map((pull, idx) => (
-                    <tr key={idx} onClick={() => window.location.href = pull.url}>
+                    <tr key={idx} onClick={(e) => handleClick(e, pull)}>
                         <td onClick={(e) => { onStar(pull); e.stopPropagation(); }}>
                             {pull.starred
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
