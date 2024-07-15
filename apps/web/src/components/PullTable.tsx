@@ -85,7 +85,7 @@ export default function PullTable({ pulls, onStar }: Props) {
                         <td>
                             <div className={styles.title}>{pull.title}</div>
                             <div className={styles.source}>
-                                {pull.host}:{pull.repo} #{pull.number}
+                                {pull.host}/{pull.repo} #{pull.number}
                             </div>
                         </td>
                     </tr>

@@ -11,6 +11,7 @@ import { sum } from 'remeda'
 import styles from "./App.module.scss";
 import { Card } from '@blueprintjs/core';
 import { getWorker } from './worker/client';
+import CommandBar from './components/CommandBar';
 
 export default function App() {
     const [isDark, setDark] = useState<boolean>(() => {
@@ -21,8 +22,7 @@ export default function App() {
     const sections = useSections();
     const pulls = usePulls();
 
-
-    getWorker();
+    const worker = getWorker();
 
     useEffect(() => {
         // Migrate connections from the legacy format.
@@ -60,7 +60,8 @@ export default function App() {
 
     return (
         <div className={clsx(styles.app, isDark && "bp5-dark")}>
-            <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)}/>
+            <CommandBar/>
+            <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)} onRefresh={worker.refresh} />
             <main className={styles.main}>
                 <div className={styles.content}>
                     {(connections.isLoaded && connections.data.length === 0) &&

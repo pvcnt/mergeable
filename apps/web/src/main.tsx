@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom'
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import TimeAgo from 'javascript-time-ago'
@@ -31,10 +31,14 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
+                element: <Navigate to="/inbox"/>,
+            },
+            {
+                path: "/inbox",
                 element: <Dashboard/>,
             },
             {
-                path: "/stars",
+                path: "/inbox/stars",
                 element: <Stars/>,
             },
             {

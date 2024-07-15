@@ -11,7 +11,7 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     gap: 0.5rem;
-    border-right: 1px solid $gray3;
+    border-right: 1px solid $gray5;
 }
 
 .logo {
@@ -21,4 +21,9 @@
 
 .bottom {
     margin-top: auto;
+}
+
+.separator {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
 }
