@@ -7,8 +7,10 @@ Indeed, the "[Pull Requests](https://github.com/pulls)" page is not customisable
 It comes with four tabs associated with pre-defined search queries, that we cannot change.
 Tabs are also inconvenient, as they requiring switching from one to another to see pull requests of interest.
 
-Mergeable attempts to fill this gap by providing a single dashboard showing all pull requests one is interesting in at a glance.
+Mergeable fills this gap by providing a single dashboard showing all pull requests one is interesting in at a glance.
 It even allows to track pull requests associated with different accounts and/or several instances of GitHub (e.g., GitHub Enterprise).
+
+![Screenshot](docs/screenshot.png)
 
 ## Features
 
@@ -17,6 +19,7 @@ Mergeable provides the following features:
 * Any number of GitHub instances can be connected (e.g., GitHub Enterprise).
 * Number of pending pull requests is shown in the page's title.
 * Local only, data is stored in your browser's storage.
+* Command bar (cmd+k), allowing to quickly navigate to a given pull request by its title.
 * Dark mode.
 
 You can use the demo instance hosted at [mergeable.pages.dev](https://mergeable.pages.dev/), or run your own instance.
