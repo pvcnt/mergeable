@@ -27,8 +27,8 @@ export default function PullTable({ pulls, onStar }: Props) {
         return <p className={styles.empty}>No results</p>;
     }
     const handleClick = (e: React.MouseEvent, pull: Pull) => {
-        // Manually reproduce the behaviour of CTRL+click.
-        if (e.metaKey || e.ctrlKey) {
+        // Manually reproduce the behaviour of CTRL+click or middle mouse button.
+        if (e.metaKey || e.ctrlKey || e.button == 1) {
             window.open(pull.url);
         } else {
             window.location.href = pull.url;
