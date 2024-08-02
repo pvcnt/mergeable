@@ -6,6 +6,7 @@ import { usePulls } from "@/db";
 
 type Props = {
     className?: string,
+    initialOpen?: boolean,
 }
 
 function highlightText(text: string, query: string) {
@@ -41,8 +42,8 @@ function escapeRegExpChars(text: string) {
     return text.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1");
 }
 
-export default function CommandBar({ className }: Props) {
-    const [ open, setOpen ] = useState(false);
+export default function CommandBar({ className, initialOpen }: Props) {
+    const [ open, setOpen ] = useState(initialOpen || false);
     const pulls = usePulls();
 
     const hotkeys: HotkeyConfig[] = useMemo(() => [
@@ -84,8 +85,8 @@ export default function CommandBar({ className }: Props) {
         if (exactMatch) {
             return normalizedTitle === normalizedQuery;
         } else {
-            const tokens = query.split(" ").map(tok => tok.trim()).filter(tok => tok.length > 0);
-            return tokens.every(tok => pull.title.indexOf(tok) > -1);
+            const tokens = normalizedQuery.split(" ").map(tok => tok.trim()).filter(tok => tok.length > 0);
+            return tokens.every(tok => normalizedTitle.indexOf(tok) > -1);
         }
     }
 
@@ -95,6 +96,7 @@ export default function CommandBar({ className }: Props) {
                 inputProps={{
                     leftIcon: "search",
                     placeholder: "Search pull requests",
+                    "aria-label": "Search pull requests",
                 }}
                 itemRenderer={itemRenderer}
                 itemPredicate={itemPredicate}

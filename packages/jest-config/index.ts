@@ -7,6 +7,7 @@ const defaultConfig: Config = {
   testEnvironment: 'node',
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
+    '^\\@/(.*)$':  '<rootDir>/src/$1',
   },
 };
 
