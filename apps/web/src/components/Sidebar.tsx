@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Button, Icon, IconSize, Intent, Tooltip } from "@blueprintjs/core";
 import { NavLink } from "react-router-dom";
 import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16';
 
 import styles from "./Sidebar.module.scss";
 import ReactTimeAgo from "react-time-ago";
-import { useRefreshTime } from "@/db";
+import { useActivity } from "@/db";
 
 function SidebarLink({ title, icon, link }: { title: string, link: string, icon: BlueprintIcons_16Id }) {
     return (
@@ -28,12 +27,8 @@ type Props = {
 }
 
 export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
-  const [ refreshing, setRefreshing ] = useState(false);
-  const lastRefreshTime = useRefreshTime("syncPulls");
-  const handleRefresh = () => {
-    setRefreshing(true);
-    onRefresh().then(() => setRefreshing(false)).catch(console.error);
-  }
+  const refreshActivity = useActivity("syncPulls");
+  const handleRefresh = () => onRefresh().catch(console.error);
   return (
     <div className={styles.sidebar}>
       <img src="/logo.svg" height="30" className={styles.logo}/>
@@ -42,8 +37,8 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
 
       <div className={styles.separator}/>
 
-      <Tooltip content={lastRefreshTime && <span>Refreshed <ReactTimeAgo date={lastRefreshTime} tooltip={false} timeStyle="round"/></span>}>
-        <Button large onClick={handleRefresh} loading={refreshing} disabled={refreshing} intent={Intent.PRIMARY} outlined>
+      <Tooltip content={refreshActivity && <span>Refreshed <ReactTimeAgo date={refreshActivity.refreshTime} tooltip={false} timeStyle="round"/></span>}>
+        <Button large onClick={handleRefresh} loading={refreshActivity?.running} disabled={refreshActivity?.running} intent={Intent.PRIMARY} outlined>
           <Icon icon="refresh" size={IconSize.LARGE}/>
         </Button>
       </Tooltip>

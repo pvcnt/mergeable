@@ -60,7 +60,7 @@ test("db should save a pull", async () => {
 });
 
 test("db should save an activity", async () => {
-    const activity: Activity = { method: "syncViewers", refreshTime: new Date() };
+    const activity: Activity = { name: "syncViewers", running: false, refreshTime: new Date() };
     const id = await db.activities.add(activity);
     await expect(db.activities.get(id)).resolves.toEqual(activity);
 });

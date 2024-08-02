@@ -15,24 +15,33 @@ function syncViewers() {
         .catch(console.error);
 }
 
-async function syncViewersOnce(force: boolean = false): Promise<void> {
-    const activity = await db.activities.get("syncViewers");
-    if (!force && !shouldRefresh(activity?.refreshTime, syncPullsIntervalMillis)) {
-        console.log("Not syncing viewers now");
+async function executeActivity(name: string, intervalMillis: number, force: boolean, fn: () => Promise<void>): Promise<void> {
+    const activity = await db.activities.get(name);
+    if (!force && activity !== undefined && activity.refreshTime <= new Date(Date.now() - intervalMillis)) {
+        console.log(`Not running ${name} now`);
         return;
     }
-    const connections = await db.connections.toArray();
-    for (const connection of connections) {
-        const viewer = await getViewer(connection);
-        await db.connections.update(connection, { viewer });
-    }
-    
     if (activity === undefined) {
-        await db.activities.add({ method: "syncViewers", refreshTime: new Date() });
+        await db.activities.add({ name, running: true, refreshTime: new Date(0) });
     } else {
-        await db.activities.update("syncViewers", { refreshTime: new Date() });
+        await db.activities.update(name, { running: true });
     }
-    console.log(`Synced ${connections.length} connections`);
+    try {
+        await fn();
+    } finally {
+        await db.activities.update(name, { running: false, refreshTime: new Date() });
+    }
+}
+
+async function syncViewersOnce(force: boolean = false): Promise<void> {
+    await executeActivity("syncViewers", syncViewersIntervalMillis, force, async () => {
+        const connections = await db.connections.toArray();
+        for (const connection of connections) {
+            const viewer = await getViewer(connection);
+            await db.connections.update(connection, { viewer });
+        }
+        console.log(`Synced ${connections.length} connections`);
+    });
 }
 
 function syncPulls() {
@@ -42,49 +51,37 @@ function syncPulls() {
 }
 
 async function syncPullsOnce(force: boolean = false): Promise<void> {
-    const activity = await db.activities.get("syncPulls");
-    if (!force && !shouldRefresh(activity?.refreshTime, syncPullsIntervalMillis)) {
-        console.log("Not syncing pull requests now");
-        return;
-    }
-    const connections = await db.connections.toArray();
-    const sections = await db.sections.toArray();
-    const stars = new Set((await db.stars.toArray()).map(star => star.uid));
+    await executeActivity("syncPulls", syncPullsIntervalMillis, force, async () => {
+        const connections = await db.connections.toArray();
+        const sections = await db.sections.toArray();
+        const stars = new Set((await db.stars.toArray()).map(star => star.uid));
 
-    const rawPulls: Pull[] = (
-        await Promise.all(sections.flatMap(section => {
-            return connections.map(async connection => {
-                const pulls = await getPulls(connection, section.search);
-                return pulls.map(pull => {
-                    const sections = [section.id];
-                    const starred = stars.has(pull.uid) ? 1 : 0;
-                    return { ...pull, sections, starred };
+        const rawPulls: Pull[] = (
+            await Promise.all(sections.flatMap(section => {
+                return connections.map(async connection => {
+                    const pulls = await getPulls(connection, section.search);
+                    return pulls.map(pull => {
+                        const sections = [section.id];
+                        const starred = stars.has(pull.uid) ? 1 : 0;
+                        return { ...pull, sections, starred };
+                    });
                 });
-            });
-        }))
-    ).flat();
+            }))
+        ).flat();
 
-    // Deduplicate pull requests present in multiple sections.
-    const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
-        .map(vs => ({ ...vs[0], sections: vs.flatMap(v => v.sections) }));
+        // Deduplicate pull requests present in multiple sections.
+        const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
+            .map(vs => ({ ...vs[0], sections: vs.flatMap(v => v.sections) }));
 
-    await db.pulls.bulkPut(pulls);
+        await db.pulls.bulkPut(pulls);
 
-    // Remove extraneous items, i.e., pull requests that are not anymore included in any sections.
-    const keys = new Set(await db.pulls.toCollection().primaryKeys());
-    pulls.forEach(pull => keys.delete(pull.uid));
-    await db.pulls.bulkDelete(Array.from(keys));
+        // Remove extraneous items, i.e., pull requests that are not anymore included in any sections.
+        const keys = new Set(await db.pulls.toCollection().primaryKeys());
+        pulls.forEach(pull => keys.delete(pull.uid));
+        await db.pulls.bulkDelete(Array.from(keys));
 
-    if (activity === undefined) {
-        await db.activities.add({ method: "syncPulls", refreshTime: new Date() });
-    } else {
-        await db.activities.update("syncPulls", { refreshTime: new Date() });
-    }
-    console.log(`Synced ${pulls.length} pull requests [${connections.length} connections, ${sections.length} sections]`);
-}
-
-function shouldRefresh(lastRefreshTime: Date|undefined, intervalMillis: number) {
-    return lastRefreshTime === undefined || lastRefreshTime <= new Date(Date.now() - intervalMillis);
+        console.log(`Synced ${pulls.length} pull requests`);
+    });
 }
 
 export type Api = {

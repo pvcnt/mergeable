@@ -27,9 +27,8 @@ export async function deleteConnection(value: Connection): Promise<void> {
     await db.connections.delete(value.id).catch(console.error)
 }
 
-export const useRefreshTime = (method: string) => {
-    const data = useLiveQuery(() => db.activities.get(method));
-    return data && data.refreshTime;
+export const useActivity = (name: string) => {
+    return useLiveQuery(() => db.activities.get(name));
 }
 
 const defaultSections: Section[] = [
