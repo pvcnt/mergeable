@@ -1,9 +1,10 @@
 import { test, expect } from "@jest/globals";
-import { PullState } from "@repo/types";
+import { Pull, PullState } from "@repo/types";
 import { computeSize } from "./size";
 
 test("computeSize returns size of a pull request", () => {
-    const pull = {
+    const pull: Pull = {
+        uid: "1:1",
         host: "github.com",
         repo: "pvcnt/mergeable",
         number: 1,
@@ -14,8 +15,10 @@ test("computeSize returns size of a pull request", () => {
         url: "https://github.com/pvcnt/mergeable/1",
         additions: 0,
         deletions: 0,
-        author: {name: "pvcnt", avatarUrl: ""},
+        author: { uid: "1:1", name: "pvcnt", avatarUrl: "" },
         comments: 0,
+        starred: 0,
+        sections: [],
     };
 
     expect(computeSize({...pull, additions: 1})).toBe("XS");

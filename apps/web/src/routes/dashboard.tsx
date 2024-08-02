@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "@/components/SectionDialog";
 import DashboardSection from "@/components/DashboardSection";
-import { SectionValue } from "@repo/types";
+import { SectionProps } from "@repo/types";
 import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "@/db";
 import Navbar from "@/components/Navbar";
 
@@ -14,7 +14,7 @@ export default function Dashboard() {
 
     const [ isEditing, setEditing ] = useState(false);
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const [ newSection, setNewSection ] = useState<SectionValue>({label: "", search: "", notified: false});
+    const [ newSection, setNewSection ] = useState<SectionProps>({label: "", search: "", notified: false});
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function Dashboard() {
         }
     }, [searchParams]);
 
-    const handleSubmit = (value: SectionValue) => {
+    const handleSubmit = (value: SectionProps) => {
         saveSection({...value, id: "", position: sections.data.length});
         // Remove sharing parameters from URL if they were defined once the new section
         // has been created from those parameters.

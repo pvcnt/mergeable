@@ -1,10 +1,11 @@
 import { Octokit } from "@octokit/rest";
-import { Connection, ConnectionValue, PullState, PullValue, User } from "@repo/types";
+import { Connection, ConnectionProps, PullState, PullProps, Team, User, Profile } from "@repo/types";
 import { SearchQuery } from "./search";
 
-const LIMIT = 50;
+const MAX_PULLS_TO_FETCH = 50;
 
 type GHPull = {
+    id: string,
     number: number,
     title: string,
     state: string,
@@ -25,37 +26,57 @@ type GHPull = {
 }
 
 type GHUser = {
+    id: string,
     name: string,
     login: string,
     avatarUrl: string,
 }
 
-type RateLimit = {
-    limit: number,
-    cost: number,
-    remaining: number,
-    resetAt: number,
-}
-
-export async function getViewer(connection: ConnectionValue): Promise<User> {
+export async function getViewer(connection: Connection): Promise<Profile> {
     const client = createClient(connection);
-    const user = await client.rest.users.getAuthenticated()
-    return {name: user.data.login, avatarUrl: user.data.avatar_url};
+    const userResponse = await client.rest.users.getAuthenticated()
+    const user: User = {
+        uid: `${connection.id}:${userResponse.data.id}`,
+        name: userResponse.data.login,
+        avatarUrl: userResponse.data.avatar_url,
+    };
+    const teamsResponse = await client.paginate("GET /user/teams", { per_page: 100 });
+    const teams: Team[] = teamsResponse.map(obj => ({
+        uid: `${connection.id}:${obj.id}`,
+        name: obj.slug,
+    }));
+    return { user, teams };
 }
 
-export async function getPulls(connection: Connection, search: string): Promise<PullValue[]> {
+export async function getPulls(connection: Connection, search: string): Promise<PullProps[]> {
     const query = `query dashboard($search: String!) {
-        search(query: $search, type: ISSUE, first: ${LIMIT}) {
+        search(query: $search, type: ISSUE, first: ${MAX_PULLS_TO_FETCH}) {
           issueCount
           edges {
             node {
               ... on PullRequest {
+                id
                 number
                 title
                 author {
                   login
                   url
                   avatarUrl
+                  ... on Bot {
+                    id
+                  }
+                  ... on EnterpriseUserAccount {
+                    id
+                  }
+                  ... on Mannequin {
+                    id
+                  }
+                  ... on User {
+                    id
+                  }
+                  ... on Organization {
+                    id
+                  }
                 }
                 repository {
                   nameWithOwner
@@ -75,12 +96,6 @@ export async function getPulls(connection: Connection, search: string): Promise<
             }
           }
         }
-        rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-        }
     }`;
     type Edge = {
         node: GHPull,
@@ -90,7 +105,6 @@ export async function getPulls(connection: Connection, search: string): Promise<
             issueCount: number,
             edges: Edge[],
         },
-        rateLimit: RateLimit,
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
     const q = new SearchQuery(search);
@@ -119,6 +133,7 @@ export async function getPulls(connection: Connection, search: string): Promise<
     const client = createClient(connection);
     const data = await client.graphql<Data>(query, {search: q.toString()});
     return data.search.edges.map(edge => edge.node).map(pull => ({
+        uid: `${connection.id}:${pull.id}`,
         host: connection.host,
         repo: pull.repository.nameWithOwner,
         number: pull.number,
@@ -139,12 +154,13 @@ export async function getPulls(connection: Connection, search: string): Promise<
         deletions: pull.deletions,
         comments: pull.totalCommentsCount,
         author: {
+            uid: `${connection.id}:${pull.author.id}`,
             name: pull.author.login,
             avatarUrl: pull.author.avatarUrl,
         },
     }));
 }
 
-function createClient(connection: ConnectionValue): Octokit {
+function createClient(connection: ConnectionProps): Octokit {
     return new Octokit({auth: connection.auth, baseUrl: connection.baseUrl});
 }

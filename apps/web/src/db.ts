@@ -4,23 +4,32 @@ import type { Connection, Pull, Section } from "@repo/types";
 import { omit } from "remeda";
 
 // Defaults to populate after adding new fields.
-const connectionDefaults = {orgs: [], viewer: ""};
+const connectionDefaults = { orgs: [] };
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
     return { isLoaded: data !== undefined, data: data?.map(v => ({...connectionDefaults, ...v})) || [] };
 }
 
-export const saveConnection = (value: Connection) => {
+export async function saveConnection (value: Connection): Promise<void> {
     if (value.id.length === 0) {
-        db.connections.add(omit(value, ["id"])).catch(console.error);
+        return db.connections.add(omit(value, ["id"]))
+            .then(() => {})
+            .catch(console.error);
     } else {
-        db.connections.put(value).catch(console.error);
+        return db.connections.put(value)
+            .then(() => {})
+            .catch(console.error);
     }
 }
 
-export const deleteConnection = (value: Connection) => {
-    db.connections.delete(value.id).catch(console.error)
+export async function deleteConnection(value: Connection): Promise<void> {
+    await db.connections.delete(value.id).catch(console.error)
+}
+
+export const useRefreshTime = (method: string) => {
+    const data = useLiveQuery(() => db.activities.get(method));
+    return data && data.refreshTime;
 }
 
 const defaultSections: Section[] = [

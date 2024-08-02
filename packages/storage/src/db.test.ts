@@ -1,15 +1,18 @@
 import { test, expect } from "@jest/globals";
-import { db } from "./db";
-import { PullState } from "@repo/types";
+import { Activity, db } from "./db";
+import { Connection, Pull, PullState, Star } from "@repo/types";
 
 test("db should save a connection", async () => {
-    const connection = {
+    const connection: Connection = {
         id: "",
         label: "Connection",
         baseUrl: "https://api.github.com",
         host: "github.com",
         auth: "ghp_xxx",
-        viewer: "pvcnt",
+        viewer: {
+            user: { uid: "1:1", name: "pvcnt", avatarUrl: "" },
+            teams: [{ uid: "1:1", name: "test" }],
+        },
         orgs: ["apache", "kubernetes"],
     };
     const id = await db.connections.add(connection);
@@ -29,13 +32,14 @@ test("db should save a section", async () => {
 });
 
 test("db should save a star", async () => {
-    const star = { uid: "github.com,pvcnt/mergeable,1" };
+    const star: Star = { uid: "github.com,pvcnt/mergeable,1" };
     const id = await db.stars.add(star);
     await expect(db.stars.get(id)).resolves.toEqual(star);
 });
 
 test("db should save a pull", async () => {
-    const pull = {
+    const pull: Pull = {
+        uid: "1:1",
         host: "github.com",
         repo: "pvcnt/mergeable",
         number: 1,
@@ -46,14 +50,17 @@ test("db should save a pull", async () => {
         url: "https://github.com/pvcnt/mergeable/1",
         additions: 0,
         deletions: 0,
-        author: {name: "pvcnt", avatarUrl: ""},
+        author: { uid: "1:1", name: "pvcnt", avatarUrl: "" },
         comments: 0,
-
-        uid: "github.com,pvcnt/mergeable,1",
-        fetchedAt: new Date(),
         starred: 0,
         sections: ["1", "2"],
     };
     const id = await db.pulls.add(pull);
     await expect(db.pulls.get(id)).resolves.toEqual(pull);
+});
+
+test("db should save an activity", async () => {
+    const activity: Activity = { method: "syncViewers", refreshTime: new Date() };
+    const id = await db.activities.add(activity);
+    await expect(db.activities.get(id)).resolves.toEqual(activity);
 });

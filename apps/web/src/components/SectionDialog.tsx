@@ -2,15 +2,15 @@ import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGro
 import { useState } from "react";
 import { AppToaster } from "../lib/toaster"
 import ConfirmDialog from "./ConfirmDialog";
-import { SectionValue } from "@repo/types";
+import { SectionProps } from "@repo/types";
 
 type Props = {
     title: string,
     isOpen: boolean,
-    section?: SectionValue,
-    newSection?: SectionValue,
+    section?: SectionProps,
+    newSection?: SectionProps,
     onClose: () => void,
-    onSubmit: (v: SectionValue) => void,
+    onSubmit: (v: SectionProps) => void,
     onDelete?: () => void,
 }
 

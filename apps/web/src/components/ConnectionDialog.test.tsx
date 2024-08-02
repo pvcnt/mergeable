@@ -6,16 +6,16 @@ import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
 import { AppToaster } from "../lib/toaster";
-import { ConnectionValue } from "@repo/types";
+import { Connection, ConnectionProps } from "@repo/types";
 
 describe("connection dialog", () => {
-    const connection = {
+    const connection: Connection = {
         id: "1",
         label: "Label",
         baseUrl: "https://api.github.com",
         host: "github.com",
         auth: "ghp_foo",
-        viewer: "pvcnt",
+        viewer: { user: { uid: "1:1", name: "pvcnt", avatarUrl: "" }, teams: [] },
         orgs: ["pvcnt"],
     };
     let user: UserEvent|undefined;
@@ -36,8 +36,8 @@ describe("connection dialog", () => {
 
     test("be submitted", async () => {
         // GIVEN an empty dialog.
-        const state: {submitted?: ConnectionValue} = {submitted: undefined};
-        const handleSubmit = (v: ConnectionValue) => {
+        const state: {submitted?: ConnectionProps} = {submitted: undefined};
+        const handleSubmit = (v: ConnectionProps) => {
             state.submitted = v;
             return Promise.resolve();
         }
@@ -55,7 +55,7 @@ describe("connection dialog", () => {
         await clickButton("Submit");
 
         // THEN the form should be submitted with its current values.
-        expect(state.submitted).toEqual({label: "Some label", baseUrl: "https://api.github.com", auth: "ghp_foo", orgs: []});
+        expect(state.submitted).toEqual({label: "Some label", baseUrl: "https://api.github.com", host: "github.com", auth: "ghp_foo", orgs: []});
     });
 
     test("submit button is disabled before base URL input and token are filled", async () => {

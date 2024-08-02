@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent } from "@blueprintjs/core"
 import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
-import type { Connection, ConnectionValue } from "@repo/types";
+import type { ConnectionProps } from "@repo/types";
 import { isTruthy } from "remeda";
 import { AppToaster } from "../lib/toaster";
 
@@ -10,11 +10,21 @@ import OrgSelector from "./OrgSelector";
 type Props = {
     title: string,
     isOpen: boolean,
-    connection?: Connection,
+    connection?: ConnectionProps,
     onClose?: () => void,
-    onSubmit?: (v: ConnectionValue) => Promise<void>,
+    onSubmit?: (v: ConnectionProps) => Promise<void>,
     onDelete?: () => void,
     allowedUrls?: string[],
+}
+
+function getHost(baseUrl: string) {
+    if (!baseUrl.startsWith("https://") && !baseUrl.startsWith("http://")) {
+        throw new Error("Invalid URL");
+    }
+    const url = new URL(baseUrl);
+    // Special case to identify github.com's host. For GHE instances, the
+    // API is mounted under /api and not under a subdomain.
+    return (url.hostname == "api.github.com") ? "github.com" : url.hostname;
 }
 
 export default function ConnectionDialog({title, isOpen, connection, onClose, onSubmit, onDelete, allowedUrls}: Props) {
@@ -23,8 +33,10 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
     const [auth, setAuth] = useState("");
     const [orgs, setOrgs] = useState<string[]>([]);
     const [isDeleting, setDeleting] = useState(false);
+    const [isDisabled, setDisabled] = useState(false);
 
     const handleOpening = () => {
+        setDisabled(false);
         setLabel(connection ? connection.label : "");
         setBaseUrl(connection ? connection.baseUrl : allowedUrls ? allowedUrls[0] : "");
         setAuth(connection ? connection.auth : "");
@@ -32,8 +44,10 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
     };
     const handleSubmit = async () => {
         if (isFilled()) {
+            setDisabled(true);
+            const host = getHost(baseUrl);
             try {
-                onSubmit && await onSubmit({label, baseUrl, auth, orgs: orgs});
+                onSubmit && await onSubmit({ label, baseUrl, auth, orgs, host });
                 onClose && onClose();
             } catch (e) {
                 const message = `Something went wrong: ${(e as Error).message}`;
@@ -84,8 +98,8 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                 </DialogBody>
                 <DialogFooter actions={
                     <>
-                        <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isFilled()} />
-                        <Button text="Cancel" aria-label="Cancel" onClick={onClose} />
+                        <Button intent={Intent.PRIMARY} aria-label="Submit" text="Submit" onClick={handleSubmit} disabled={!isFilled() || isDisabled} />
+                        <Button text="Cancel" aria-label="Cancel" onClick={onClose} disabled={isDisabled} />
                     </>
                 }>
                     {connection && <Button intent={Intent.DANGER} text="Delete" aria-label="Delete" minimal onClick={() => setDeleting(true)} />}

@@ -1,33 +1,44 @@
+import { Profile } from "./user"
+
 /**
- * Values for a section, as provided by a user in a form or API.
+ * Properties for a section, as provided by a user in a form or API.
  */
-export type SectionValue = {
+export type SectionProps = {
     label: string,
     search: string,
     notified: boolean,
 }
 
-export type Section = SectionValue & {
+/**
+ * A section, as saved in the database.
+ */
+export type Section = SectionProps & {
     id: string,
     position: number,
 }
 
 /**
- * Values for a connection, as provided by a user in a form or API.
+ * Properties for a connection, as provided by a user in a form or API.
  */
-export type ConnectionValue = {
+export type ConnectionProps = {
     label: string,
     baseUrl: string,
+    host: string,
     auth: string,
     orgs: string[],
 }
 
-export type Connection = ConnectionValue & {
-    id: string,
-    host: string,
-    viewer: string,
+/**
+ * A connection, as saved in the database.
+ */
+export type Connection = ConnectionProps & {
+    id: string
+    viewer?: Profile
 }
 
+/**
+ * A star, as saved in the database.
+ */
 export type Star = {
-    uid: string,
+    uid: string
 }

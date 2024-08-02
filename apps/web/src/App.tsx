@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
-import localforage from "localforage"
 
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { saveConnection, useConnections, usePulls, useSections } from '@/db';
+import { useConnections, usePulls, useSections } from '@/db';
 import { sum } from 'remeda'
 
 import styles from "./App.module.scss";
@@ -23,20 +22,6 @@ export default function App() {
     const pulls = usePulls();
 
     const worker = getWorker();
-
-    useEffect(() => {
-        // Migrate connections from the legacy format.
-        if (connections.isLoaded && connections.data.length === 0) {
-            type LegacyConnection = {name?: string, host: string, baseUrl: string, auth: string};
-            type LegacyConfig = {connections: LegacyConnection[]};
-
-            localforage.getItem<LegacyConfig>("config").then(config => {
-                config && config.connections.forEach(v => {
-                    saveConnection({id: "", label: v.name || "", baseUrl: v.baseUrl, host: v.host, auth: v.auth, viewer: "", orgs: []})
-                })
-            }).catch(console.error)
-        }
-    }, [connections.isLoaded, connections.data.length]);
 
     useEffect(() => {
         // Write the isDark value to local storage whenever it changes
@@ -61,7 +46,7 @@ export default function App() {
     return (
         <div className={clsx(styles.app, isDark && "bp5-dark")}>
             <CommandBar/>
-            <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)} onRefresh={worker.refresh} />
+            <Sidebar isDark={isDark} onDarkChange={() => setDark(v => !v)} onRefresh={worker.refreshPulls} />
             <main className={styles.main}>
                 <div className={styles.content}>
                     {(connections.isLoaded && connections.data.length === 0) &&

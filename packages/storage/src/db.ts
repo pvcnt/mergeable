@@ -1,6 +1,11 @@
 import type { Connection, Pull, Section, Star } from "@repo/types";
 import Dexie, { type EntityTable } from "dexie";
 
+export type Activity = {
+    method: string
+    refreshTime: Date
+}
+
 export const db = new Dexie("webapp") as Dexie & {
     // Config.
     connections: EntityTable<Connection, "id">;
@@ -9,6 +14,7 @@ export const db = new Dexie("webapp") as Dexie & {
 
     // Cache.
     pulls: EntityTable<Pull, "uid">,
+    activities: EntityTable<Activity, "method">,
 };
 
 db.version(1).stores({
@@ -19,4 +25,5 @@ db.version(1).stores({
 
     // Cache.
     pulls: "uid, host, repo, number, starred, *sections",
+    activities: "method",
 });

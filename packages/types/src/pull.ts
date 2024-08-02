@@ -1,3 +1,5 @@
+import { User } from "./user"
+
 export type PullList = {
     total: number
     hasMore: boolean
@@ -12,7 +14,8 @@ export enum PullState {
     Closed,
 }
 
-export type PullValue = {
+export type PullProps = {
+    uid: string,
     host: string,
     repo: string,
     number: number,
@@ -27,14 +30,7 @@ export type PullValue = {
     author: User,
 }
 
-export type User = {
-    name: string,
-    avatarUrl: string,
-}
-
-export type Pull = PullValue & {
-    uid: string,
-    fetchedAt: Date,
+export type Pull = PullProps & {
     starred: number,  // boolean is not indexable.
     sections: string[],
 }
