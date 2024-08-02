@@ -110,7 +110,9 @@ export async function getPulls(connection: Connection, search: string): Promise<
     const q = new SearchQuery(search);
     q.set("type", "pr");
     q.set("sort", "updated");
-    q.setAll("org", connection.orgs);
+    if (connection.orgs.length > 0) {
+      q.setAll("org", connection.orgs);
+    }
 
     if (!q.has("archived")) {
         // Unless the query explicitely allows PRs from archived repositories, exclude
