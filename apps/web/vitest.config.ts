@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import path from "path";
 import { defineConfig } from "vitest/config";
 

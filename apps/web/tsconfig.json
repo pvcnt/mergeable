@@ -3,7 +3,7 @@
   "extends": "@repo/typescript-config/vite.json",
   "compilerOptions": {
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "types": ["node", "@testing-library/jest-dom"],
+    "types": ["@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"],
     }
