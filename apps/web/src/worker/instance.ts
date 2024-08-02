@@ -11,7 +11,7 @@ declare const self: SharedWorkerGlobalScope;
 
 function syncViewers() {
     syncViewersOnce()
-        .then(() => setInterval(syncPulls, syncViewersIntervalMillis))
+        .then(() => setInterval(syncViewers, syncViewersIntervalMillis))
         .catch(console.error);
 }
 
