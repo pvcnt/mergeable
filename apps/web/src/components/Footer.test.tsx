@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { render } from "@testing-library/react";
 import Footer from "./Footer";
 

@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { Activity, db } from "./db";
 import { Connection, Pull, PullState, Star } from "@repo/types";
 

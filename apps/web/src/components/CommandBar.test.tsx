@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { describe, expect, test, beforeAll, afterAll } from "@jest/globals";
+import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import { PullState } from "@repo/types";

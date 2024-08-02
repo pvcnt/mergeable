@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { Pull, PullState } from "@repo/types";
 import { computeSize } from "./size";
 
