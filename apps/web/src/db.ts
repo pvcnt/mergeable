@@ -99,16 +99,16 @@ export const useSections = () => {
     return { isLoaded, data: data || [] };
 }
 
-export const saveSection = (value: Section) => {
+export async function saveSection(value: Section): Promise<void> {
     if (value.id.length === 0) {
-        db.sections.add(omit(value, ["id"])).catch(console.error);
+        await db.sections.add(omit(value, ["id"]));
     } else {
-        db.sections.put(value).catch(console.error);
+        await db.sections.put(value);
     }
 }
 
-export const deleteSection = (value: Section) => {
-    db.sections.delete(value.id).catch(console.error);
+export async function deleteSection(value: Section): Promise<void> {
+    await db.sections.delete(value.id);
 }
 
 export const moveSectionUp = (value: Section) => {
