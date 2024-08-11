@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
-import type { Section, SectionProps } from "@repo/types";
+import { type Section, type SectionProps, defaultSectionProps } from "@repo/types";
 import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "../db";
 import Navbar from "../components/Navbar";
 import { getWorker } from "../worker/client";
@@ -15,7 +15,7 @@ export default function Dashboard() {
 
     const [ isEditing, setEditing ] = useState(false);
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const [ newSection, setNewSection ] = useState<SectionProps>({label: "", search: "", notified: false});
+    const [ newSection, setNewSection ] = useState(defaultSectionProps);
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
@@ -24,6 +24,7 @@ export default function Dashboard() {
                 label: searchParams.get("label") || "",
                 search: searchParams.get("search") || "",
                 notified: false,
+                attention: true,
             })
             setEditing(true)
         }

@@ -1,8 +1,8 @@
 import * as Comlink from "comlink";
 import { groupBy, unique } from "remeda";
 import { db } from "@repo/storage";
-import { splitQueries, type Pull } from "@repo/types";
-import { GitHubClient } from "@repo/github";
+import { splitQueries, type Pull, type Connection } from "@repo/types";
+import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
 const syncPullsIntervalMillis = 5 * 60_000;    // 5 minutes
@@ -57,16 +57,21 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
         const sections = await db.sections.toArray();
         const stars = new Set((await db.stars.toArray()).map(star => star.uid));
 
+        const connectionByPull: Record<string, Connection> = {};
         const rawPulls: Pull[] = (
             await Promise.all(sections.flatMap(section => {
                 return connections.flatMap(connection => {
                     const queries = splitQueries(section.search);
-                    return queries.map(async query => {
+                    return queries.flatMap(async query => {
                         const pulls = await client.getPulls(connection, query);
                         return pulls.map(pull => {
+                            connectionByPull[pull.uid] = connection;
                             const sections = [section.id];
                             const starred = stars.has(pull.uid) ? 1 : 0;
-                            return { ...pull, sections, starred };
+                            // The `attention` flag carries the fact that the pull request is
+                            // included in the attention set. It will be transformed later.
+                            const attention = section.attention ? 1 : 0;
+                            return { ...pull, sections, starred, attention };
                         });
                     });
                 });
@@ -75,15 +80,29 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
 
         // Deduplicate pull requests present in multiple sections.
         const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
-            .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
+            .map(vs => ({
+                 ...vs[0],
+                 sections: unique(vs.flatMap(v => v.sections)),
+                 // The `attention` flag carries the fact that the pull request is
+                 // included in the attention set. It will be transformed later.
+                 attention: vs.some(p => p.attention) ? 1 : 0,
+            }));
+        
+        
+        // Compute whether pull requests are in the attention set after they have been deduplicated.
+        // We rely on the previously computed `attention` flag, which indicates whether the
+        // pull request is included in the attention set.
+        pulls.forEach(async pull => {
+            pull.attention = pull.attention && (await isInAttentionSet(client, connectionByPull[pull.uid], pull)) ? 1 : 0;
+        });
 
-        // Upsert pull requests...
+        // Remove pull requests that are not anymore included in any sections...
+        const keysToRemove = new Set(await db.pulls.toCollection().primaryKeys());
+        pulls.forEach(pull => keysToRemove.delete(pull.uid));
+        await db.pulls.bulkDelete(Array.from(keysToRemove));
+
+        // ... then add/update all other pull requests.
         await db.pulls.bulkPut(pulls);
-
-        // ... and remove pull requests that are not anymore included in any sections.
-        const keys = new Set(await db.pulls.toCollection().primaryKeys());
-        pulls.forEach(pull => keys.delete(pull.uid));
-        await db.pulls.bulkDelete(Array.from(keys));
 
         console.log(`Synced ${pulls.length} pull requests`);
     });

@@ -7,6 +7,7 @@ export type SectionProps = {
     label: string,
     search: string,
     notified: boolean,
+    attention: boolean,
 }
 
 /**
@@ -54,6 +55,11 @@ export type Section = SectionProps & {
     id: string,
     position: number,
 }
+
+/**
+ * Default properties for a new section.
+ */
+export const defaultSectionProps: SectionProps = { label: "", search: "", notified: false, attention: true };
 
 /**
  * Properties for a connection, as provided by a user in a form or API.

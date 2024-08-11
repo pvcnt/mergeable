@@ -1,4 +1,4 @@
-import { User } from "./user"
+import { Team, User } from "./user"
 
 export type PullList = {
     total: number
@@ -28,9 +28,13 @@ export type PullProps = {
     deletions: number,
     comments: number,
     author: User,
+    requestedReviewers: User[],
+    requestedTeams: Team[],
+    reviewers: User[],
 }
 
 export type Pull = PullProps & {
-    starred: number,  // boolean is not indexable.
+    starred: number,    // boolean is not indexable.
     sections: string[],
+    attention: number,  // boolean is not indexable.
 }

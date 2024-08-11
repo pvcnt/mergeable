@@ -15,8 +15,12 @@ export function mockPull(props?: Partial<Pull>): Pull {
         deletions: 0,
         author: { name: "pvcnt", avatarUrl: "" },
         comments: 0,
+        requestedReviewers: [],
+        requestedTeams: [],
+        reviewers: [],
         starred: 0,
         sections: [],
+        attention: 0,
         ...props,
     };
 }
@@ -28,6 +32,7 @@ export function mockSection(props?: Partial<Section>): Section {
         search: "author:@me",
         notified: false,
         position: 0,
+        attention: true,
         ...props,
     };
 }

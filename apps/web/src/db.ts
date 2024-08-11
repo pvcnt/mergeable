@@ -5,6 +5,7 @@ import { omit } from "remeda";
 
 // Defaults to populate after adding new fields.
 const connectionDefaults = { orgs: [] };
+const sectionDefaults = { attention: false };
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
@@ -38,6 +39,7 @@ const defaultSections: Section[] = [
         search: "is:open -author:@me review-requested:@me ; is:open -author:@me involves:@me",
         notified: true,
         position: 0,
+        attention: true,
     },
     {
         id: "",
@@ -45,13 +47,15 @@ const defaultSections: Section[] = [
         search: "is:open author:@me draft:false",
         notified: true,
         position: 1,
+        attention: true,
     },
     {
         id: "",
         label: "Draft reviews",
         search: "is:open author:@me draft:true",
         notified: false,
-        position: 5,
+        position: 2,
+        attention: false,
     }
 ];
 
@@ -74,7 +78,7 @@ export const useSections = () => {
         }).catch(console.error);
     }
 
-    return { isLoaded, data: data || [] };
+    return { isLoaded, data: data?.map(v => ({...sectionDefaults, ...v})) || [] };
 }
 
 export async function saveSection(value: Section): Promise<void> {
