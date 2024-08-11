@@ -4,7 +4,7 @@ import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
 import { AppToaster } from "../lib/toaster";
 import type { ConnectionProps } from "@repo/types";
-import { mockConnection } from "../../../../packages/testing/src";
+import { mockConnection } from "@repo/testing";
 
 describe("connection dialog", () => {
     let user: UserEvent|undefined;

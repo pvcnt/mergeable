@@ -1,17 +1,16 @@
 import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import { db } from "@repo/storage";
-import CommandBar from "./CommandBar";
 import { HotkeysProvider } from "@blueprintjs/core";
-import { mockPull } from "../../../../packages/testing/src";
+import { db } from "@repo/storage";
+import { mockPull } from "@repo/testing";
+import CommandBar from "./CommandBar";
 
 describe("command bar", () => {
     let user: UserEvent|undefined;
 
     beforeAll(async () => {
         user = userEvent.setup();
-
         await db.pulls.add(mockPull({ uid: "1:1", title: "Some title" }));
         await db.pulls.add(mockPull({ uid: "1:2", title: "Another title" }));
     })

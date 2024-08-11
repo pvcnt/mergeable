@@ -5,10 +5,12 @@ import { omit } from "remeda";
 
 // Defaults to populate after adding new fields.
 const connectionDefaults = { orgs: [] };
+const sectionDefaults = { attention: false };
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
-    return { isLoaded: data !== undefined, data: data?.map(v => ({...connectionDefaults, ...v})) || [] };
+    const isLoaded = data !== undefined;
+    return { isLoaded, data: data?.map(v => ({...connectionDefaults, ...v})) || [] };
 }
 
 export async function saveConnection (value: Connection): Promise<void> {
@@ -34,45 +36,27 @@ export const useActivity = (name: string) => {
 const defaultSections: Section[] = [
     {
         id: "",
-        label: "Needs your review",
-        search: "is:open review-requested:@me -review:approved -reviewed-by:@me draft:false",
+        label: "Incoming reviews",
+        search: "is:open involves:@me draft:false -author:@me",
         notified: true,
         position: 0,
+        attention: true,
     },
     {
         id: "",
-        label: "Changes requested",
-        search: "is:open author:@me review:changes_requested",
+        label: "Outgoing reviews",
+        search: "is:open author:@me draft:false",
         notified: true,
         position: 1,
+        attention: true,
     },
     {
         id: "",
-        label: "Approved",
-        search: "is:open author:@me review:approved",
-        notified: false,
-        position: 2,
-    },
-    {
-        id: "",
-        label: "Waiting for reviewers",
-        search: "is:open author:@me review:none draft:false",
-        notified: false,
-        position: 3,
-    },
-    {
-        id: "",
-        label: "Waiting for the author",
-        search: "is:open review-requested:@me review:changes_requested",
-        notified: false,
-        position: 4,
-    },
-    {
-        id: "",
-        label: "Draft",
+        label: "Draft reviews",
         search: "is:open author:@me draft:true",
         notified: false,
-        position: 5,
+        position: 2,
+        attention: false,
     }
 ];
 
@@ -95,7 +79,7 @@ export const useSections = () => {
         }).catch(console.error);
     }
 
-    return { isLoaded, data: data || [] };
+    return { isLoaded, data: data?.map(v => ({...sectionDefaults, ...v})) || [] };
 }
 
 export async function saveSection(value: Section): Promise<void> {
