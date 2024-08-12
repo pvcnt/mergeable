@@ -81,6 +81,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -191,6 +194,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@repo/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -206,6 +212,12 @@ importers:
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.1.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
+
+  packages/testing:
+    dependencies:
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
 
   packages/types:
     devDependencies:
