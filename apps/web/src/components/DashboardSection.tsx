@@ -1,7 +1,7 @@
 import { Button, Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core"
 import { useState } from "react"
 import SectionDialog from "./SectionDialog";
-import { Pull, Section } from "@repo/types";
+import type { Pull, Section } from "@repo/types";
 import PullTable from "./PullTable";
 
 import styles from "./DashboardSection.module.scss";

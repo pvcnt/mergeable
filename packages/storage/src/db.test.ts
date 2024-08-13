@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import { Activity, db } from "./db";
-import { Star } from "@repo/types";
+import type { Star } from "@repo/types";
 import { mockConnection, mockSection, mockPull } from "@repo/testing";
 
 test("db should save a connection", async () => {

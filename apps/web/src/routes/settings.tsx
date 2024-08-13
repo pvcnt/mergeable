@@ -5,7 +5,7 @@ import ConnectionTable from "../components/ConnectionTable"
 import { getWorker } from "../worker/client"
 import { deleteConnection, saveConnection, useConnections } from "../db"
 import { isTruthy } from "remeda"
-import { Connection, ConnectionProps } from "@repo/types"
+import type { Connection, ConnectionProps } from "@repo/types"
 
 import styles from "./settings.module.scss";
 
