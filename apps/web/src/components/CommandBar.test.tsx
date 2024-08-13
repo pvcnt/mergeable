@@ -1,10 +1,10 @@
 import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import { PullState } from "@repo/types";
 import { db } from "@repo/storage";
 import CommandBar from "./CommandBar";
 import { HotkeysProvider } from "@blueprintjs/core";
+import { mockPull } from "../../../../packages/testing/src";
 
 describe("command bar", () => {
     let user: UserEvent|undefined;
@@ -12,23 +12,8 @@ describe("command bar", () => {
     beforeAll(async () => {
         user = userEvent.setup();
 
-        const pull = {
-            host: "github.com",
-            repo: "pvcnt/mergeable",
-            number: 1,
-            state: PullState.Approved,
-            createdAt: "now",
-            updatedAt: "now",
-            url: "https://github.com/pvcnt/mergeable/1",
-            additions: 0,
-            deletions: 0,
-            author: { uid: "1:1", name: "pvcnt", avatarUrl: "" },
-            comments: 0,
-            starred: 0,
-            sections: ["1", "2"],
-        };
-        await db.pulls.add({ ...pull, uid: "1:1", title: "Some title" });
-        await db.pulls.add({ ...pull, uid: "1:2", title: "Another title" });
+        await db.pulls.add(mockPull({ uid: "1:1", title: "Some title" }));
+        await db.pulls.add(mockPull({ uid: "1:2", title: "Another title" }));
     })
 
     afterAll(async () => await db.pulls.clear());

@@ -1,16 +1,17 @@
 import * as Comlink from "comlink";
 import { groupBy } from "remeda";
-import { getPulls, getViewer } from "@repo/github";
 import { db } from "@repo/storage";
 import type { Pull } from "@repo/types";
+import { GitHubClient } from "@repo/github";
+import { gitHubClient } from "../github";
 
 const syncPullsIntervalMillis = 5 * 60_000;    // 5 minutes
 const syncViewersIntervalMillis = 60 * 60_000; // 1 hour
 
 declare const self: SharedWorkerGlobalScope;
 
-function syncViewers() {
-    syncViewersOnce()
+function syncViewers(client: GitHubClient) {
+    syncViewersOnce(client)
         .then(() => setInterval(syncViewers, syncViewersIntervalMillis))
         .catch(console.error);
 }
@@ -33,24 +34,24 @@ async function executeActivity(name: string, intervalMillis: number, force: bool
     }
 }
 
-async function syncViewersOnce(force: boolean = false): Promise<void> {
+export async function syncViewersOnce(client: GitHubClient, force: boolean = false): Promise<void> {
     await executeActivity("syncViewers", syncViewersIntervalMillis, force, async () => {
         const connections = await db.connections.toArray();
         for (const connection of connections) {
-            const viewer = await getViewer(connection);
+            const viewer = await client.getViewer(connection);
             await db.connections.update(connection, { viewer });
         }
         console.log(`Synced ${connections.length} connections`);
     });
 }
 
-function syncPulls() {
-    syncPullsOnce()
+function syncPulls(client: GitHubClient) {
+    syncPullsOnce(client)
         .then(() => setInterval(syncPulls, syncPullsIntervalMillis))
         .catch(console.error);
 }
 
-async function syncPullsOnce(force: boolean = false): Promise<void> {
+export async function syncPullsOnce(client: GitHubClient, force: boolean = false): Promise<void> {
     await executeActivity("syncPulls", syncPullsIntervalMillis, force, async () => {
         const connections = await db.connections.toArray();
         const sections = await db.sections.toArray();
@@ -59,7 +60,7 @@ async function syncPullsOnce(force: boolean = false): Promise<void> {
         const rawPulls: Pull[] = (
             await Promise.all(sections.flatMap(section => {
                 return connections.map(async connection => {
-                    const pulls = await getPulls(connection, section.search);
+                    const pulls = await client.getPulls(connection, section.search);
                     return pulls.map(pull => {
                         const sections = [section.id];
                         const starred = stars.has(pull.uid) ? 1 : 0;
@@ -91,13 +92,13 @@ export type Api = {
 
 self.addEventListener("connect", (event: MessageEvent) => {
     // Start background sync with GitHub.
-    syncViewers();
-    syncPulls();
+    syncViewers(gitHubClient);
+    syncPulls(gitHubClient);
 
     // Expose an API to our clients.
     const api: Api = {
-        refreshPulls: () => syncPullsOnce(true),
-        refreshViewers: () => syncViewersOnce(true),
+        refreshPulls: () => syncPullsOnce(gitHubClient, true),
+        refreshViewers: () => syncViewersOnce(gitHubClient, true),
     };
     Comlink.expose(api, event.ports[0]);
 });

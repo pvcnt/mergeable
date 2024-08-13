@@ -1,0 +1,24 @@
+{
+  "name": "@repo/testing",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "default": "./build/index.js",
+      "types": "./build/index.d.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint \"**/*.ts\""
+  },
+  "dependencies": {
+    "@repo/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.4"
+  }
+}

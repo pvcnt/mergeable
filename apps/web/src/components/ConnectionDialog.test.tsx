@@ -3,18 +3,10 @@ import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "./ConnectionDialog";
 import { AppToaster } from "../lib/toaster";
-import { Connection, ConnectionProps } from "@repo/types";
+import { type ConnectionProps } from "@repo/types";
+import { mockConnection } from "../../../../packages/testing/src";
 
 describe("connection dialog", () => {
-    const connection: Connection = {
-        id: "1",
-        label: "Label",
-        baseUrl: "https://api.github.com",
-        host: "github.com",
-        auth: "ghp_foo",
-        viewer: { user: { uid: "1:1", name: "pvcnt", avatarUrl: "" }, teams: [] },
-        orgs: ["pvcnt"],
-    };
     let user: UserEvent|undefined;
 
     beforeEach(() => {
@@ -101,6 +93,7 @@ describe("connection dialog", () => {
     test("should be closed after successful submission", async () => {
         // GIVEN a pre-filled dialog.
         const state = {closed: false};
+        const connection = mockConnection();
         const handleClose = () => state.closed = true;
         render(
             <ConnectionDialog
@@ -120,7 +113,8 @@ describe("connection dialog", () => {
     test("should not closed with a toast after failed submission", async () => {
         // GIVEN a pre-filled dialog that will fail to submit.
         const state = {closed: false};
-        const handleSubmit = () => Promise.reject({message: "Bad credentials"});
+        const connection = mockConnection();
+        const handleSubmit = () => Promise.reject(new Error("Bad credentials"));
         const handleClose = () => state.closed = true;
         render(
             <ConnectionDialog
