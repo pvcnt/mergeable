@@ -114,7 +114,7 @@ describe("connection dialog", () => {
         // GIVEN a pre-filled dialog that will fail to submit.
         const state = {closed: false};
         const connection = mockConnection();
-        const handleSubmit = () => Promise.reject({message: "Bad credentials"});
+        const handleSubmit = () => Promise.reject(new Error("Bad credentials"));
         const handleClose = () => state.closed = true;
         render(
             <ConnectionDialog

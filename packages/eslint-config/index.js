@@ -18,6 +18,10 @@ module.exports = {
   },
   rules: {
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      { allowShortCircuit: true }
+    ],
     "@typescript-eslint/no-misused-promises": [
       "error",
       // https://github.com/typescript-eslint/typescript-eslint/issues/4619

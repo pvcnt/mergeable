@@ -2,8 +2,8 @@ import * as Comlink from "comlink";
 import { groupBy } from "remeda";
 import { db } from "@repo/storage";
 import type { Pull } from "@repo/types";
-import { gitHubClient } from "@/github";
 import { GitHubClient } from "@repo/github";
+import { gitHubClient } from "../github";
 
 const syncPullsIntervalMillis = 5 * 60_000;    // 5 minutes
 const syncViewersIntervalMillis = 60 * 60_000; // 1 hour

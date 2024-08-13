@@ -1,3 +1,4 @@
-# packages/types
+# packages/testing
 
-This package contains common Typescript types.
+This package contains testing utils.
+It should only be included as a development dependency.
