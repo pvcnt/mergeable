@@ -22,8 +22,6 @@ jobs:
           node-version: 22
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.4
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
       - name: Set up QEMU
