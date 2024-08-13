@@ -15,5 +15,7 @@ jobs:
           node-version: 22
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install
       - name: Test
-        run: pnpm install && pnpm lint && pnpm test
+        run: pnpm lint && pnpm test

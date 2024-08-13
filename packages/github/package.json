@@ -3,15 +3,14 @@
   "version": "0.0.0",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
     }
   },
   "license": "MIT",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "typecheck": "tsc --noemit",
     "lint": "eslint \"**/*.ts\"",
     "test": "vitest run"
   },

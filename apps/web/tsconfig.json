@@ -4,6 +4,8 @@
   "compilerOptions": {
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "types": ["@testing-library/jest-dom"],
+    "outDir": "build",
   },
-  "include": ["src", "*.ts"]
+  "include": ["src"],
+  "exclude": ["node_modules"],
 }
