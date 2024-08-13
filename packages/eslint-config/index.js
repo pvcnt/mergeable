@@ -10,7 +10,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier",
   ],
-  ignorePatterns: [".eslintrc.cjs"],
+  ignorePatterns: [".eslintrc.cjs", "vitest.config.ts", "dist/**"],
   plugins: ["@typescript-eslint"],
   parserOptions: {
     sourceType: "module",

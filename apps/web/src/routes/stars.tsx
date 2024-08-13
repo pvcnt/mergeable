@@ -1,7 +1,7 @@
 import { Card, Spinner } from "@blueprintjs/core";
-import { toggleStar, usePulls } from "@/db";
-import Navbar from "@/components/Navbar";
-import PullTable from "@/components/PullTable";
+import { toggleStar, usePulls } from "../db";
+import Navbar from "../components/Navbar";
+import PullTable from "../components/PullTable";
 
 export default function Stars() {
     const pulls = usePulls({starred: 1});

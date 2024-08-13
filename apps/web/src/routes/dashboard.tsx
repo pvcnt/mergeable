@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@blueprintjs/core";
-import SectionDialog from "@/components/SectionDialog";
-import DashboardSection from "@/components/DashboardSection";
+import SectionDialog from "../components/SectionDialog";
+import DashboardSection from "../components/DashboardSection";
 import { Section, SectionProps } from "@repo/types";
-import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "@/db";
-import Navbar from "@/components/Navbar";
-import { getWorker } from "@/worker/client";
+import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "../db";
+import Navbar from "../components/Navbar";
+import { getWorker } from "../worker/client";
 
 export default function Dashboard() {
     const sections = useSections();

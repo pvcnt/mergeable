@@ -48,11 +48,10 @@
     "fake-indexeddb": "^6.0.0",
     "jsdom": "^24.1.1",
     "sass": "^1.77.6",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",
     "vite": "^5.2.12",
     "vite-plugin-comlink": "^5.0.1",
-    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.5"
   }
 }
