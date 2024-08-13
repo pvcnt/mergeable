@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { mockPull } from "../../../../packages/testing/src";
+import { mockPull } from "@repo/testing";
 import { computeSize } from "./size";
 
 test("computeSize returns size of a pull request", () => {

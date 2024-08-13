@@ -4,7 +4,7 @@ import { userEvent, type UserEvent } from "@testing-library/user-event";
 import { db } from "@repo/storage";
 import CommandBar from "./CommandBar";
 import { HotkeysProvider } from "@blueprintjs/core";
-import { mockPull } from "../../../../packages/testing/src";
+import { mockPull } from "@repo/testing";
 
 describe("command bar", () => {
     let user: UserEvent|undefined;
