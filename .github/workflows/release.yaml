@@ -100,7 +100,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Build assets
-        run: pnpm install && pnpm build
+        run: pnpm install && pnpm package
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
           VITE_GITHUB_URLS: https://api.github.com
