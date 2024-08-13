@@ -1,8 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@repo/typescript-config/base.json",
-  "include": ["src", "*.ts"],
   "compilerOptions": {
-    "lib": ["es2015"]
-  }
+    "lib": ["es2015"],
+    "outDir": "dist",
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"],
 }
