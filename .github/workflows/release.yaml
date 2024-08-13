@@ -35,7 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build assets
-        run: pnpm install && pnpm build
+        run: pnpm install && pnpm package
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
       - name: Tag image

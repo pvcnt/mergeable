@@ -3,7 +3,7 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["es2015"],
-    "outDir": "dist",
+    "outDir": "build",
   },
   "include": ["src"],
   "exclude": ["node_modules"],
