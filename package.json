@@ -12,7 +12,7 @@
     "eslint": "^8.57.0",
     "@repo/eslint-config": "workspace:*",
     "prettier": "^3.2.5",
-    "turbo": "^2.0.1"
+    "turbo": "^2.0.12"
   },
   "packageManager": "pnpm@9.7.0"
 }
