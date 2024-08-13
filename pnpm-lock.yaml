@@ -96,9 +96,6 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.5.2(@testing-library/dom@10.1.0)
-      '@types/node':
-        specifier: ^22.1.0
-        version: 22.1.0
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.3
@@ -4011,6 +4008,7 @@ snapshots:
   '@types/node@22.1.0':
     dependencies:
       undici-types: 6.13.0
+    optional: true
 
   '@types/postcss-modules-local-by-default@4.0.2':
     dependencies:
@@ -6248,7 +6246,8 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  undici-types@6.13.0: {}
+  undici-types@6.13.0:
+    optional: true
 
   universal-user-agent@6.0.1: {}
 
