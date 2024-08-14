@@ -86,13 +86,13 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                                   onChange={e => setBaseUrl(e.currentTarget.value)}
                                   placeholder="https://api.github.com" />}
                     </FormGroup>
-                    <FormGroup label="Access token" labelInfo="(required)">
+                    <FormGroup label="Access token" labelInfo="(required)" helperText="Required scopes: read:org, repo, user">
                         <InputGroup
                             value={auth}
                             aria-label="Access token"
                             onChange={e => setAuth(e.currentTarget.value)}/>
                     </FormGroup>
-                    <FormGroup label="Filter organizations" subLabel="Only pull requests from selected organizations will be considered.">
+                    <FormGroup label="Filter organizations" helperText="Only pull requests from selected organizations will be considered.">
                         <OrgSelector selected={orgs} onChange={setOrgs}/>
                     </FormGroup>
                 </DialogBody>
