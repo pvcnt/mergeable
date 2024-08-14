@@ -53,7 +53,7 @@ describe("sync pulls", () => {
         client = new TestGitHubClient();
         await db.connections.add(mockConnection({ id: "1" }));
         await db.connections.add(mockConnection({ id: "2" }));
-        await db.sections.add(mockSection({ id: "1", search: "author:@me draft:true" }));
+        await db.sections.add(mockSection({ id: "1", search: "author:@me draft:true;author:@me draft:false" }));
         await db.sections.add(mockSection({ id: "2", search: "author:@me review:approved" }));
     })
 
@@ -67,11 +67,15 @@ describe("sync pulls", () => {
     it("should update pulls", async () => {
         assert(client !== undefined);
 
+        // GIVEN some pull requests are returned from GitHub.
         let connection = await db.connections.get("1");
         assert(connection !== undefined);
         client.setPulls(connection, "author:@me draft:true", [
             mockPull({ uid: "1:1" }),
             mockPull({ uid: "1:2" }),
+        ]);
+        client.setPulls(connection, "author:@me draft:false", [
+            mockPull({ uid: "1:4" }),
         ]);
         client.setPulls(connection, "author:@me review:approved", [
             mockPull({ uid: "1:1" }),
@@ -87,11 +91,14 @@ describe("sync pulls", () => {
             mockPull({ uid: "2:2" }),
         ]);
 
+        // WHEN syncing pull requests.
         await syncPullsOnce(client);
 
+        // THEN every pull request must be present in the database.
         const pks = await db.pulls.toCollection().primaryKeys();
-        expect(pks.sort()).toEqual(["1:1", "1:2", "1:3", "2:1", "2:2"]);
+        expect(pks.sort()).toEqual(["1:1", "1:2", "1:3", "1:4", "2:1", "2:2"]);
 
+        // THEN every pull request must be in the correct section(s).
         let pull = await db.pulls.get("1:1");
         expect(pull?.sections).toEqual(["1", "2"]);
 
@@ -100,6 +107,9 @@ describe("sync pulls", () => {
 
         pull = await db.pulls.get("1:3");
         expect(pull?.sections).toEqual(["2"]);
+
+        pull = await db.pulls.get("1:4");
+        expect(pull?.sections).toEqual(["1"]);
     })
 
     it("should update activity", async () => {
