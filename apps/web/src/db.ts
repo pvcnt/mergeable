@@ -35,7 +35,7 @@ const defaultSections: Section[] = [
     {
         id: "",
         label: "Incoming reviews",
-        search: "is:open -author:@me review-requested:@me ; is:open -author:@me commenter:@me",
+        search: "is:open -author:@me review-requested:@me ; is:open -author:@me involves:@me",
         notified: true,
         position: 0,
     },
