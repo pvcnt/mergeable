@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
-import { groupBy } from "remeda";
+import { groupBy, unique } from "remeda";
 import { db } from "@repo/storage";
-import type { Pull } from "@repo/types";
+import { splitQueries, type Pull } from "@repo/types";
 import { GitHubClient } from "@repo/github";
 import { gitHubClient } from "../github";
 
@@ -59,12 +59,15 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
 
         const rawPulls: Pull[] = (
             await Promise.all(sections.flatMap(section => {
-                return connections.map(async connection => {
-                    const pulls = await client.getPulls(connection, section.search);
-                    return pulls.map(pull => {
-                        const sections = [section.id];
-                        const starred = stars.has(pull.uid) ? 1 : 0;
-                        return { ...pull, sections, starred };
+                return connections.flatMap(connection => {
+                    const queries = splitQueries(section.search);
+                    return queries.map(async query => {
+                        const pulls = await client.getPulls(connection, query);
+                        return pulls.map(pull => {
+                            const sections = [section.id];
+                            const starred = stars.has(pull.uid) ? 1 : 0;
+                            return { ...pull, sections, starred };
+                        });
                     });
                 });
             }))
@@ -72,11 +75,12 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
 
         // Deduplicate pull requests present in multiple sections.
         const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
-            .map(vs => ({ ...vs[0], sections: vs.flatMap(v => v.sections) }));
+            .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
 
+        // Upsert pull requests...
         await db.pulls.bulkPut(pulls);
 
-        // Remove extraneous items, i.e., pull requests that are not anymore included in any sections.
+        // ... and remove pull requests that are not anymore included in any sections.
         const keys = new Set(await db.pulls.toCollection().primaryKeys());
         pulls.forEach(pull => keys.delete(pull.uid));
         await db.pulls.bulkDelete(Array.from(keys));

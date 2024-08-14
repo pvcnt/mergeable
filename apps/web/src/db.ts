@@ -8,7 +8,7 @@ const connectionDefaults = { orgs: [] };
 
 export const useConnections = () => {
     const data = useLiveQuery(() => db.connections.toArray());
-    return { isLoaded: data !== undefined, data: data?.map(v => ({...connectionDefaults, ...v})) || [] };
+    return { isLoaded: data !== undefined, data: data?.map(v => ({ ...connectionDefaults, ...v})) || [] };
 }
 
 export async function saveConnection (value: Connection): Promise<void> {
@@ -34,42 +34,21 @@ export const useActivity = (name: string) => {
 const defaultSections: Section[] = [
     {
         id: "",
-        label: "Needs your review",
-        search: "is:open review-requested:@me -review:approved -reviewed-by:@me draft:false",
+        label: "Incoming reviews",
+        search: "is:open -author:@me review-requested:@me ; is:open -author:@me commenter:@me",
         notified: true,
         position: 0,
     },
     {
         id: "",
-        label: "Changes requested",
-        search: "is:open author:@me review:changes_requested",
+        label: "Outgoing reviews",
+        search: "is:open author:@me draft:false",
         notified: true,
         position: 1,
     },
     {
         id: "",
-        label: "Approved",
-        search: "is:open author:@me review:approved",
-        notified: false,
-        position: 2,
-    },
-    {
-        id: "",
-        label: "Waiting for reviewers",
-        search: "is:open author:@me review:none draft:false",
-        notified: false,
-        position: 3,
-    },
-    {
-        id: "",
-        label: "Waiting for the author",
-        search: "is:open review-requested:@me review:changes_requested",
-        notified: false,
-        position: 4,
-    },
-    {
-        id: "",
-        label: "Draft",
+        label: "Draft reviews",
         search: "is:open author:@me draft:true",
         notified: false,
         position: 5,
