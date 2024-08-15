@@ -1,12 +1,10 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core";
 import ReactTimeAgo from "react-time-ago";
-
 import { type Pull, PullState } from "@repo/types";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
 
 import styles from "./PullTable.module.scss";
-import clsx from "clsx";
 
 export type Props = {
     pulls: Pull[],
