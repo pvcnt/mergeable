@@ -33,7 +33,7 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
             // they do not refer to any action to take.
             continue;
         }
-        const lastViewerCommentPos = thread.findIndex(c => c.author.name === viewerName);
+        const lastViewerCommentPos = [...thread].reverse().findIndex(c => c.author.name === viewerName);
         const commentsAfterLastViewerComment = (lastViewerCommentPos === -1) 
             ? comments 
             : comments.slice(lastViewerCommentPos + 1);
@@ -56,9 +56,9 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
         // users to have a look at comments and reply to them.
         const sortedCommenterNames = Array.from(commenterNames).sort();
         if (sortedCommenterNames.length === 1) {
-            return { set: true, reason: `${sortedCommenterNames[0]} replied` };
+            return { set: true, reason: `${sortedCommenterNames[0]} left a comment` };
         } else {
-            return { set: true, reason: `${sortedCommenterNames[0]} and ${sortedCommenterNames.length - 1} other${sortedCommenterNames.length > 2 ? 's' : ''} replied` };
+            return { set: true, reason: `${sortedCommenterNames[0]} and ${sortedCommenterNames.length - 1} other${sortedCommenterNames.length > 2 ? 's' : ''} left a comment` };
         }
     } else if (isAuthor && isApproved) {
         // The author (and only them) is in the attention of an approved pull request, because it
@@ -66,7 +66,7 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
         return { set: true, reason: "Pull request is approved" };
     } else if (isRequestedReviewer && !isApproved) {
         // A requested reviewer is part of the attention set if the pull request is not already approved.
-        return { set: true, reason: "You are a requested reviewer" };
+        return { set: true, reason: "Review is requested" };
     } else {
         return { set: false };
     }
@@ -75,23 +75,20 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
 /**
  * Group all review comments of a pull request into threads.
  * 
- * This method only works if *all* review comments are actually provided. A partial
- * list of comments will generate an error.
- * 
  * @param comments Review comments of a pull request.
  * @returns Review comments, grouped by thread (in the same order).
  */
 function groupByThread(comments: Comment[]): Comment[][] {
-    const threadByComment: Record<string, string> = {};
+    // `inReplyTo` contains the identifier of the first comment of a thread.
+    // The first message in a thread does not have an `inReplyTo`. 
     const threads: Record<string, Comment[]> = {};
     for (const comment of comments) {
         if (comment.inReplyTo === undefined) {
             threads[comment.uid] = [comment];
-            threadByComment[comment.uid] = comment.uid;
+        } else if (comment.inReplyTo in threads) {
+            threads[comment.inReplyTo].push(comment);
         } else {
-            const thread = threadByComment[comment.inReplyTo];
-            threads[thread].push(comment);
-            threadByComment[comment.uid] = thread;
+            threads[comment.inReplyTo] = [comment];
         }
     }
     return Object.values(threads);

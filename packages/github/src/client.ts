@@ -242,7 +242,8 @@ export class DefaultGitHubClient implements GitHubClient {
 }
 
 export class TestGitHubClient implements GitHubClient {
-  private pulls: Record<string, Record<string, PullProps[]>> = {};
+  private pulls: Record<string, PullProps[]> = {};
+  private comments: Record<string, Comment[]> = {};
 
   getViewer(connection: Connection): Promise<Profile> {
     return Promise.resolve({
@@ -252,17 +253,23 @@ export class TestGitHubClient implements GitHubClient {
   }
 
   getPulls(connection: Connection, search: string): Promise<PullProps[]> {
-    return Promise.resolve((this.pulls[connection.id] || {})[search] || []);
+    return Promise.resolve(this.pulls[`${connection.id}/${search}`] || []);
   }
 
   setPulls(connection: Connection, search: string, pulls: PullProps[]) {
-    if (!(connection.id in this.pulls)) {
-      this.pulls[connection.id] = {};
-    }
-    this.pulls[connection.id][search] = pulls;
+    this.pulls[`${connection.id}/${search}`] = pulls;
   }
 
   getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]> {
-    return Promise.resolve([]);
+    return Promise.resolve(this.comments[`${connection.id}/${repo}/${pullNumber}`] || []);
+  }
+
+  setComments(connection: Connection, repo: string, pullNumber: number, comments: Comment[]) {
+    this.comments[`${connection.id}/${repo}/${pullNumber}`] = comments;
+  }
+
+  clear(): void {
+    this.pulls = {};
+    this.comments = {};
   }
 }
