@@ -77,7 +77,7 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
 
         // Deduplicate pull requests present in multiple sections.
         const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
-            .map(vs => ({ ...vs[0], sections: unique(vs.flatMap(v => v.sections)) }));
+            .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
         
         
         // Compute whether pull requests are in the attention set after they have been deduplicated.
