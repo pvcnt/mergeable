@@ -16,7 +16,7 @@ export class SearchQuery {
         if (init === undefined) {
             this.terms = [];
         } else if (typeof init === "string") {
-            this.terms = SearchQuery._parseTerms(init);
+            this.terms = this.parseTerms(init);
         } else {
             this.terms = init;
         }
@@ -44,7 +44,7 @@ export class SearchQuery {
         return this.terms.map(t => t.toString()).join(" ");
     }
 
-    static _parseTerms(str: string): SearchTerm[] {
+    private parseTerms(str: string): SearchTerm[] {
         // https://stackoverflow.com/a/16261693
         const parts = str.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
         const terms: SearchTerm[] = [];
@@ -53,14 +53,14 @@ export class SearchQuery {
             if (part === "NOT") {
                 not = true;
             } else {
-                terms.push(SearchQuery._parseTerm(part, not));
+                terms.push(this.parseTerm(part, not));
                 not = false;
             }
         }
         return terms;
     }
 
-    static _parseTerm(str: string, not: boolean): SearchTerm {
+    private parseTerm(str: string, not: boolean): SearchTerm {
         const exclude = str.startsWith("-");
         const colonPos = str.indexOf(":");
         if (colonPos > -1) {

@@ -33,8 +33,13 @@ export type PullProps = {
     reviewers: User[],
 }
 
+export type Attention = {
+    set: boolean
+    reason?: string
+}
+
 export type Pull = PullProps & {
     starred: number,    // boolean is not indexable.
     sections: string[],
-    attention: number,  // boolean is not indexable.
+    attention?: Attention,
 }

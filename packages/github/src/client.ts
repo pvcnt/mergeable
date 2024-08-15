@@ -216,7 +216,7 @@ export class DefaultGitHubClient implements GitHubClient {
     );
     return comments.map(comment => ({
       uid: `${connection.id}:${comment.id}`,
-      inReplyTo: `${connection.id}:${comment.in_reply_to_id}`,
+      inReplyTo: comment.in_reply_to_id ? `${connection.id}:${comment.in_reply_to_id}` : undefined,
       author: {
         name: comment.user.login,
         avatarUrl: comment.user.avatar_url,

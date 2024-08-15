@@ -68,10 +68,7 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
                             connectionByPull[pull.uid] = connection;
                             const sections = [section.id];
                             const starred = stars.has(pull.uid) ? 1 : 0;
-                            // The `attention` flag carries the fact that the pull request is
-                            // included in the attention set. It will be transformed later.
-                            const attention = section.attention ? 1 : 0;
-                            return { ...pull, sections, starred, attention };
+                            return { ...pull, sections, starred };
                         });
                     });
                 });
@@ -80,21 +77,17 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
 
         // Deduplicate pull requests present in multiple sections.
         const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
-            .map(vs => ({
-                 ...vs[0],
-                 sections: unique(vs.flatMap(v => v.sections)),
-                 // The `attention` flag carries the fact that the pull request is
-                 // included in the attention set. It will be transformed later.
-                 attention: vs.some(p => p.attention) ? 1 : 0,
-            }));
+            .map(vs => ({ ...vs[0], sections: unique(vs.flatMap(v => v.sections)) }));
         
         
         // Compute whether pull requests are in the attention set after they have been deduplicated.
-        // We rely on the previously computed `attention` flag, which indicates whether the
-        // pull request is included in the attention set.
-        pulls.forEach(async pull => {
-            pull.attention = pull.attention && (await isInAttentionSet(client, connectionByPull[pull.uid], pull)) ? 1 : 0;
-        });
+        const sectionsInAttentionSet = new Set(sections.filter(v => v.attention).map(v => v.id));
+        for (const pull of pulls) {
+            if (pull.sections.some(v => sectionsInAttentionSet.has(v))) {
+                isInAttentionSet(client, connectionByPull[pull.uid], pull).catch(console.error);
+                pull.attention = await isInAttentionSet(client, connectionByPull[pull.uid], pull);
+            }
+        }
 
         // Remove pull requests that are not anymore included in any sections...
         const keysToRemove = new Set(await db.pulls.toCollection().primaryKeys());

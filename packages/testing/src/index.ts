@@ -20,7 +20,6 @@ export function mockPull(props?: Partial<Pull>): Pull {
         reviewers: [],
         starred: 0,
         sections: [],
-        attention: 0,
         ...props,
     };
 }
