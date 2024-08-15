@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "lib": ["es2015"],
+    "target": "es2015",
     "outDir": "build",
   },
   "include": ["src"],
