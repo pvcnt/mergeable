@@ -80,22 +80,22 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
             .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
         
         
-        // Compute whether pull requests are in the attention set after they have been deduplicated.
+        // Compute whether pull requests are in the attention set after they have been
+        // deduplicated, since this can be quite expensive to do.
         const sectionsInAttentionSet = new Set(sections.filter(v => v.attention).map(v => v.id));
         for (const pull of pulls) {
             if (pull.sections.some(v => sectionsInAttentionSet.has(v))) {
-                isInAttentionSet(client, connectionByPull[pull.uid], pull).catch(console.error);
                 pull.attention = await isInAttentionSet(client, connectionByPull[pull.uid], pull);
             }
         }
 
-        // Remove pull requests that are not anymore included in any section...
-        const keysToRemove = new Set(await db.pulls.toCollection().primaryKeys());
-        pulls.forEach(pull => keysToRemove.delete(pull.uid));
-        await db.pulls.bulkDelete(Array.from(keysToRemove));
-
-        // ... then upsert all other pull requests.
+        // Upsert pull requests...
         await db.pulls.bulkPut(pulls);
+
+        // ... and remove pull requests that are not anymore included in any sections.
+        const keys = new Set(await db.pulls.toCollection().primaryKeys());
+        pulls.forEach(pull => keys.delete(pull.uid));
+        await db.pulls.bulkDelete(Array.from(keys));
 
         console.log(`Synced ${pulls.length} pull requests`);
     });
