@@ -89,12 +89,12 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
             }
         }
 
-        // Remove pull requests that are not anymore included in any sections...
+        // Remove pull requests that are not anymore included in any section...
         const keysToRemove = new Set(await db.pulls.toCollection().primaryKeys());
         pulls.forEach(pull => keysToRemove.delete(pull.uid));
         await db.pulls.bulkDelete(Array.from(keysToRemove));
 
-        // ... then add/update all other pull requests.
+        // ... then upsert all other pull requests.
         await db.pulls.bulkPut(pulls);
 
         console.log(`Synced ${pulls.length} pull requests`);

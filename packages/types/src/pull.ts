@@ -39,7 +39,7 @@ export type Attention = {
 }
 
 export type Pull = PullProps & {
-    starred: number,    // boolean is not indexable.
+    starred: number, // boolean is not indexable.
     sections: string[],
     attention?: Attention,
 }
