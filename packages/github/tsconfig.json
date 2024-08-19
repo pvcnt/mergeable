@@ -3,6 +3,7 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "target": "es2015",
+    "lib": ["es2023.Array"],
     "outDir": "build",
   },
   "include": ["src"],

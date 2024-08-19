@@ -33,7 +33,7 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
             // they do not refer to any action to take.
             continue;
         }
-        const lastViewerCommentPos = [...thread].reverse().findIndex(c => c.author.name === viewerName);
+        const lastViewerCommentPos = thread.findLastIndex(c => c.author.name === viewerName);
         const commentsAfterLastViewerComment = (lastViewerCommentPos === -1) 
             ? comments 
             : comments.slice(lastViewerCommentPos + 1);
