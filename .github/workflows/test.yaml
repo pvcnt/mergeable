@@ -1,7 +1,9 @@
-name: presubmit
+name: test
 
 on:
   pull_request: ~
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -18,4 +20,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Test
-        run: pnpm lint && pnpm test
+        run: pnpm lint && pnpm coverage
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -12,12 +12,14 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint \"**/*.ts\"",
-    "test": "vitest run"
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/testing": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
     "fake-indexeddb": "^6.0.0",
     "typescript": "^5.5.4",
