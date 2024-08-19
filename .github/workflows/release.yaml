@@ -1,4 +1,4 @@
-name: postsubmit
+name: release
 
 on:
   push:

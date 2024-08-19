@@ -4,9 +4,9 @@ logs
 pnpm-debug.log*
 
 node_modules
-build
-dist
-*.local
+build/
+coverage/
+dist/
 
 # Editor directories and files
 .vscode/*
@@ -20,4 +20,4 @@ dist
 *.sw?
 
 # Turbo
-.turbo
+.turbo/
