@@ -6,7 +6,7 @@ export default defineConfig({
       enabled: true,
       include: ["src/**"],
       provider: "istanbul",
-      reporter: ["text-summary", "html", "lcovonly"],
+      reporter: ["text", "lcovonly"],
     },
   },
 });
