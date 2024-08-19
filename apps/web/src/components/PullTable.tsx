@@ -1,6 +1,5 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core";
 import ReactTimeAgo from "react-time-ago";
-
 import { type Pull, PullState } from "@repo/types";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
@@ -39,6 +38,7 @@ export default function PullTable({ pulls, onStar }: Props) {
             <thead>
                 <tr>
                     <th>&nbsp;</th>
+                    <th>&nbsp;</th>
                     <th>Author</th>
                     <th>Status</th>
                     <th>Last Action</th>
@@ -53,6 +53,14 @@ export default function PullTable({ pulls, onStar }: Props) {
                             {pull.starred
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
                                 : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
+                        </td>
+                        <td>
+                            {pull.attention?.set && 
+                                <IconWithTooltip
+                                    icon="flag"
+                                    color="#CD4246"
+                                    title={`You are in the attention set: ${pull.attention?.reason}`}
+                                />}
                         </td>
                         <td>
                             <div className={styles.author}>

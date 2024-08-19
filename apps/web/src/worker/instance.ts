@@ -1,8 +1,8 @@
 import * as Comlink from "comlink";
 import { groupBy, unique } from "remeda";
 import { db } from "@repo/storage";
-import { splitQueries, type Pull } from "@repo/types";
-import { GitHubClient } from "@repo/github";
+import { splitQueries, type Pull, type Connection } from "@repo/types";
+import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
 const syncPullsIntervalMillis = 5 * 60_000;    // 5 minutes
@@ -57,13 +57,15 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
         const sections = await db.sections.toArray();
         const stars = new Set((await db.stars.toArray()).map(star => star.uid));
 
+        const connectionByPull: Record<string, Connection> = {};
         const rawPulls: Pull[] = (
             await Promise.all(sections.flatMap(section => {
                 return connections.flatMap(connection => {
                     const queries = splitQueries(section.search);
-                    return queries.map(async query => {
+                    return queries.flatMap(async query => {
                         const pulls = await client.getPulls(connection, query);
                         return pulls.map(pull => {
+                            connectionByPull[pull.uid] = connection;
                             const sections = [section.id];
                             const starred = stars.has(pull.uid) ? 1 : 0;
                             return { ...pull, sections, starred };
@@ -76,6 +78,16 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
         // Deduplicate pull requests present in multiple sections.
         const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
             .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
+        
+        
+        // Compute whether pull requests are in the attention set after they have been
+        // deduplicated, since this can be quite expensive to do.
+        const sectionsInAttentionSet = new Set(sections.filter(v => v.attention).map(v => v.id));
+        for (const pull of pulls) {
+            if (pull.sections.some(v => sectionsInAttentionSet.has(v))) {
+                pull.attention = await isInAttentionSet(client, connectionByPull[pull.uid], pull);
+            }
+        }
 
         // Upsert pull requests...
         await db.pulls.bulkPut(pulls);

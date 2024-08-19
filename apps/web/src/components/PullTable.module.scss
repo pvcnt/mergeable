@@ -14,18 +14,22 @@
         text-align: center;
         width: 25px;
     }
-    tbody td:nth-child(2) { /* Author */
+    tbody td:nth-child(2) { /* Attention */
+        text-align: center;
+        width: 25px;
+    }
+    tbody td:nth-child(3) { /* Author */
         text-align: center;
         width: 50px;
     }
-    tbody td:nth-child(3) { /* Status */
+    tbody td:nth-child(4) { /* Status */
         text-align: center;
         width: 50px;
     }
-    tbody td:nth-child(4) { /* Last Action */
+    tbody td:nth-child(5) { /* Last Action */
         width: 200px;
     }
-    tbody td:nth-child(5) { /* Size */
+    tbody td:nth-child(6) { /* Size */
         text-align: center;
         width: 50px;
     }

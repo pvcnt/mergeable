@@ -2,7 +2,7 @@ import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGro
 import { useState } from "react";
 import { AppToaster } from "../lib/toaster"
 import ConfirmDialog from "./ConfirmDialog";
-import type { SectionProps } from "@repo/types";
+import { type SectionProps, defaultSectionProps } from "@repo/types";
 
 type Props = {
     title: string,
@@ -18,16 +18,18 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
     const [label, setLabel] = useState("");
     const [search, setSearch] = useState("");
     const [notified, setNotified] = useState(false);
+    const [attention, setAttention] = useState(true);
     const [isDeleting, setDeleting] = useState(false);
 
     const handleOpening = () => {
-        setLabel(section ? section.label : newSection ? newSection.label : "");
-        setSearch(section ? section.search : newSection ? newSection.search : "");
-        setNotified(section ? section.notified : newSection ? newSection.notified : false);
+        setLabel(section ? section.label : newSection ? newSection.label : defaultSectionProps.label);
+        setSearch(section ? section.search : newSection ? newSection.search : defaultSectionProps.search);
+        setNotified(section ? section.notified : newSection ? newSection.notified : defaultSectionProps.notified);
+        setAttention(section ? section.attention : newSection ? newSection.attention : defaultSectionProps.attention);
     }
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({label, search, notified});
+            onSubmit({ label, search, notified, attention });
             onClose();
         }
     }
@@ -64,6 +66,11 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
                         checked={notified}
                         label="Pull requests in this section add to the badge count"
                         onChange={e => setNotified(e.currentTarget.checked)}
+                        />
+                    <Checkbox
+                        checked={attention}
+                        label="Pull requests in this section are included in the attention set"
+                        onChange={e => setAttention(e.currentTarget.checked)}
                         />
                 </DialogBody>
                 <DialogFooter actions={

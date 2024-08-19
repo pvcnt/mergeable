@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { type Connection, PullState, type PullProps, type Team, type User, type Profile } from "@repo/types";
+import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile } from "@repo/types";
 import { SearchQuery } from "./search";
 
 const MAX_PULLS_TO_FETCH = 50;
@@ -23,18 +23,41 @@ type GHPull = {
     merged: boolean,
     closed: boolean,
     reviewDecision?: string,
+    reviewRequests: {
+      nodes: GHReviewRequest[],
+    }
+    latestOpinionatedReviews: {
+      nodes: GHReview[],
+    }
+}
+
+type GHUserReviewRequest = GHUser & {
+  __typename: "Bot" | "Mannequin" | "User"
+}
+
+type GHTeamReviewRequest = GHTeam & {
+  __typename: "Team"
+}
+
+type GHReviewRequest = GHUserReviewRequest | GHTeamReviewRequest
+
+type GHReview = {
+  author: GHUser
 }
 
 type GHUser = {
-    id: string,
-    name: string,
-    login: string,
-    avatarUrl: string,
+    login: string
+    avatarUrl: string
+}
+
+type GHTeam = {
+  combinedSlug: string
 }
 
 export interface GitHubClient {
   getViewer(connection: Connection): Promise<Profile>;
   getPulls(connection: Connection, search: string): Promise<PullProps[]>;
+  getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]>;
 }
 
 export class DefaultGitHubClient implements GitHubClient {
@@ -63,22 +86,36 @@ export class DefaultGitHubClient implements GitHubClient {
                 title
                 author {
                   login
-                  url
-                  avatarUrl
-                  ... on Bot {
-                    id
+                  avatarUrl                  
+                }
+                reviewRequests(first: 100) {
+                  nodes {
+                    requestedReviewer {
+                      __typename
+                      ... on Bot {
+                        login
+                        avatarUrl
+                      }
+                      ... on Mannequin {
+                        login
+                        avatarUrl
+                      }
+                      ... on User {
+                        login
+                        avatarUrl
+                      }
+                      ... on Team {
+                        combinedSlug
+                      }
+                    }
                   }
-                  ... on EnterpriseUserAccount {
-                    id
-                  }
-                  ... on Mannequin {
-                    id
-                  }
-                  ... on User {
-                    id
-                  }
-                  ... on Organization {
-                    id
+                }
+                latestOpinionatedReviews(first: 100) {
+                  nodes {
+                    author {
+                      login
+                      avatarUrl
+                    }
                   }
                 }
                 repository {
@@ -158,10 +195,33 @@ export class DefaultGitHubClient implements GitHubClient {
         additions: pull.additions,
         deletions: pull.deletions,
         comments: pull.totalCommentsCount,
-        author: {
-            name: pull.author.login,
-            avatarUrl: pull.author.avatarUrl,
-        },
+        author: this.makeUser(pull.author),
+        requestedReviewers: pull.reviewRequests.nodes
+          .filter(n => n.__typename != "Team")
+          .map(n => this.makeUser(n as GHUser)),
+        requestedTeams: pull.reviewRequests.nodes
+          .filter(n => n.__typename == "Team")
+          .map(n => this.makeTeam(n as GHTeam)),
+        reviewers: pull.latestOpinionatedReviews.nodes
+          .map(n => this.makeUser(n.author)),
+    }));
+  }
+  
+  async getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]> {
+    const octokit = this.getOctokit(connection);
+    const [ repoOwner, repoName ] = repo.split("/");
+    const comments = await octokit.paginate(
+      "GET /repos/{owner}/{repo}/pulls/{pull_number}/comments",
+      { owner: repoOwner, repo: repoName, pull_number: pullNumber, per_page: 100 }
+    );
+    return comments.map(comment => ({
+      uid: `${connection.id}:${comment.id}`,
+      inReplyTo: comment.in_reply_to_id ? `${connection.id}:${comment.in_reply_to_id}` : undefined,
+      author: {
+        name: comment.user.login,
+        avatarUrl: comment.user.avatar_url,
+      },
+      createdAt: new Date(comment.created_at),
     }));
   }
 
@@ -171,10 +231,19 @@ export class DefaultGitHubClient implements GitHubClient {
     }
     return this.octokits[connection.id];
   }
+
+  private makeUser(user: GHUser): User {
+    return { name: user.login, avatarUrl: user.avatarUrl };
+  }
+  
+  private makeTeam(team: GHTeam): Team {
+    return { name: team.combinedSlug };
+  }
 }
 
 export class TestGitHubClient implements GitHubClient {
-  private pulls: Record<string, Record<string, PullProps[]>> = {};
+  private pulls: Record<string, PullProps[]> = {};
+  private comments: Record<string, Comment[]> = {};
 
   getViewer(connection: Connection): Promise<Profile> {
     return Promise.resolve({
@@ -184,13 +253,23 @@ export class TestGitHubClient implements GitHubClient {
   }
 
   getPulls(connection: Connection, search: string): Promise<PullProps[]> {
-    return Promise.resolve((this.pulls[connection.id] || {})[search] || []);
+    return Promise.resolve(this.pulls[`${connection.id}/${search}`] || []);
   }
 
   setPulls(connection: Connection, search: string, pulls: PullProps[]) {
-    if (!(connection.id in this.pulls)) {
-      this.pulls[connection.id] = {};
-    }
-    this.pulls[connection.id][search] = pulls;
+    this.pulls[`${connection.id}/${search}`] = pulls;
+  }
+
+  getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]> {
+    return Promise.resolve(this.comments[`${connection.id}/${repo}/${pullNumber}`] || []);
+  }
+
+  setComments(connection: Connection, repo: string, pullNumber: number, comments: Comment[]) {
+    this.comments[`${connection.id}/${repo}/${pullNumber}`] = comments;
+  }
+
+  clear(): void {
+    this.pulls = {};
+    this.comments = {};
   }
 }

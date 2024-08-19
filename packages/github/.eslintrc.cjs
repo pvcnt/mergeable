@@ -7,4 +7,10 @@ module.exports = {
   parserOptions: {
     project: true,
   },
+  rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { args: "none" },
+    ]
+  },
 };
