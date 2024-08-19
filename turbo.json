@@ -11,6 +11,10 @@
     "test": {
       "dependsOn": ["build"]
     },
+    "coverage": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"]
+    },
     "package": {
       "dependsOn": ["build"],
       "outputs": ["dist/**"]

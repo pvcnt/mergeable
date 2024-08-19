@@ -1,7 +1,8 @@
-name: presubmit
+name: postsubmit
 
 on:
-  pull_request: ~
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -15,8 +16,6 @@ jobs:
           node-version: 22
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Install LCOV
-        uses: hrishikesh-kadam/setup-lcov@v1
       - name: Install dependencies
         run: pnpm install
       - name: Test
