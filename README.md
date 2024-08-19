@@ -1,5 +1,7 @@
 # Mergeable
 
+[![codecov](https://codecov.io/github/pvcnt/mergeable/graph/badge.svg?token=ZZN3FRNP86)](https://codecov.io/github/pvcnt/mergeable)
+
 Mergeable is an inbox for GitHub pull requests.
 
 This project is an attempt at being better than GitHub when providing an overview of open pull requests needing my attention.
