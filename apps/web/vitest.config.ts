@@ -5,10 +5,8 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["fake-indexeddb/auto", "test-setup.ts"],
     coverage: {
-      enabled: true,
       include: ["src/**"],
       provider: "istanbul",
-      reporter: ["text", "lcovonly"],
     },
   },
 });
