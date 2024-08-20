@@ -27,6 +27,7 @@ export default function Settings() {
     const handleNew = async (props: ConnectionProps) => {
         await saveConnection({ id: "", ...props });
         await worker.refreshViewers();
+        await worker.refreshPulls();
     };
     const handleEdit = async (previous: Connection, props: ConnectionProps) => {
         await saveConnection({ ...previous, ...props });
