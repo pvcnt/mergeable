@@ -42,7 +42,7 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
         params.set('action', 'share');
         params.set('label', label);
         params.set('search', search);
-        await navigator.clipboard.writeText(`${window.location.origin}/?${params.toString()}`);;
+        await navigator.clipboard.writeText(`${window.location.origin}/inbox?${params.toString()}`);;
         (await AppToaster).show({message: "Share URL has been copied to clipboard.", intent: Intent.SUCCESS});
     }
 
