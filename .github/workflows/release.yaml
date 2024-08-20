@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  deployments: write
   packages: write
   id-token: write 
 
@@ -19,7 +18,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install Cosign
@@ -88,28 +87,3 @@ jobs:
         run: helm package helm/mergeable --version 0.0.${{ github.run_number }} --destination dist
       - name: Push chart
         run: helm push dist/*.tgz oci://ghcr.io/pvcnt/helm
-  cloudflare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Build assets
-        run: pnpm install && pnpm package
-        env:
-          VITE_COMMIT_SHA: ${{ github.sha }}
-          VITE_GITHUB_URLS: https://api.github.com
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          accountId: 1f74b8302712fd67d5eddea8c96eb776
-          projectName: mergeable
-          workingDirectory: apps/webapp
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
