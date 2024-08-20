@@ -21,3 +21,6 @@ dist/
 
 # Turbo
 .turbo/
+
+# Astro
+.astro/
