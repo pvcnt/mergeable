@@ -81,11 +81,12 @@ export const useSections = () => {
     return { isLoaded, data: data?.map(v => ({...sectionDefaults, ...v})) || [] };
 }
 
-export async function saveSection(value: Section): Promise<void> {
+export async function saveSection(value: Section): Promise<string> {
     if (value.id.length === 0) {
-        await db.sections.add(omit(value, ["id"]));
+        return await db.sections.add(omit(value, ["id"]));
     } else {
         await db.sections.put(value);
+        return value.id;
     }
 }
 
@@ -115,6 +116,15 @@ export const moveSectionDown = (value: Section) => {
         await db.sections.update(below, {"position": value.position});
         await db.sections.update(value, {"position": below.position});
     }).catch(console.error);
+}
+
+export async function resetSections(): Promise<void> {
+    await db.transaction("rw", db.sections, async () => {
+        await db.sections.clear();
+        for (const section of defaultSections) {
+            await db.sections.add(omit(section, ["id"]));
+        }
+    });
 }
 
 export const toggleStar = async (pull: Pull) => {

@@ -4,14 +4,14 @@ import { PropsWithChildren } from "react";
 
 export type Props = {
     isOpen: boolean,
-    onClose: () => void,
-    onConfirm: () => void,
+    onClose?: () => void,
+    onSubmit?: () => void,
 }
 
-export default function ConfirmDialog({isOpen, onClose, onConfirm, children}: PropsWithChildren<Props>) {    
+export default function ConfirmDialog({isOpen, onClose, onSubmit, children}: PropsWithChildren<Props>) {    
     const handleConfirm = () => {
-        onConfirm()
-        onClose()
+        onSubmit && onSubmit();
+        onClose && onClose();
     }
 
     return (
@@ -21,8 +21,8 @@ export default function ConfirmDialog({isOpen, onClose, onConfirm, children}: Pr
             </DialogBody>
             <DialogFooter actions={
                 <>
-                    <Button intent={Intent.PRIMARY} text="Yes" onClick={handleConfirm}/>
-                    <Button text="No" onClick={onClose} />
+                    <Button intent={Intent.PRIMARY} text="Yes" onClick={handleConfirm} aria-label="Confirm" />
+                    <Button text="No" onClick={onClose} aria-label="Cancel" />
                 </>
             } />
         </Dialog>
