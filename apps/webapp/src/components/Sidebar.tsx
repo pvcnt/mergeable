@@ -1,4 +1,4 @@
-import { Button, Icon, IconSize, Intent, Tooltip } from "@blueprintjs/core";
+import { AnchorButton, Button, Icon, IconSize, Intent, Tooltip } from "@blueprintjs/core";
 import { NavLink } from "react-router-dom";
 import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16';
 
@@ -43,7 +43,12 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
         </Button>
       </Tooltip>
 
-      <div className={styles.bottom}>   
+      <div className={styles.bottom}>
+        <Tooltip content="Read the docs">
+          <AnchorButton large minimal href="https://pvcnt.github.io/mergeable/">
+            <Icon icon="help" size={IconSize.LARGE}/>
+          </AnchorButton>
+        </Tooltip>
         <Tooltip content={"Switch to " + (isDark ? "light" : "dark") + " mode"}>
           <Button large onClick={onDarkChange} minimal>
             <Icon icon={isDark ? "flash" : "moon"} size={IconSize.LARGE}/>
