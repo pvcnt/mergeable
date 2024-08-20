@@ -27,9 +27,9 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install -F website
+        run: pnpm install --filter website...
       - name: Build website
-        run: pnpm package -F website
+        run: pnpm package --filter website...
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -28,9 +28,9 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --filter webapp...
       - name: Build webapp
-        run: pnpm package -F webapp
+        run: pnpm package --filter webapp...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
           VITE_GITHUB_URLS: https://api.github.com
