@@ -35,9 +35,6 @@ importers:
       '@repo/github':
         specifier: workspace:*
         version: link:../../packages/github
-      '@repo/storage':
-        specifier: workspace:*
-        version: link:../../packages/storage
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -53,6 +50,9 @@ importers:
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
+      dexie:
+        specifier: ^4.0.7
+        version: 4.0.7
       dexie-react-hooks:
         specifier: ^1.1.7
         version: 1.1.7(@types/react@18.3.3)(dexie@4.0.7)(react@18.3.1)

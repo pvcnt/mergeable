@@ -10,6 +10,27 @@ export type SectionProps = {
     attention: boolean,
 }
 
+export const defaultSections: SectionProps[] = [
+    {
+        label: "Incoming reviews",
+        search: "is:open -author:@me review-requested:@me ; is:open -author:@me involves:@me",
+        notified: true,
+        attention: true,
+    },
+    {
+        label: "Outgoing reviews",
+        search: "is:open author:@me draft:false",
+        notified: true,
+        attention: true,
+    },
+    {
+        label: "Draft reviews",
+        search: "is:open author:@me draft:true",
+        notified: false,
+        attention: false,
+    }
+];
+
 /**
  * Split a search string into multiple GitHub search queries.
  * 

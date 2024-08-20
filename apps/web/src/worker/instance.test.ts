@@ -1,7 +1,7 @@
 import { TestGitHubClient } from "@repo/github";
 import { afterEach, beforeEach, it, describe, expect, assert } from "vitest";
 import { syncPullsOnce, syncViewersOnce } from "./instance";
-import { db } from "@repo/storage";
+import { db } from "../lib/db";
 import { mockPull, mockConnection, mockSection } from "@repo/testing";
 
 describe("sync viewers", () => {

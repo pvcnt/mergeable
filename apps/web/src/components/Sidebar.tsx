@@ -4,7 +4,7 @@ import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esm/generated/16px/b
 
 import styles from "./Sidebar.module.scss";
 import ReactTimeAgo from "react-time-ago";
-import { useActivity } from "../db";
+import { useActivity } from "../lib/queries";
 
 function SidebarLink({ title, icon, link }: { title: string, link: string, icon: BlueprintIcons_16Id }) {
     return (

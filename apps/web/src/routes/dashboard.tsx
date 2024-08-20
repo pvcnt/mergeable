@@ -4,7 +4,8 @@ import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
 import { type Section, type SectionProps, defaultSectionProps } from "@repo/types";
-import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar, useSections, usePulls } from "../db";
+import { useSections, usePulls } from "../lib/queries";
+import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar } from "../lib/mutations";
 import Navbar from "../components/Navbar";
 import { getWorker } from "../worker/client";
 

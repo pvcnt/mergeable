@@ -4,7 +4,7 @@ import clsx from 'clsx'
 
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
-import { useConnections, usePulls, useSections } from './db';
+import { useConnections, usePulls, useSections } from './lib/queries';
 import { sum } from 'remeda'
 
 import styles from "./App.module.scss";
