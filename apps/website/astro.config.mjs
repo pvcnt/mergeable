@@ -39,7 +39,10 @@ export default defineConfig({
         './src/styles/home.css',
         './src/styles/theme.css',
       ],
-      plugins: [starlightLinksValidator()],
+      plugins: [
+        starlightLinksValidator({
+          errorOnRelativeLinks: false,
+        })],
     }),
   ],
 });
