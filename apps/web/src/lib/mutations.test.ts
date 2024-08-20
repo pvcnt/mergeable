@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { saveSection, resetSections } from "./db";
 import { mockSection } from "@repo/testing";
-import { db } from "@repo/storage";
+import { saveSection, resetSections } from "./mutations";
+import { db } from "./db";
 
-describe("db", () => {
+describe("mutations", () => {
     afterEach(async () => {
         await db.connections.clear();
     })

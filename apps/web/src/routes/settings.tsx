@@ -4,7 +4,8 @@ import ConnectionDialog from "../components/ConnectionDialog"
 import ConnectionTable from "../components/ConnectionTable"
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getWorker } from "../worker/client";
-import { deleteConnection, resetSections, saveConnection, useConnections } from "../db";
+import { useConnections } from "../lib/queries";
+import { deleteConnection, resetSections, saveConnection } from "../lib/mutations";
 import { isTruthy } from "remeda";
 import type { Connection, ConnectionProps } from "@repo/types"
 import styles from "./settings.module.scss";

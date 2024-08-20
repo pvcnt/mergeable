@@ -1,5 +1,6 @@
 import { Card, Spinner } from "@blueprintjs/core";
-import { toggleStar, usePulls } from "../db";
+import { usePulls } from "../lib/queries";
+import { toggleStar } from "../lib/mutations";
 import Navbar from "../components/Navbar";
 import PullTable from "../components/PullTable";
 
