@@ -21,7 +21,7 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
 
-  apps/web:
+  apps/webapp:
     dependencies:
       '@blueprintjs/core':
         specifier: ^5.10.3
@@ -175,40 +175,6 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
-      typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
-      vitest:
-        specifier: ^2.0.5
-        version: 2.0.5(@types/node@22.1.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
-
-  packages/storage:
-    dependencies:
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../types
-      dexie:
-        specifier: ^4.0.7
-        version: 4.0.7
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/testing':
-        specifier: workspace:*
-        version: link:../testing
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@vitest/coverage-istanbul':
-        specifier: ^2.0.5
-        version: 2.0.5(vitest@2.0.5(@types/node@22.1.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0))
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      fake-indexeddb:
-        specifier: ^6.0.0
-        version: 6.0.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
