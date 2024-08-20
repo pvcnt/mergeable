@@ -28,7 +28,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install -F webapp
+        run: pnpm install
       - name: Build webapp
         run: pnpm package -F webapp
         env:
