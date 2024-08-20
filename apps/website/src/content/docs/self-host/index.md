@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Getting started
 sidebar:
   order: 1
 ---
@@ -13,9 +13,9 @@ This provides the following benefits:
 * **Customizability:** By deploying your own instances, you may personalise it in such a way it fits your workflow.
 For example, you may connect to an internal GitHub Enterprise instance.
 
-## Comparison
+## Compare methods
 
-The following table showcases the supported deployment methods:
+The following deployment methods are currently supported:
 
 | Name                     | Use cases                             |
 |--------------------------|---------------------------------------|
