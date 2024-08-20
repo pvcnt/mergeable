@@ -105,7 +105,7 @@ export default function ConnectionDialog({title, isOpen, connection, onClose, on
                     {connection && <Button intent={Intent.DANGER} text="Delete" aria-label="Delete" minimal onClick={() => setDeleting(true)} />}
                 </DialogFooter>
             </Dialog>
-            {connection && <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={handleDelete}>
+            {connection && <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onSubmit={handleDelete}>
                 Are you sure you want to delete connection <em>{connection.label || connection.host}</em>?
             </ConfirmDialog>}
         </>

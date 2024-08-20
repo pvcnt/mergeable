@@ -84,7 +84,7 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
                 </DialogFooter>
             </Dialog>
 
-            {section && <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onConfirm={handleDelete}>
+            {section && <ConfirmDialog isOpen={isDeleting} onClose={() => setDeleting(false)} onSubmit={handleDelete}>
                 Are you sure you want to delete section <em>{section.label}</em>?
             </ConfirmDialog>}
         </>

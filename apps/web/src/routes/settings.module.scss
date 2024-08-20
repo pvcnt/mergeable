@@ -2,13 +2,16 @@
     max-width: 1080px;
     margin-right: auto;
     margin-left: auto;
-  }
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
 .header {
     display: flex;
     width: 100%;
     gap: 1rem;
-    margin-bottom: 1rem;
 }
 
 .title {
