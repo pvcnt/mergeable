@@ -68,9 +68,7 @@ export default function Settings() {
                     <p>
                         Resetting to factory settings will erase the current configuration and
                         replace it with a default configuration provided to new users.
-                    </p>
-                    <p>
-                        <i>Affected:</i> sections. <i>Not affected:</i> connections, stars.
+                        It does <i>not</i> affect connections and stars.
                     </p>
                     <Button text="Reset to factory settings" intent="danger" outlined onClick={() => setResetting(true)} />
                 </Card>
