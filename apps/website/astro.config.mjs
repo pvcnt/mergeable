@@ -1,6 +1,5 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
-import relativeLinks from "astro-relative-links";
 
 // https://astro.build/config
 export default defineConfig({
@@ -36,7 +35,5 @@ export default defineConfig({
         },
       ],
     }),
-    // Better support for "base" property.
-    relativeLinks(),
   ],
 });
