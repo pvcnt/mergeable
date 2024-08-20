@@ -1,4 +1,4 @@
-name: Deploy website to GitHub Pages
+name: Deploy website
 
 on:
   push:
@@ -13,13 +13,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          path: apps/website
           node-version: 22
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build website
+        run: pnpm package -F website
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: apps/website/dist/
 
   deploy:
     needs: build
