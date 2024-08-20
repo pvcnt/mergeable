@@ -1,5 +1,6 @@
 ---
 title: Configure connections
+draft: true
 sidebar:
-  order: 1
+  order: 4
 ---

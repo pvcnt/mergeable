@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import starlightLinksValidator from "starlight-links-validator";
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,14 +27,19 @@ export default defineConfig({
           autogenerate: { directory: "about" },
         },
         {
-          label: "Get Started",
-          autogenerate: { directory: "get-started" },
+          label: "User Guide",
+          autogenerate: { directory: "user" },
         },
         {
           label: "Self-Host",
           autogenerate: { directory: "self-host" },
         },
       ],
+      customCss: [
+        './src/styles/home.css',
+        './src/styles/theme.css',
+      ],
+      plugins: [starlightLinksValidator()],
     }),
   ],
 });

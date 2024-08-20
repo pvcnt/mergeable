@@ -6,14 +6,31 @@ hero:
   title: Mergeable
   tagline: A better inbox for GitHub pull requests.
   actions:
-    - text: Get Started
-      link: ./get-started/
-      icon: right-arrow
-    - text: Learn More
+    - text: Read The Docs
       link: ./about/
+      icon: right-arrow
+    - text: Try Now
+      link: https://mergeable.pages.dev
       variant: minimal
-      icon: right-caret
+      icon: external
 editUrl: false
 ---
 
-<img src="/mergeable/screenshot.png" alt="Screenshot" />
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Fully customizable" icon="setting">
+    Organize pull requests into sections, defined by flexible search queries.
+  </Card>
+  <Card title="Self-Hostable" icon="laptop">
+    Easy to deploy locally, on bare metal, Kubernetes, or your favorite PaaS.
+  </Card>
+  <Card title="Fast" icon="rocket">
+    Data is all stored locally, in the browser storage. Keyboard shortcuts (e.g., <code>cmd+k</code>) allow to navigate quickly.
+  </Card>
+  <Card title="Enterprise-Ready" icon="approve-check">
+    Connect to multiple GitHub instances, including private GitHub Enterprise installations.
+  </Card>
+</CardGrid>
+
+<p class="disclaimer">Mergeable is free and open-source software. If you find it useful, please [contribute](https://github.com/pvcnt/mergeable/issues).</p>
