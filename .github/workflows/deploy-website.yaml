@@ -2,12 +2,17 @@ name: Deploy website
 
 on:
   push:
-    branches: [ main, website ]
+    branches: [main]
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+# Prevent two versions of the website from being deployed in parallel.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -29,7 +34,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: apps/website/dist/
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
