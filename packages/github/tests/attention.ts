@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { isInAttentionSet } from "@repo/github";
-import { TestGitHubClient } from "@repo/github";
+import { isInAttentionSet } from "../src/attention.js";
+import { TestGitHubClient } from "../src/client.js";
 import { mockConnection, mockPull } from "@repo/testing";
 import { PullState } from "@repo/types";
 

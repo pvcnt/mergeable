@@ -88,6 +88,11 @@ export class DefaultGitHubClient implements GitHubClient {
                   login
                   avatarUrl                  
                 }
+                timelineItems(last: 100) {
+                  nodes {
+                    __typename
+                  }
+                }
                 reviewRequests(first: 100) {
                   nodes {
                     requestedReviewer {
@@ -136,15 +141,22 @@ export class DefaultGitHubClient implements GitHubClient {
             }
           }
         }
+        rateLimit {
+          cost
+        }
     }`;
     type Edge = {
         node: GHPull,
+    }
+    type RateLimit = {
+      cost: number
     }
     type Data = {
         search: {
             issueCount: number,
             edges: Edge[],
         },
+        rateLimit: RateLimit,
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
     const q = new SearchQuery(search);
