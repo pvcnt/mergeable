@@ -1,6 +1,7 @@
 {
   "name": "@repo/types",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
     ".": {
       "default": "./build/index.js",
@@ -9,14 +10,17 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsc --project tsconfig.build.json",
+    "dev": "tsc --project tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
-    "test": "vitest run"
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"

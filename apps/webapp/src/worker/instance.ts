@@ -19,7 +19,6 @@ function syncViewers(client: GitHubClient) {
 async function executeActivity(name: string, intervalMillis: number, force: boolean, fn: () => Promise<void>): Promise<void> {
     const activity = await db.activities.get(name);
     if (!force && activity !== undefined && activity.refreshTime <= new Date(Date.now() - intervalMillis)) {
-        console.log(`Not running ${name} now`);
         return;
     }
     if (activity === undefined) {

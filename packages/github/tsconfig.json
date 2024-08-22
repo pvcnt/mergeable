@@ -3,9 +3,8 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "target": "es2015",
-    "lib": ["es2023.Array"],
-    "outDir": "build",
+    "lib": ["es2023", "es2023.Array"],
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules"],
 }

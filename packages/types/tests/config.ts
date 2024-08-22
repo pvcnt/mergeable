@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { splitQueries, joinQueries } from "./config";
+import { splitQueries, joinQueries } from "@repo/types";
 
 describe("Section", () => {
     it("should split a search string into queries", () => {

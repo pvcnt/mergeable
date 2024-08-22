@@ -1,4 +1,4 @@
-import { Profile } from "./user"
+import type { Profile } from "./user.js"
 
 /**
  * Properties for a section, as provided by a user in a form or API.

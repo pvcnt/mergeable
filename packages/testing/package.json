@@ -1,6 +1,7 @@
 {
   "name": "@repo/testing",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
     ".": {
       "default": "./build/index.js",
@@ -10,6 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\""
   },
   "dependencies": {

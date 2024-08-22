@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { SearchQuery, SearchOp, SearchTerm } from "./search";
+import { SearchQuery, SearchOp, SearchTerm } from "@repo/github";
 
 describe("SearchQuery", () => {
     const expectTerms = (str: string, terms: SearchTerm[]) => {

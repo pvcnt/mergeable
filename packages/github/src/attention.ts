@@ -1,5 +1,5 @@
 import { type Attention, type PullProps, type Comment, type Connection, PullState } from "@repo/types";
-import { GitHubClient } from "./client";
+import { GitHubClient } from "./client.js";
 
 export async function isInAttentionSet(client: GitHubClient, connection: Connection, pull: PullProps): Promise<Attention> {
     if (pull.state === PullState.Draft || pull.state === PullState.Merged || pull.state === PullState.Closed) {
