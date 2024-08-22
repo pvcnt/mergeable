@@ -7,7 +7,6 @@
     "coverage": "turbo coverage",
     "lint": "turbo lint",
     "dev": "turbo dev",
-    "package": "turbo package",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

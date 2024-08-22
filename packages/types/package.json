@@ -4,8 +4,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./build/index.js",
-      "types": "./build/index.d.ts"
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "license": "MIT",
