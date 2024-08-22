@@ -1,10 +1,10 @@
 {
   "extends": "./base.json",
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es2015",
+    "lib": ["es2023", "DOM", "WebWorker"],
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM", "WebWorker"],
     "sourceMap": true,
     "resolveJsonModule": true,
     "moduleResolution": "Bundler",
