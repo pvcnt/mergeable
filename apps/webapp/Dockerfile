@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1.8.1
 
-FROM joseluisq/static-web-server:2.32.0
+FROM joseluisq/static-web-server:2.32.0-alpine
+
+ARG TARGETARCH
+
+COPY --chmod=0755 docker/envsubst-${TARGETARCH} /bin/envsubst
+COPY --chmod=0755 docker/entrypoint.sh /
 
 COPY <<EOF /config.toml
   [general]
@@ -24,4 +29,5 @@ COPY ./dist /mergeable
 
 ENV SERVER_CONFIG_FILE=config.toml
 
+ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE 80

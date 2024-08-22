@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/pvcnt/mergeable
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Tag is overridden by CI before publishing the Helm Chart.
   tag: "latest"
 
@@ -18,6 +18,8 @@ serviceAccount:
 
 podAnnotations: {}
 podLabels: {}
+
+env: {}
 
 podSecurityContext: {}
 

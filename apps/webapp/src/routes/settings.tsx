@@ -18,8 +18,8 @@ export default function Settings() {
     const connections = useConnections();
     const navigate = useNavigate();
 
-    const allowedUrls = isTruthy(import.meta.env.VITE_GITHUB_URLS) 
-        ? import.meta.env.VITE_GITHUB_URLS.split(",") 
+    const allowedUrls = isTruthy(import.meta.env.MERGEABLE_GITHUB_URLS) 
+        ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",") 
         : undefined;
     
     const worker = getWorker();
