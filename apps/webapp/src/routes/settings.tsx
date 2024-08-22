@@ -6,7 +6,6 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { getWorker } from "../worker/client";
 import { useConnections } from "../lib/queries";
 import { deleteConnection, resetSections, saveConnection } from "../lib/mutations";
-import { isTruthy } from "remeda";
 import type { Connection, ConnectionProps } from "@repo/types"
 import styles from "./settings.module.scss";
 import { AppToaster } from "../lib/toaster";
@@ -18,8 +17,8 @@ export default function Settings() {
     const connections = useConnections();
     const navigate = useNavigate();
 
-    const allowedUrls = isTruthy(import.meta.env.VITE_GITHUB_URLS) 
-        ? import.meta.env.VITE_GITHUB_URLS.split(",") 
+    const allowedUrls = import.meta.env.MERGEABLE_GITHUB_URLS
+        ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",") 
         : undefined;
     
     const worker = getWorker();
