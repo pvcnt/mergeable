@@ -2,6 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Default",
   "compilerOptions": {
+    "target": "es2015",
+    "lib": ["es2023", "es2023.Array"],
     "composite": false,
     "declaration": true,
     "declarationMap": true,
@@ -9,13 +11,12 @@
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
     "isolatedModules": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "jsx": "react-jsx"
   },
 }

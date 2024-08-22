@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile } from "@repo/types";
-import { SearchQuery } from "./search";
+import { SearchQuery } from "./search.js";
 
 const MAX_PULLS_TO_FETCH = 50;
 

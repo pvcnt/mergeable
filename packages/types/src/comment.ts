@@ -1,4 +1,4 @@
-import { User } from "./user"
+import type { User } from "./user.js"
 
 export type Comment = {
     uid: string

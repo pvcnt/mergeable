@@ -1,4 +1,4 @@
-import type { Team, User } from "./user"
+import type { Team, User } from "./user.js"
 
 export type PullList = {
     total: number

@@ -1,16 +1,18 @@
 {
   "name": "@repo/github",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
     ".": {
-      "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsc --project tsconfig.build.json",
+    "dev": "tsc --project tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
     "test": "vitest run",
     "coverage": "vitest run --coverage"

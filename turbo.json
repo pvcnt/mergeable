@@ -3,10 +3,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["build/**"]
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["build"]
     },
     "lint": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "typecheck"]
     },
     "test": {
       "dependsOn": ["build"]
@@ -14,10 +17,6 @@
     "coverage": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**"]
-    },
-    "package": {
-      "dependsOn": ["build"],
-      "outputs": ["dist/**"]
     },
     "dev": {
       "cache": false,
