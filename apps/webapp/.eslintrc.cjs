@@ -5,6 +5,7 @@ module.exports = {
     "@repo/eslint-config/index.js",
     "plugin:react-hooks/recommended",
   ],
+  ignorePatterns: ["public/**"],
   plugins: ["react-refresh"],
   parserOptions: {
     project: true,

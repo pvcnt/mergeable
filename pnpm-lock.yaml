@@ -81,6 +81,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@repo/vite-plugin-process-env':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-process-env
       '@testing-library/jest-dom':
         specifier: ^6.4.6
         version: 6.4.6(@jest/globals@29.7.0)(jest@29.7.0(@types/node@22.5.0)(ts-node@10.9.2(@types/node@22.5.0)(typescript@5.5.4)))(vitest@2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0))
@@ -244,6 +247,30 @@ importers:
         version: 2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
 
   packages/typescript-config: {}
+
+  packages/vite-plugin-process-env:
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.5.0
+        version: 22.5.0
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      typescript:
+        specifier: ^5.5.4
+        version: 5.5.4
+      vite:
+        specifier: ^5.4.1
+        version: 5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
+      vitest:
+        specifier: ^2.0.5
+        version: 2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
 
 packages:
 
@@ -6074,7 +6101,6 @@ snapshots:
   '@types/node@22.5.0':
     dependencies:
       undici-types: 6.19.8
-    optional: true
 
   '@types/postcss-modules-local-by-default@4.0.2':
     dependencies:
@@ -9932,8 +9958,7 @@ snapshots:
 
   undici-types@6.13.0: {}
 
-  undici-types@6.19.8:
-    optional: true
+  undici-types@6.19.8: {}
 
   unified@11.0.5:
     dependencies:

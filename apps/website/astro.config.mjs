@@ -28,7 +28,7 @@ export default defineConfig({
         },
         {
           label: "User Guide",
-          autogenerate: { directory: "user" },
+          autogenerate: { directory: "user-guide" },
         },
         {
           label: "Self-Host",
