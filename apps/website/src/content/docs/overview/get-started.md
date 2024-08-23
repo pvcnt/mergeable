@@ -8,7 +8,7 @@ The fastest way to get started is to use the public instance of Mergeable availa
 This instance is provided free of charge, and allows to interact with pull requests from [github.com](https://github.com), from public and private repositories alike.
 
 :::note
-If you need to interact with a private GitHub Enterprise instance, please consider [self-hosting](../self-host).
+If you need to interact with a private GitHub Enterprise instance, please consider [self-hosting](../../self-host/).
 :::
 
 When you first start Mergeable, it displays an empty dashboard, because it is not connected to any GitHub instance.
