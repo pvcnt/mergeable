@@ -10,7 +10,7 @@ Switching between tabs is slow, and there is no way to see all pull requests fro
 
 Mergeable is a better inbox for GitHub pull requests, that displays all pull requests of interest on a single page in a very flexible manner:
 
-![Inbox](/mergeable/images/inbox.png)
+![Inbox](../../../assets/screenshots/dashboard.png)
 
 ## Compare with...
 

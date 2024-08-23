@@ -20,7 +20,6 @@ export default defineConfig({
       social: {
         github: "https://github.com/pvcnt/mergeable",
       },
-      pagination: false,
       sidebar: [
         {
           label: "About",

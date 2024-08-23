@@ -20,9 +20,9 @@ pnpm build
 This will create a static website under the `apps/webapp/dist` directory.
 The content of this directory can then be dropped into your Web server of hosting platform.
 
-<Aside type="caution">
+:::caution
 The Web server or hosting platform must be configured so that all traffic directed to a path that does not match an existing file should be redirected to `index.html`.
-</Aside>
+:::
 
 ## Configuration
 
