@@ -44,8 +44,8 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
       </Tooltip>
 
       <div className={styles.bottom}>
-        <Tooltip content="Read the docs">
-          <AnchorButton large minimal href="https://pvcnt.github.io/mergeable/">
+        <Tooltip content="Help">
+          <AnchorButton large minimal href="https://pvcnt.github.io/mergeable/user-guide/">
             <Icon icon="help" size={IconSize.LARGE}/>
           </AnchorButton>
         </Tooltip>
