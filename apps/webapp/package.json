@@ -16,7 +16,7 @@
     "@blueprintjs/icons": "^5.9.0",
     "@blueprintjs/select": "^5.1.5",
     "@repo/github": "workspace:*",
-    "@repo/types": "workspace:*",
+    "@repo/model": "workspace:*",
     "clsx": "^2.1.1",
     "comlink": "^4.4.1",
     "dexie": "^4.0.7",

@@ -1,14 +1,11 @@
 import { TestGitHubClient } from "@repo/github";
 import { afterEach, beforeEach, it, describe, expect, assert } from "vitest";
-import { syncPullsOnce, syncViewersOnce } from "./instance";
-import { db } from "../lib/db";
+import { syncPullsOnce, syncViewersOnce } from "../../src/worker/instance.js";
+import { db } from "../../src/lib/db.js";
 import { mockPull, mockConnection, mockSection } from "@repo/testing";
 
 describe("sync viewers", () => {
-    let client: TestGitHubClient|undefined;
-
     beforeEach(async () => {
-        client = new TestGitHubClient();
         await db.connections.add(mockConnection({ id: "1" }));
         await db.connections.add(mockConnection({ id: "2" }));
     })
@@ -19,38 +16,39 @@ describe("sync viewers", () => {
     })
 
     it("should update connections", async () => {
-        assert(client !== undefined);
+        let activity = await db.activities.get("syncViewers");
+        expect(activity).toBeUndefined();
+
+        const client = new TestGitHubClient();
         await syncViewersOnce(client);
 
         let connection = await db.connections.get("1");
-        expect(connection).toBeDefined();
+        expect(connection?.viewer).toBeDefined();
         expect(connection?.viewer?.user).toEqual({ name: "test[1]", avatarUrl: "" });
 
         connection = await db.connections.get("2");
         expect(connection?.viewer).toBeDefined();
         expect(connection?.viewer?.user).toEqual({ name: "test[2]", avatarUrl: "" });
-    })
-
-    it("should update activity", async () => {
-        assert(client !== undefined);
-
-        let activity = await db.activities.get("syncViewers");
-        expect(activity).toBeUndefined();
-
-        await syncViewersOnce(client);
 
         activity = await db.activities.get("syncViewers");
         expect(activity?.running).toBeFalsy();
         expect(activity?.refreshTime.getTime()).toBeGreaterThan(0);
         expect(activity?.refreshTime.getTime()).toBeLessThanOrEqual(Date.now());
     })
+
+    it("should not update connections if recently completed", async () => {
+        await db.activities.add({ name: "syncViewers", running: false, refreshTime: new Date() });
+
+        const client = new TestGitHubClient();
+        await syncViewersOnce(client);
+
+        const connection = await db.connections.get("1");
+        expect(connection?.viewer).toBeUndefined();
+    })
 })
 
 describe("sync pulls", () => {
-    let client: TestGitHubClient|undefined;
-
     beforeEach(async () => {
-        client = new TestGitHubClient();
         await db.connections.add(mockConnection({ id: "1" }));
         await db.connections.add(mockConnection({ id: "2" }));
         await db.sections.add(mockSection({ id: "1", search: "author:@me draft:true;author:@me draft:false" }));
@@ -65,11 +63,14 @@ describe("sync pulls", () => {
     })
 
     it("should update pulls", async () => {
-        assert(client !== undefined);
+        let activity = await db.activities.get("syncPulls");
+        expect(activity).toBeUndefined();
 
         // GIVEN some pull requests are returned from GitHub.
         let connection = await db.connections.get("1");
         assert(connection !== undefined);
+
+        const client = new TestGitHubClient();
         client.setPulls(connection, "author:@me draft:true", [
             mockPull({ uid: "1:1" }),
             mockPull({ uid: "1:2" }),
@@ -110,19 +111,20 @@ describe("sync pulls", () => {
 
         pull = await db.pulls.get("1:4");
         expect(pull?.sections).toEqual(["1"]);
-    })
 
-    it("should update activity", async () => {
-        assert(client !== undefined);
-
-        let activity = await db.activities.get("syncPulls");
-        expect(activity).toBeUndefined();
-
-        await syncPullsOnce(client);
-
+        // THEN the activity should have been updated.
         activity = await db.activities.get("syncPulls");
         expect(activity?.running).toBeFalsy();
         expect(activity?.refreshTime.getTime()).toBeGreaterThan(0);
         expect(activity?.refreshTime.getTime()).toBeLessThanOrEqual(Date.now());
+    })
+
+    it("should not update pulls if recently completed", async () => {
+        await db.activities.add({ name: "syncPulls", running: false, refreshTime: new Date() });
+
+        const client = new TestGitHubClient();
+        await syncPullsOnce(client);
+
+        expect(await db.pulls.count()).toBe(0);
     })
 })

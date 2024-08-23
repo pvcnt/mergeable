@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { HotkeysTarget2, HotkeyConfig, MenuItem } from "@blueprintjs/core";
 import { ItemPredicate, ItemRenderer, Omnibar } from "@blueprintjs/select";
-import type { Pull } from "@repo/types";
+import type { Pull } from "@repo/model";
 import { usePulls } from "../lib/queries";
 
 type Props = {

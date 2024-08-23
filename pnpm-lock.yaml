@@ -35,9 +35,9 @@ importers:
       '@repo/github':
         specifier: workspace:*
         version: link:../../packages/github
-      '@repo/types':
+      '@repo/model':
         specifier: workspace:*
-        version: link:../../packages/types
+        version: link:../../packages/model
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -180,9 +180,9 @@ importers:
       '@octokit/rest':
         specifier: ^20.1.1
         version: 20.1.1
-      '@repo/types':
+      '@repo/model':
         specifier: workspace:*
-        version: link:../types
+        version: link:../model
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -206,11 +206,7 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
 
-  packages/testing:
-    dependencies:
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../types
+  packages/model:
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -225,7 +221,11 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  packages/types:
+  packages/testing:
+    dependencies:
+      '@repo/model':
+        specifier: workspace:*
+        version: link:../model
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

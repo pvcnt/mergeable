@@ -1,4 +1,4 @@
-import { type Attention, type PullProps, type Comment, type Connection, PullState } from "@repo/types";
+import { type Attention, type PullProps, type Comment, type Connection, PullState } from "@repo/model";
 import { GitHubClient } from "./client.js";
 
 export async function isInAttentionSet(client: GitHubClient, connection: Connection, pull: PullProps): Promise<Attention> {

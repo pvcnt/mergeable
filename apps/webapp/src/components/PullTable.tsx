@@ -1,6 +1,6 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core";
 import ReactTimeAgo from "react-time-ago";
-import { type Pull, PullState } from "@repo/types";
+import { type Pull, PullState } from "@repo/model";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
 

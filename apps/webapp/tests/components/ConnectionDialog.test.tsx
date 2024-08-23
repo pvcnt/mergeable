@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "../../src/components/ConnectionDialog.js";
 import { AppToaster } from "../../src/lib/toaster.js";
-import type { ConnectionProps } from "@repo/types";
+import type { ConnectionProps } from "@repo/model";
 import { mockConnection } from "@repo/testing";
 
 describe("connection dialog", () => {

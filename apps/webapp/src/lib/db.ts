@@ -1,4 +1,4 @@
-import type { Connection, Pull, Section, Star } from "@repo/types";
+import type { Connection, Pull, Section, Star } from "@repo/model";
 import Dexie, { type EntityTable } from "dexie";
 
 export type Activity = {

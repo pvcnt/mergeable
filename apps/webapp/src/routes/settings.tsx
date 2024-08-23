@@ -6,7 +6,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { getWorker } from "../worker/client";
 import { useConnections } from "../lib/queries";
 import { deleteConnection, resetSections, saveConnection } from "../lib/mutations";
-import type { Connection, ConnectionProps } from "@repo/types"
+import type { Connection, ConnectionProps } from "@repo/model"
 import styles from "./settings.module.scss";
 import { AppToaster } from "../lib/toaster";
 import { useNavigate } from "react-router-dom";

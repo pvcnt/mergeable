@@ -1,4 +1,4 @@
-import { type Pull, type Section, type Connection, PullState } from "@repo/types";
+import { type Pull, type Section, type Connection, PullState } from "@repo/model";
 
 export function mockPull(props?: Partial<Pull>): Pull {
     return {

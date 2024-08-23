@@ -2,7 +2,7 @@ import { Button, Checkbox, Dialog, DialogBody, DialogFooter, FormGroup, InputGro
 import { useState } from "react";
 import { AppToaster } from "../lib/toaster"
 import ConfirmDialog from "./ConfirmDialog";
-import { type SectionProps, defaultSectionProps } from "@repo/types";
+import { type SectionProps, defaultSectionProps } from "@repo/model";
 
 type Props = {
     title: string,

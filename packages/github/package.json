@@ -29,6 +29,6 @@
   "dependencies": {
     "@octokit/core": "^6.1.2",
     "@octokit/rest": "^20.1.1",
-    "@repo/types": "workspace:*"
+    "@repo/model": "workspace:*"
   }
 }

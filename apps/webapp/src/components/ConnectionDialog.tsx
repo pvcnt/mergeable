@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, InputGroup, Intent } from "@blueprintjs/core"
 import { useState } from "react"
 import ConfirmDialog from "./ConfirmDialog"
-import type { ConnectionProps } from "@repo/types";
+import type { ConnectionProps } from "@repo/model";
 import { isTruthy } from "remeda";
 import { AppToaster } from "../lib/toaster";
 

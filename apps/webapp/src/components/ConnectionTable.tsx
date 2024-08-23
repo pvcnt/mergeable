@@ -1,7 +1,7 @@
 import { Button, HTMLTable } from "@blueprintjs/core"
 import { useState } from "react"
 import ConnectionDialog from "./ConnectionDialog"
-import type { Connection, ConnectionProps } from "@repo/types"
+import type { Connection, ConnectionProps } from "@repo/model"
 
 import styles from "./ConnectionTable.module.scss";
 

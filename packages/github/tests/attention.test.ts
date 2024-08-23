@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { isInAttentionSet } from "../src/attention.js";
 import { TestGitHubClient } from "../src/client.js";
 import { mockConnection, mockPull } from "@repo/testing";
-import { PullState } from "@repo/types";
+import { PullState } from "@repo/model";
 
 describe("attention set", () => {
     const client = new TestGitHubClient();

@@ -1,7 +1,8 @@
 import * as Comlink from "comlink";
 import { groupBy, unique } from "remeda";
 import { db } from "../lib/db";
-import { splitQueries, type Pull, type Connection } from "@repo/github";
+import { splitQueries } from "@repo/github";
+import type { Pull, Connection } from "@repo/model";
 import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
@@ -18,7 +19,7 @@ function syncViewers(client: GitHubClient) {
 
 async function executeActivity(name: string, intervalMillis: number, force: boolean, fn: () => Promise<void>): Promise<void> {
     const activity = await db.activities.get(name);
-    if (!force && activity !== undefined && activity.refreshTime <= new Date(Date.now() - intervalMillis)) {
+    if (!force && activity !== undefined && activity.refreshTime > new Date(Date.now() - intervalMillis)) {
         return;
     }
     if (activity === undefined) {

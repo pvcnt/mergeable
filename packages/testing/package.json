@@ -15,7 +15,7 @@
     "lint": "eslint \"**/*.ts\""
   },
   "dependencies": {
-    "@repo/types": "workspace:*"
+    "@repo/model": "workspace:*"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
