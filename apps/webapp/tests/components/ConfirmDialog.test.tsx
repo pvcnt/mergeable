@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import ConfirmDialog from "./ConfirmDialog";
+import ConfirmDialog from "../../src/components/ConfirmDialog.js";
 
 describe("confirm dialog", () => {
     let user: UserEvent|undefined;

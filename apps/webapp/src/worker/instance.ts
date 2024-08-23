@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
 import { groupBy, unique } from "remeda";
 import { db } from "../lib/db";
-import { splitQueries, type Pull, type Connection } from "@repo/types";
+import { splitQueries, type Pull, type Connection } from "@repo/github";
 import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 

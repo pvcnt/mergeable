@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { mockSection } from "@repo/testing";
-import { saveSection, resetSections } from "./mutations";
-import { db } from "./db";
+import { saveSection, resetSections } from "../../src/lib/mutations.js";
+import { db } from "../../src/lib/db.js";
 
 describe("mutations", () => {
     afterEach(async () => {

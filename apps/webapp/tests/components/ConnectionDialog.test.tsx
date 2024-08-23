@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import ConnectionDialog from "./ConnectionDialog";
-import { AppToaster } from "../lib/toaster";
+import ConnectionDialog from "../../src/components/ConnectionDialog.js";
+import { AppToaster } from "../../src/lib/toaster.js";
 import type { ConnectionProps } from "@repo/types";
 import { mockConnection } from "@repo/testing";
 

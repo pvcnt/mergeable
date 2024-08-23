@@ -1,8 +1,8 @@
 import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import { db } from "../lib/db";
-import CommandBar from "./CommandBar";
+import { db } from "../../src/lib/db.js";
+import CommandBar from "../../src/components/CommandBar.js";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { mockPull } from "@repo/testing";
 

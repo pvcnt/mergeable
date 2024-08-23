@@ -10,19 +10,15 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
-    "dev": "tsc --project tsconfig.build.json --watch",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"**/*.ts\"",
-    "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "lint": "eslint \"**/*.ts\""
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "typescript": "^5.5.4"
   }
 }

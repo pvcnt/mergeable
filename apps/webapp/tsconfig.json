@@ -6,6 +6,6 @@
     "types": ["@testing-library/jest-dom"],
     "outDir": "dist",
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules"],
 }
