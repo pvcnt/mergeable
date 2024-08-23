@@ -1,5 +1,5 @@
 ---
-title: Getting started
+title: Introduction
 sidebar:
   order: 1
 ---

@@ -1,7 +1,7 @@
 ---
 title: Use the inbox
 sidebar:
-  order: 2
+  order: 3
 ---
 
 The landing page of Mergeable is its inbox, that shows all pull requests in your radar.
@@ -35,6 +35,7 @@ Results from all individual search queries will be merged and displayed together
 ### Edit a section
 
 You may edit an existing section by clicking on the pencil icon on the right side, next to its label.
+The edit dialog also contains a link to delete the section permanently.
 
 ### Move sections
 
