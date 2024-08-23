@@ -30,6 +30,7 @@
     "remeda": "^2.0.5"
   },
   "devDependencies": {
+    "@codecov/vite-plugin": "0.0.1-beta.10",
     "@repo/eslint-config": "workspace:*",
     "@repo/testing": "workspace:*",
     "@repo/typescript-config": "workspace:*",
