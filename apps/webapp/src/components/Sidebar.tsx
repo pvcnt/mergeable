@@ -1,9 +1,8 @@
 import { AnchorButton, Button, Icon, Intent, Tooltip } from "@blueprintjs/core";
 import { NavLink } from "react-router-dom";
 import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16';
-
 import styles from "./Sidebar.module.scss";
-import ReactTimeAgo from "react-time-ago";
+import TimeAgo from "./TimeAgo";
 import { useActivity } from "../lib/queries";
 
 function SidebarLink({ title, icon, link }: { title: string, link: string, icon: BlueprintIcons_16Id }) {
@@ -37,7 +36,7 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
 
       <div className={styles.separator}/>
 
-      <Tooltip content={refreshActivity && <span>Refreshed <ReactTimeAgo date={refreshActivity.refreshTime} tooltip={false} timeStyle="round"/></span>}>
+      <Tooltip content={refreshActivity && <span>Refreshed <TimeAgo date={refreshActivity.refreshTime} tooltip={false} timeStyle="round"/></span>}>
         <Button onClick={handleRefresh} loading={refreshActivity?.running} disabled={refreshActivity?.running} intent={Intent.PRIMARY} outlined>
           <Icon icon="refresh"/>
         </Button>

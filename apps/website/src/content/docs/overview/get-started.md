@@ -1,7 +1,7 @@
 ---
 title: Get started
 sidebar:
-  order: 1
+  order: 3
 ---
 
 The fastest way to get started is to use the public instance of Mergeable available at [mergeable.pages.dev](https://mergeable.pages.dev).

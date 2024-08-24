@@ -1,5 +1,5 @@
 ---
-title: Use the inbox
+title: Browse the inbox
 sidebar:
   order: 3
 ---
@@ -14,6 +14,7 @@ By default, some default sections are populated:
 ![Dashboard sections](../../../assets/screenshots/dashboard-empty.png)
 
 But those are only created for your convenience, as they can all be modified or even replaced.
+Please note that nothing prevents a pull request from appearing in several sections.
 
 ### Add a new section
 
@@ -22,8 +23,7 @@ The following dialog will open:
 
 ![New section dialog](../../../assets/screenshots/new-section.png)
 
-You need to provide a label and a search query.
-The search query uses [GitHub's search language for pull requests](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests), with the following modifications:
+The search query uses [GitHub's search language](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests), with the following modifications:
 
 * A `type:pr` term is implicitely added, you do not need to include it.
 * Pull requests are always sorted by last updated first (i.e., `sort:updated`).
