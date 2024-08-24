@@ -1,4 +1,4 @@
-import { AnchorButton, Button, Icon, IconSize, Intent, Tooltip } from "@blueprintjs/core";
+import { AnchorButton, Button, Icon, Intent, Tooltip } from "@blueprintjs/core";
 import { NavLink } from "react-router-dom";
 import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16';
 
@@ -11,8 +11,8 @@ function SidebarLink({ title, icon, link }: { title: string, link: string, icon:
         <NavLink to={link}>
         {({ isActive }) => (
             <Tooltip content={title}>
-              <Button minimal large active={isActive}>
-                <Icon icon={icon} size={IconSize.LARGE}/>
+              <Button minimal active={isActive}>
+                <Icon icon={icon}/>
               </Button>
             </Tooltip>
         )}
@@ -38,20 +38,20 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
       <div className={styles.separator}/>
 
       <Tooltip content={refreshActivity && <span>Refreshed <ReactTimeAgo date={refreshActivity.refreshTime} tooltip={false} timeStyle="round"/></span>}>
-        <Button large onClick={handleRefresh} loading={refreshActivity?.running} disabled={refreshActivity?.running} intent={Intent.PRIMARY} outlined>
-          <Icon icon="refresh" size={IconSize.LARGE}/>
+        <Button onClick={handleRefresh} loading={refreshActivity?.running} disabled={refreshActivity?.running} intent={Intent.PRIMARY} outlined>
+          <Icon icon="refresh"/>
         </Button>
       </Tooltip>
 
       <div className={styles.bottom}>
         <Tooltip content="Help">
-          <AnchorButton large minimal href="https://pvcnt.github.io/mergeable/user-guide/">
-            <Icon icon="help" size={IconSize.LARGE}/>
+          <AnchorButton minimal href="https://pvcnt.github.io/mergeable/user-guide/">
+            <Icon icon="help"/>
           </AnchorButton>
         </Tooltip>
         <Tooltip content={"Switch to " + (isDark ? "light" : "dark") + " mode"}>
-          <Button large onClick={onDarkChange} minimal>
-            <Icon icon={isDark ? "flash" : "moon"} size={IconSize.LARGE}/>
+          <Button onClick={onDarkChange} minimal>
+            <Icon icon={isDark ? "flash" : "moon"}/>
           </Button>
         </Tooltip>
       </div>
