@@ -6,7 +6,6 @@ import type { Profile } from "./user.js"
 export type SectionProps = {
     label: string,
     search: string,
-    notified: boolean,
     attention: boolean,
 }
 
@@ -14,20 +13,17 @@ export const defaultSections: SectionProps[] = [
     {
         label: "Incoming reviews",
         search: "is:open -author:@me review-requested:@me ; is:open -author:@me involves:@me",
-        notified: true,
         attention: true,
     },
     {
         label: "Outgoing reviews",
         search: "is:open author:@me draft:false",
-        notified: true,
         attention: true,
     },
     {
         label: "Draft reviews",
         search: "is:open author:@me draft:true",
-        notified: false,
-        attention: false,
+        attention: true,
     }
 ];
 
@@ -42,7 +38,7 @@ export type Section = SectionProps & {
 /**
  * Default properties for a new section.
  */
-export const defaultSectionProps: SectionProps = { label: "", search: "", notified: true, attention: true };
+export const defaultSectionProps: SectionProps = { label: "", search: "", attention: true };
 
 /**
  * Properties for a connection, as provided by a user in a form or API.

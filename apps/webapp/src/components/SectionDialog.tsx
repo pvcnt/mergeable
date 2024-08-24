@@ -17,19 +17,17 @@ type Props = {
 export default function SectionDialog({title, section, newSection, isOpen, onClose, onSubmit, onDelete}: Props) {    
     const [label, setLabel] = useState("");
     const [search, setSearch] = useState("");
-    const [notified, setNotified] = useState(false);
     const [attention, setAttention] = useState(true);
     const [isDeleting, setDeleting] = useState(false);
 
     const handleOpening = () => {
         setLabel(section ? section.label : newSection ? newSection.label : defaultSectionProps.label);
         setSearch(section ? section.search : newSection ? newSection.search : defaultSectionProps.search);
-        setNotified(section ? section.notified : newSection ? newSection.notified : defaultSectionProps.notified);
         setAttention(section ? section.attention : newSection ? newSection.attention : defaultSectionProps.attention);
     }
     const handleSubmit = () => {
         if (isValid()) {
-            onSubmit({ label, search, notified, attention });
+            onSubmit({ label, search, attention });
             onClose();
         }
     }
@@ -63,13 +61,8 @@ export default function SectionDialog({title, section, newSection, isOpen, onClo
                         <TextArea value={search} onChange={e => setSearch(e.target.value)} fill/>
                     </FormGroup>
                     <Checkbox
-                        checked={notified}
-                        label="Pull requests in this section add to the badge count"
-                        onChange={e => setNotified(e.currentTarget.checked)}
-                        />
-                    <Checkbox
                         checked={attention}
-                        label="Pull requests in this section are included in the attention set"
+                        label="Pull requests in this section can be in the attention set"
                         onChange={e => setAttention(e.currentTarget.checked)}
                         />
                 </DialogBody>

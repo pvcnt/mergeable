@@ -29,7 +29,6 @@ export function mockSection(props?: Partial<Section>): Section {
         id: "",
         label: "Section",
         search: "author:@me",
-        notified: false,
         position: 0,
         attention: true,
         ...props,

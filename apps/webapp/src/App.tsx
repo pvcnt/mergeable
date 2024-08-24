@@ -4,8 +4,7 @@ import clsx from 'clsx'
 
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
-import { useConnections, usePulls, useSections } from './lib/queries';
-import { sum } from 'remeda'
+import { useConnections, usePulls } from './lib/queries';
 
 import styles from "./App.module.scss";
 import { Card } from '@blueprintjs/core';
@@ -18,8 +17,6 @@ export default function App() {
         return JSON.parse(localStorage.getItem('isDark') || 'false') as boolean;
     });
     const connections = useConnections();
-    const sections = useSections();
-    const pulls = usePulls();
 
     const worker = getWorker();
 
@@ -28,20 +25,16 @@ export default function App() {
         localStorage.setItem('isDark', JSON.stringify(isDark));
     }, [isDark]);
 
-    const count = sum(
-        sections.data
-            .filter(section => section.notified)
-            .map(section => pulls.data.filter(pull => pull.sections.indexOf(section.id) > -1).length)
-    );
-
-    // Change window's title to include number of pull requests.
+    // Change window's title to include number of pull requests in the attention set.
+    const pulls = usePulls();
+    const count = pulls.data.filter(pull => pull.attention !== undefined && pull.attention.set).length;
     useEffect(() => {
         if (count > 0) {
             document.title = `(${count}) Mergeable`
         } else {
             document.title = "Mergeable"
         }
-    }, [count])
+    }, [count]);
 
     return (
         <div className={clsx(styles.app, isDark && "bp5-dark")}>

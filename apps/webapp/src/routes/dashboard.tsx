@@ -29,7 +29,6 @@ export default function Dashboard() {
             setNewSection({
                 label: searchParams.get("label") || "",
                 search: searchParams.get("search") || "",
-                notified: defaultSectionProps.notified,
                 attention: defaultSectionProps.attention,
             })
             setEditing(true)
