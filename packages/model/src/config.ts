@@ -42,7 +42,7 @@ export type Section = SectionProps & {
 /**
  * Default properties for a new section.
  */
-export const defaultSectionProps: SectionProps = { label: "", search: "", notified: false, attention: true };
+export const defaultSectionProps: SectionProps = { label: "", search: "", notified: true, attention: true };
 
 /**
  * Properties for a connection, as provided by a user in a form or API.

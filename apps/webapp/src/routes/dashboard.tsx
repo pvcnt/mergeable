@@ -8,15 +8,20 @@ import { useSections, usePulls } from "../lib/queries";
 import { deleteSection, moveSectionDown, moveSectionUp, saveSection, toggleStar } from "../lib/mutations";
 import Navbar from "../components/Navbar";
 import { getWorker } from "../worker/client";
+import SectionCard from "../components/SectionCard";
 
 export default function Dashboard() {
     const sections = useSections();
     const pulls = usePulls();
-    const pullsBySection = sections.data.map(section => pulls.data.filter(pull => pull.sections.indexOf(section.id) > -1));
 
     const [ isEditing, setEditing ] = useState(false);
     const [ searchParams, setSearchParams ] = useSearchParams();
     const [ newSection, setNewSection ] = useState(defaultSectionProps);
+
+    const useAttentionSet = sections.data.some(section => section.attention);
+
+    const pullsBySection = sections.data.map(section => pulls.data.filter(pull => pull.sections.indexOf(section.id) > -1));
+    const pullsWithAttention = useAttentionSet ? pulls.data.filter(pull => pull.attention?.set) : [];
 
     // Open a "New section" dialog if URL is a share link.
     useEffect(() => {
@@ -62,6 +67,15 @@ export default function Dashboard() {
                 isOpen={sections.isLoaded && isEditing}
                 onClose={() => setEditing(false)}
                 onSubmit={handleSubmit}/>
+            
+            {useAttentionSet &&
+                <SectionCard
+                    label="Needs attention"
+                    isLoading={pulls.isLoading}
+                    pulls={pullsWithAttention}
+                    onStar={toggleStar}
+                    />}
+
             {sections.isLoaded && sections.data.map((section, idx) => {
                 return (
                     <DashboardSection
@@ -69,7 +83,6 @@ export default function Dashboard() {
                         section={section}
                         isLoading={pulls.isLoading}
                         pulls={pullsBySection[idx]}
-                        hasMore={false}
                         isFirst={idx === 0}
                         isLast={idx === sections.data.length - 1}
                         onChange={handleChange}

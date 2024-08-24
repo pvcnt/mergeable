@@ -1,11 +1,5 @@
 import type { Team, User } from "./user.js"
 
-export type PullList = {
-    total: number
-    hasMore: boolean
-    pulls: Pull[]
-}
-
 export enum PullState {
     Draft,
     Pending,

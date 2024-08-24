@@ -8,7 +8,7 @@ import styles from "./PullTable.module.scss";
 
 export type Props = {
     pulls: Pull[],
-    onStar: (v: Pull) => void,
+    onStar?: (v: Pull) => void,
 }
 
 const formatDate = (d: string)  => {
@@ -32,7 +32,11 @@ export default function PullTable({ pulls, onStar }: Props) {
         } else {
             window.location.href = pull.url;
         }
-    }
+    };
+    const handleStar = (e: React.MouseEvent, pull: Pull) => {
+        onStar && onStar(pull);
+        e.stopPropagation();
+    };
     return (
         <HTMLTable interactive className={styles.table}>
             <thead>
@@ -49,7 +53,7 @@ export default function PullTable({ pulls, onStar }: Props) {
             <tbody>
                 {pulls.map((pull, idx) => (
                     <tr key={idx} onClick={(e) => handleClick(e, pull)}>
-                        <td onClick={(e) => { onStar(pull); e.stopPropagation(); }}>
+                        <td onClick={(e) => handleStar(e, pull)}>
                             {pull.starred
                                 ? <IconWithTooltip icon="star" color="#FBD065" title="Unstar pull request"/>
                                 : <IconWithTooltip icon="star-empty" title="Star pull request"/>}
