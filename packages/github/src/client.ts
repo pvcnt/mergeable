@@ -143,11 +143,6 @@ export class DefaultGitHubClient implements GitHubClient {
                 additions
                 deletions
                 totalCommentsCount
-                mergeable
-                headRefName
-                headRefOid
-                baseRefName
-                baseRefOid
               }
             }
           }
