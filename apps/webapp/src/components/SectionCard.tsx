@@ -1,4 +1,4 @@
-import { Card, Collapse, H5, Icon, Intent, Spinner, Tag } from "@blueprintjs/core";
+import { Card, Collapse, H5, Icon, Spinner, Tag } from "@blueprintjs/core";
 import { ReactNode, useState } from "react";
 import type { Pull } from "@repo/model";
 import PullTable from "./PullTable";
@@ -24,7 +24,7 @@ export default function SectionCard({ label, isLoading, pulls, onStar, actions }
                 <H5 onClick={(e) => handleClick(e)} className={styles.title}>
                     <Icon icon={collapsed ? "chevron-down" : "chevron-up"} color="text"/>
                     <span>{label}</span>
-                    {(pulls.length > 0) && <Tag round intent={Intent.NONE}>{pulls.length}</Tag>}
+                    {(pulls.length > 0) && <Tag round minimal>{pulls.length}</Tag>}
                 </H5>
                 <div className={styles.actions}>{actions}</div>
             </div>

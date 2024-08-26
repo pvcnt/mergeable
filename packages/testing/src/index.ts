@@ -7,7 +7,7 @@ export function mockPull(props?: Partial<Pull>): Pull {
         repo: "pvcnt/mergeable",
         number: 1,
         title: "Title",
-        state: PullState.Approved,
+        state: PullState.Pending,
         createdAt: "2024-08-05T15:57:00Z",
         updatedAt: "2024-08-05T15:57:00Z",
         url: "https://github.com/pvcnt/mergeable/1",

@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile } from "@repo/model";
+import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile, CheckState } from "@repo/model";
 import { SearchQuery } from "./search.js";
 
 const MAX_PULLS_TO_FETCH = 50;
@@ -29,6 +29,14 @@ type GHPull = {
     latestOpinionatedReviews: {
       nodes: GHReview[],
     }
+    statusCheckRollup: {
+      state: "ERROR"|"EXPECTED"|"FAILURE"|"PENDING"|"SUCCESS"
+    }|null
+    mergeable: string
+    headRefName: string
+    headRefOid: string
+    baseRefName: string
+    baseRefOid: string
 }
 
 type GHUserReviewRequest = GHUser & {
@@ -88,10 +96,8 @@ export class DefaultGitHubClient implements GitHubClient {
                   login
                   avatarUrl                  
                 }
-                timelineItems(last: 100) {
-                  nodes {
-                    __typename
-                  }
+                statusCheckRollup {
+                  state
                 }
                 reviewRequests(first: 100) {
                   nodes {
@@ -145,18 +151,14 @@ export class DefaultGitHubClient implements GitHubClient {
           cost
         }
     }`;
-    type Edge = {
-        node: GHPull,
-    }
-    type RateLimit = {
-      cost: number
-    }
     type Data = {
         search: {
             issueCount: number,
-            edges: Edge[],
+            edges: { node: GHPull }[],
         },
-        rateLimit: RateLimit,
+        rateLimit: {
+          cost: number,
+        },
     }
     // Enforce searching for PRs, and filter by org as required by the connection.
     const q = new SearchQuery(search);
@@ -201,6 +203,18 @@ export class DefaultGitHubClient implements GitHubClient {
             : pull.reviewDecision == "APPROVED"
             ? PullState.Approved
             : PullState.Pending,
+        ciState: pull.statusCheckRollup?.state == "ERROR"
+            ? CheckState.Error
+            : pull.statusCheckRollup?.state == "FAILURE"
+            ? CheckState.Failure
+            : pull.statusCheckRollup?.state == "SUCCESS"
+            ? CheckState.Success
+            // Do not differentiate between "Pending" and "Expected".
+            : pull.statusCheckRollup?.state == "PENDING"
+            ? CheckState.Pending
+            : pull.statusCheckRollup?.state == "EXPECTED"
+            ? CheckState.Pending
+            : undefined,
         createdAt: pull.createdAt,
         updatedAt: pull.updatedAt,
         url: pull.url,

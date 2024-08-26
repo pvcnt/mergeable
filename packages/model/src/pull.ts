@@ -8,6 +8,13 @@ export enum PullState {
     Closed,
 }
 
+export enum CheckState {
+    Pending,
+    Error,
+    Failure,
+    Success,
+}
+
 export type PullProps = {
     uid: string,
     host: string,
@@ -15,6 +22,7 @@ export type PullProps = {
     number: number,
     title: string,
     state: PullState,
+    ciState?: CheckState,
     createdAt: string,
     updatedAt: string,
     url: string,
