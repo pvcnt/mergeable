@@ -1,6 +1,6 @@
 import { HTMLTable, Tooltip, Tag, Icon } from "@blueprintjs/core";
 import TimeAgo from "./TimeAgo";
-import { type Pull, PullState } from "@repo/model";
+import { CheckState, type Pull, PullState } from "@repo/model";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
 
@@ -44,7 +44,8 @@ export default function PullTable({ pulls, onStar }: Props) {
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                     <th>Author</th>
-                    <th>Status</th>
+                    <th><IconWithTooltip title="Status" icon="git-pull"/></th>
+                    <th><IconWithTooltip title="CI Status" icon="tick-circle"/></th>
                     <th>Last Action</th>
                     <th>Size</th>
                     <th>Title</th>
@@ -85,6 +86,17 @@ export default function PullTable({ pulls, onStar }: Props) {
                             : pull.state == PullState.Pending
                             ? <IconWithTooltip icon="git-pull" title="Pending" color="#C87619"/>
                             : null}
+                        </td>
+                        <td>
+                            {pull.ciState == CheckState.Error
+                            ? <IconWithTooltip icon="error" title="Error" color="#AC2F33"/>
+                            : pull.ciState == CheckState.Failure
+                            ? <IconWithTooltip icon="cross-circle" title="Failure" color="#AC2F33"/>
+                            : pull.ciState == CheckState.Success
+                            ? <IconWithTooltip icon="tick-circle" title="Success" color="#1C6E42"/>
+                            : pull.ciState == CheckState.Pending
+                            ? <IconWithTooltip icon="circle" title="Pending" color="#C87619"/>
+                            : <IconWithTooltip icon="remove" title="None" color="#5F6B7C"/>}
                         </td>
                         <td>
                             <Tooltip content={formatDate(pull.updatedAt)}>

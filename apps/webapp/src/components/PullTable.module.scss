@@ -3,8 +3,12 @@
 .table {
     width: 100%;
     thead th {
-        color: $pt-text-color-disabled;
+        color: $pt-text-color-muted !important;
+        font-weight: normal !important;
         font-size: $pt-font-size-small;
+        svg {
+            fill: $pt-text-color-muted;
+        }
     }
     tbody td {
         overflow: hidden;
@@ -13,23 +17,32 @@
     tbody td:nth-child(1) { /* Star */
         text-align: center;
         width: 25px;
+        padding: 0.5rem;
     }
     tbody td:nth-child(2) { /* Attention */
         text-align: center;
         width: 25px;
+        padding: 0.5rem;
     }
     tbody td:nth-child(3) { /* Author */
         text-align: center;
         width: 50px;
+        padding: 0.5rem;
     }
     tbody td:nth-child(4) { /* Status */
         text-align: center;
-        width: 50px;
+        width: 25px;
+        padding: 0.5rem;
     }
-    tbody td:nth-child(5) { /* Last Action */
-        width: 200px;
+    tbody td:nth-child(5) { /* CI Status */
+        text-align: center;
+        width: 25px;
+        padding: 0.5rem;
     }
-    tbody td:nth-child(6) { /* Size */
+    tbody td:nth-child(6) { /* Last Action */
+        width: 160px;
+    }
+    tbody td:nth-child(7) { /* Size */
         text-align: center;
         width: 50px;
     }
@@ -46,6 +59,11 @@
 .author img {
     border-radius: 5rem;
     height: 32px;
+}
+
+.status {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .additions {
