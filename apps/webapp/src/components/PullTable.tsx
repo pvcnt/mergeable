@@ -91,12 +91,12 @@ export default function PullTable({ pulls, onStar }: Props) {
                             {pull.ciState == CheckState.Error
                             ? <IconWithTooltip icon="error" title="Error" color="#AC2F33"/>
                             : pull.ciState == CheckState.Failure
-                            ? <IconWithTooltip icon="cross-circle" title="Failure" color="#AC2F33"/>
+                            ? <IconWithTooltip icon="cross-circle" title="Some checks are failing" color="#AC2F33"/>
                             : pull.ciState == CheckState.Success
-                            ? <IconWithTooltip icon="tick-circle" title="Success" color="#1C6E42"/>
+                            ? <IconWithTooltip icon="tick-circle" title="All checks passing" color="#1C6E42"/>
                             : pull.ciState == CheckState.Pending
                             ? <IconWithTooltip icon="circle" title="Pending" color="#C87619"/>
-                            : <IconWithTooltip icon="remove" title="None" color="#5F6B7C"/>}
+                            : <IconWithTooltip icon="remove" title="No status" color="#5F6B7C"/>}
                         </td>
                         <td>
                             <Tooltip content={formatDate(pull.updatedAt)}>

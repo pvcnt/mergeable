@@ -1,4 +1,4 @@
-import { type Attention, type PullProps, type Comment, type Connection, PullState } from "@repo/model";
+import { type Attention, type PullProps, type Comment, type Connection, PullState, CheckState } from "@repo/model";
 import { GitHubClient } from "./client.js";
 
 export async function isInAttentionSet(client: GitHubClient, connection: Connection, pull: PullProps): Promise<Attention> {
@@ -60,8 +60,11 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
         } else {
             return { set: true, reason: `${sortedCommenterNames[0]} and ${sortedCommenterNames.length - 1} other${sortedCommenterNames.length > 2 ? 's' : ''} left a comment` };
         }
+    } else if (isAuthor && (pull.ciState == CheckState.Error || pull.ciState == CheckState.Failure)) {
+        // The author (and only them) is in the attention set if a CI check is failing.
+        return { set: true, reason: "CI is failing" };
     } else if (isAuthor && isApproved) {
-        // The author (and only them) is in the attention of an approved pull request, because it
+        // The author (and only them) is in the attention set of an approved pull request, because it
         // now has to merge it.
         return { set: true, reason: "Pull request is approved" };
     } else if (isRequestedReviewer && !isApproved) {

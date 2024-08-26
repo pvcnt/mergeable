@@ -30,7 +30,7 @@ type GHPull = {
       nodes: GHReview[],
     }
     statusCheckRollup: {
-      state: "ERROR"|"EXPECTED"|"FAILURE"|"PENDING"|"SUCCESS"
+      state: "ERROR" | "EXPECTED" | "FAILURE" | "PENDING" | "SUCCESS"
     }|null
     mergeable: string
     headRefName: string
