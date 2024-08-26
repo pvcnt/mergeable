@@ -23,6 +23,7 @@ jobs:
         run: pnpm lint && pnpm coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          POLLY_MODE: offline
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
