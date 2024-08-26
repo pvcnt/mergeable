@@ -79,7 +79,7 @@ export class DefaultGitHubClient implements GitHubClient {
         avatarUrl: userResponse.data.avatar_url,
     };
     const teamsResponse = await octokit.paginate("GET /user/teams", { per_page: 100 });
-    const teams: Team[] = teamsResponse.map(obj => ({ name: obj.slug }));
+    const teams: Team[] = teamsResponse.map(obj => ({ name: `${obj.organization.login}/${obj.slug}` }));
     return { user, teams };
   }
   async getPulls(connection: Connection, search: string): Promise<PullProps[]> {
