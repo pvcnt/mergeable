@@ -6,7 +6,7 @@ import { mockConnection, mockSection, mockPull } from "@repo/testing";
 test("should save a connection", async () => {
     const connection = mockConnection({
         viewer: {
-            user: { name: "pvcnt", avatarUrl: "" },
+            user: { name: "pvcnt", avatarUrl: "", bot: false },
             teams: [{ name: "test" }],
         },
         orgs: ["apache", "kubernetes"],

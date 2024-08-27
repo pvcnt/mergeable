@@ -69,6 +69,7 @@ type GHReview = {
 }
 
 type GHUser = {
+  __typename: "Bot"|"EnterpriseUserAccount"|"Mannequin"|"Organization"|"User"
   login: string
   avatarUrl: string
 }
@@ -93,6 +94,7 @@ export class DefaultGitHubClient implements GitHubClient {
     const user: User = {
         name: userResponse.data.login,
         avatarUrl: userResponse.data.avatar_url,
+        bot: false,
     };
     const teamsResponse = await octokit.paginate("GET /user/teams", { per_page: 100 });
     const teams: Team[] = teamsResponse.map(obj => ({ name: `${obj.organization.login}/${obj.slug}` }));
@@ -152,8 +154,9 @@ export class DefaultGitHubClient implements GitHubClient {
           additions
           deletions
           author {
+            __typename
             login
-            avatarUrl                  
+            avatarUrl
           }
           statusCheckRollup {
             state
@@ -163,6 +166,7 @@ export class DefaultGitHubClient implements GitHubClient {
             nodes {
               id
               author {
+                __typename
                 login
                 avatarUrl
               }
@@ -198,6 +202,7 @@ export class DefaultGitHubClient implements GitHubClient {
             nodes {
               id
               author {
+                __typename
                 login
                 avatarUrl
               }
@@ -217,6 +222,7 @@ export class DefaultGitHubClient implements GitHubClient {
                 nodes {
                   id
                   author {
+                    __typename
                     login
                     avatarUrl
                   }
@@ -330,7 +336,11 @@ export class DefaultGitHubClient implements GitHubClient {
   }
 
   private makeUser(user: GHUser): User {
-    return { name: user.login, avatarUrl: user.avatarUrl };
+    return {
+      name: user.login,
+      avatarUrl: user.avatarUrl,
+      bot: user.__typename === "Bot",
+    };
   }
   
   private makeTeam(team: GHTeam): Team {
@@ -361,7 +371,7 @@ export class TestGitHubClient implements GitHubClient {
 
   getViewer(connection: Connection): Promise<Profile> {
     return Promise.resolve({
-      user: { name: `test[${connection.id}]`, avatarUrl: "" },
+      user: { name: `test[${connection.id}]`, avatarUrl: "", bot: false },
       teams: [ { name: `test[${connection.id}]` } ],
     });
   }

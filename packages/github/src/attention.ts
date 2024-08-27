@@ -29,9 +29,14 @@ export function isInAttentionSet(connection: Connection, pull: PullProps): Atten
             continue;
         }
         const lastViewerCommentPos = discussion.comments.findLastIndex(c => c.author?.name === viewerName);
-        const commentsAfterLastViewerComment = (lastViewerCommentPos === -1) 
+        let commentsAfterLastViewerComment = (lastViewerCommentPos === -1) 
             ? discussion.comments 
             : discussion.comments.slice(lastViewerCommentPos + 1);
+        if (discussion.file === undefined) {
+            // Ignore bot comments in top-level discussions, since this particular one tends
+            // to be catch-all, and not really a threaded discussion.
+            commentsAfterLastViewerComment = commentsAfterLastViewerComment.filter(c => c.author === undefined || !c.author.bot);
+        }
         if (lastViewerCommentPos > -1 && commentsAfterLastViewerComment.length > 0) {
             // The author and reviewers are always notified when somebody replied to them.
             commentsAfterLastViewerComment
