@@ -115,6 +115,24 @@ test("should contain the author when three users replied", () => {
     expect(attention).toEqual({ set: true, reason: "test1 and 2 others left a comment" });
 })
 
+test("should not contain the author when a user replied in a resolved discussion", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: true,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user1, createdAt: new Date(1), body: "" },
+                ],
+            },
+        ],
+    });
+    const attention = isInAttentionSet(connection, pull);
+    expect(attention).toEqual({ set: false });
+})
+
 test("should contain a reviewer when a user replied", () => {
     const pull = mockPull({
         state: PullState.Pending,
@@ -134,6 +152,27 @@ test("should contain a reviewer when a user replied", () => {
     });
     const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test2 left a comment" });
+})
+
+test("should not contain a reviewer when a user replied in a resolved discussion", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: user1,
+        reviews: [
+            { author: me, createdAt: new Date(0), lgtm: false },
+        ],
+        discussions: [
+            {
+                resolved: true,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user2, createdAt: new Date(1), body: "" },
+                ],
+            },
+        ],
+    });
+    const attention = isInAttentionSet(connection, pull);
+    expect(attention).toEqual({ set: false });
 })
 
 test("should not contain the author when nobody replied", () => {
@@ -180,6 +219,24 @@ test("should not contain the author when a non-reviewer left a comment", () => {
         discussions: [
             {
                 resolved: false,
+                comments: [
+                    { id: "1", author: user1, createdAt: new Date(0), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
+    expect(attention).toEqual({ set: false });
+})
+
+test("should not contain the author when a reviewer left a comment in a resolved discussion", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        reviews: [{ author: user1, createdAt: new Date(0), lgtm: false }],
+        discussions: [
+            {
+                resolved: true,
                 comments: [
                     { id: "1", author: user1, createdAt: new Date(0), body: "" },
                 ],

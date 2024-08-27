@@ -24,12 +24,6 @@ export function isInAttentionSet(connection: Connection, pull: PullProps): Atten
     const reviewerNames = new Set(pull.reviews.map(r => r.author?.name));
     const commenterNames = new Set<string>();
     for (const discussion of pull.discussions) {
-        if (discussion.comments.every(c => c.author?.name === pull.author.name)) {
-            // Threads containing only comments from the author are ignored. They are usually
-            // part of the initial remarks left by the author. If nobody replied, we consider
-            // they do not refer to any action to take.
-            continue;
-        }
         if (discussion.resolved) {
             // Resolved discussions are ignored.
             continue;

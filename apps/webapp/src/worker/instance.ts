@@ -56,6 +56,9 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
         const connections = await db.connections.toArray();
         const sections = await db.sections.toArray();
 
+        // Search for pull requests for every section and every connection.
+        // Every request returns node IDs for matching pull requests, and
+        // the date at which each pull request was last updated.
         const rawResults = (
             await Promise.all(sections.flatMap(section => {
                 return connections.flatMap(connection => {
@@ -77,19 +80,21 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
         const results = Object.values(groupBy(rawResults, pull => pull.uid))
             .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
         
+        // For every unique pull request, fetch information about it.
         const stars = new Set((await db.stars.toArray()).map(star => star.uid));
         const connectionsById = indexBy(connections, prop("id"));
         const sectionsInAttentionSet = new Set(sections.filter(v => v.attention).map(v => v.id));
-        const currentKeys = new Set(await db.pulls.toCollection().primaryKeys());
+        const previousKeys = new Set(await db.pulls.toCollection().primaryKeys());
 
         const stats = { new: 0, unchanged: 0, updated: 0 };
 
         const pulls: Pull[] = await Promise.all(results.map(async res => {
-            if (currentKeys.has(res.uid)) {
-                const currentPull = await db.pulls.get(res.uid);
-                if (currentPull !== undefined && res.updatedAt <= currentPull.updatedAt) {
+            if (previousKeys.has(res.uid)) {
+                const previousPull = await db.pulls.get(res.uid);
+                // Avoid fetching information if the pull request did not change.
+                if (previousPull !== undefined && res.updatedAt <= previousPull.updatedAt) {
                     stats.unchanged += 1;
-                    return currentPull;
+                    return previousPull;
                 } else {
                     stats.updated += 1;
                 }
@@ -110,11 +115,11 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
             }
         }));
 
-        // Upsert pull requests...
+        // Upsert current pull requests...
         await db.pulls.bulkPut(pulls);
 
-        // ... and remove pull requests that are not anymore included in any sections.
-        const staleKeys = new Set(currentKeys);
+        // ... and remove previous pull requests that are not anymore included in any sections.
+        const staleKeys = new Set(previousKeys);
         pulls.forEach(pull => staleKeys.delete(pull.uid));
         await db.pulls.bulkDelete(Array.from(staleKeys));
 
