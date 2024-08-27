@@ -24,11 +24,11 @@ describe("sync viewers", () => {
 
         let connection = await db.connections.get("1");
         expect(connection?.viewer).toBeDefined();
-        expect(connection?.viewer?.user).toEqual({ name: "test[1]", avatarUrl: "" });
+        expect(connection?.viewer?.user).toEqual({ name: "test[1]", avatarUrl: "", bot: false });
 
         connection = await db.connections.get("2");
         expect(connection?.viewer).toBeDefined();
-        expect(connection?.viewer?.user).toEqual({ name: "test[2]", avatarUrl: "" });
+        expect(connection?.viewer?.user).toEqual({ name: "test[2]", avatarUrl: "", bot: false });
 
         activity = await db.activities.get("syncViewers");
         expect(activity?.running).toBeFalsy();

@@ -1,6 +1,7 @@
 export type User = {
     name: string
     avatarUrl: string
+    bot: boolean
 }
 
 export type Team = {

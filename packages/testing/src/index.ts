@@ -18,7 +18,7 @@ export function mockPull(props?: Omit<Partial<Pull>, "uid"|"url">): Pull {
         url: `https://${host}/${repo}/${number}`,
         additions: 0,
         deletions: 0,
-        author: { name: "pvcnt", avatarUrl: "" },
+        author: { name: "pvcnt", avatarUrl: "", bot: false },
         requestedReviewers: [],
         requestedTeams: [],
         reviews: [],

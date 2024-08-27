@@ -16,6 +16,7 @@ test("should return viewer", async () => {
         user: {
             name: "pvcnt",
             avatarUrl: "https://avatars.githubusercontent.com/u/944506?v=4",
+            bot: false,
         },
         teams: [
             { name: "privamov/developers" },
@@ -59,11 +60,13 @@ test("should get pull", async () => {
         author: {
           name: "cpoerschke",
           avatarUrl: "https://avatars.githubusercontent.com/u/6458642?u=8ccfc26ce7209695b2fcca628a59baca42cff00f&v=4",
+          bot: false,
         },
         requestedReviewers: [
             {
                 name: "HoustonPutman",
                 avatarUrl: "https://avatars.githubusercontent.com/u/3376422?u=323311c61ac2b04e5deac436faaa4f4309fe7beb&v=4",
+                bot: false,
             },
         ],
         requestedTeams: [],
@@ -72,6 +75,7 @@ test("should get pull", async () => {
             author: {
                 name: "dsmiley",
                 avatarUrl: "https://avatars.githubusercontent.com/u/377295?u=85f6ade89e5b34f001267475e806da2a52b2755a&v=4",
+                bot: false,
             },
             createdAt: new Date("2024-08-23T19:07:24.000Z"),
             lgtm: false,
@@ -86,6 +90,7 @@ test("should get pull", async () => {
                         author: {
                             name: "dsmiley",
                             avatarUrl: "https://avatars.githubusercontent.com/u/377295?u=85f6ade89e5b34f001267475e806da2a52b2755a&v=4",
+                            bot: false,
                         },
                         body: "As there is now FieldExistsQuery covering a range of cases (not just even docValues & norms), this probably obsoletes complexity inside FieldType.getExistenceQuery.  Can we just call that and remove getSpecializedExistenceQuery as needless in lieu of subtypes overriding getExistenceQuery?\r\n\r\nCC @HoustonPutman as you worked on this method",
                         createdAt: new Date("2024-08-23T19:07:24.000Z"),
@@ -98,8 +103,9 @@ test("should get pull", async () => {
                     {
                         id: "PRRC_kwDOFFj3yM5nFK8J",
                         author: {
-                            avatarUrl: "https://avatars.githubusercontent.com/u/377295?u=85f6ade89e5b34f001267475e806da2a52b2755a&v=4",
                             name: "dsmiley",
+                            avatarUrl: "https://avatars.githubusercontent.com/u/377295?u=85f6ade89e5b34f001267475e806da2a52b2755a&v=4",
+                            bot: false,
                         },
                         body: "I suspect this code pre-dated FieldType.getExistenceQuery -- just call that.",
                         createdAt: new Date("2024-08-23T19:07:24.000Z"),
