@@ -22,6 +22,10 @@ async function executeActivity(name: string, intervalMillis: number, force: bool
     if (!force && activity !== undefined && activity.refreshTime > new Date(Date.now() - intervalMillis)) {
         return;
     }
+    if (activity !== undefined && activity.running) {
+        // Do not run activities concurrently.
+        return;
+    }
     if (activity === undefined) {
         await db.activities.add({ name, running: true, refreshTime: new Date(0) });
     } else {
