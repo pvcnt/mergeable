@@ -2,7 +2,7 @@ import * as Comlink from "comlink";
 import { groupBy, indexBy, prop, unique } from "remeda";
 import { db } from "../lib/db";
 import { splitQueries } from "@repo/github";
-import type { Pull } from "@repo/model";
+import { LATEST_SCHEMA_VERSION, type Pull } from "@repo/model";
 import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
@@ -92,7 +92,10 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
             if (previousKeys.has(res.uid)) {
                 const previousPull = await db.pulls.get(res.uid);
                 // Avoid fetching information if the pull request did not change.
-                if (previousPull !== undefined && res.updatedAt <= previousPull.updatedAt) {
+                if (previousPull !== undefined 
+                    && res.updatedAt <= previousPull.updatedAt 
+                    && previousPull.schemaVersion === LATEST_SCHEMA_VERSION
+                ) {
                     stats.unchanged += 1;
                     return previousPull;
                 } else {
@@ -110,6 +113,7 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
                 connection: res.connection,
                 sections: res.sections,
                 host: connection.host,
+                schemaVersion: LATEST_SCHEMA_VERSION,
                 starred: stars.has(res.uid) ? 1 : 0,
                 attention: mayBeInAttentionSet ? isInAttentionSet(connection, pull) : undefined,
             }
