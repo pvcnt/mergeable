@@ -66,6 +66,11 @@ export type Attention = {
     reason?: string
 }
 
+// Schema version is used to force bursting the local cache of pull requests
+// when there is a change that requires it (e.g., adding a new field that must
+// be populated).
+export const LATEST_SCHEMA_VERSION = "v1";
+
 export type Pull = PullProps & {
     uid: string
     host: string
@@ -73,4 +78,5 @@ export type Pull = PullProps & {
     sections: string[]
     attention?: Attention
     connection: string
+    schemaVersion?: string
 }
