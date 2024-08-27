@@ -1,71 +1,87 @@
-import { Octokit } from "@octokit/rest";
-import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile, CheckState } from "@repo/model";
+import { Octokit } from "octokit";
+import { throttling } from "@octokit/plugin-throttling";
+import { type Connection, type Comment, PullState, type PullProps, type Team, type User, type Profile, CheckState, type PullResult, type Review, Discussion } from "@repo/model";
 import { SearchQuery } from "./search.js";
 
 const MAX_PULLS_TO_FETCH = 50;
 
+const MyOctokit = Octokit.plugin(throttling);
+
+export interface GitHubClient {
+  getViewer(connection: Connection): Promise<Profile>;
+  searchPulls(connection: Connection, search: string): Promise<PullResult[]>;
+  getPull(connection: Connection, id: string): Promise<PullProps>;
+}
+
 type GHPull = {
-    id: string,
-    number: number,
-    title: string,
-    state: string,
-    author: GHUser,
-    createdAt: string,
-    updatedAt: string,
-    url: string,
-    additions: number,
-    deletions: number,
-    totalCommentsCount: number,
-    repository: {
-        nameWithOwner: string,
-    },
-    isDraft: boolean,
-    merged: boolean,
-    closed: boolean,
-    reviewDecision?: string,
-    reviewRequests: {
-      nodes: GHReviewRequest[],
-    }
-    latestOpinionatedReviews: {
-      nodes: GHReview[],
-    }
-    statusCheckRollup: {
-      state: "ERROR" | "EXPECTED" | "FAILURE" | "PENDING" | "SUCCESS"
-    }|null
-    mergeable: string
-    headRefName: string
-    headRefOid: string
-    baseRefName: string
-    baseRefOid: string
+  number: number
+  title: string
+  repository: {
+    nameWithOwner: string
+  }
+  author: GHUser
+  createdAt: string
+  updatedAt: string
+  url: string
+  additions: number
+  deletions: number
+  isDraft: boolean,
+  merged: boolean
+  closed: boolean
+  reviewDecision: "CHANGES_REQUESTED"|"APPROVED"|"REVIEW_REQUIRED"|null,
+  statusCheckRollup: { state: "EXPECTED"|"ERROR"|"FAILURE"|"PENDING"|"SUCCESS" }|null,
+  comments: {
+    totalCount: number
+    nodes: GHComment[]
+  }
+  reviewRequests: {
+    totalCount: number
+    nodes: GHReviewRequest[],
+  }
+  reviews: {
+    totalCount: number
+    nodes: GHReview[]
+  }
+  reviewThreads: {
+    totalCount: number
+    nodes: {
+      isResolved: boolean
+      path: string
+      comments: {
+        totalCount: number
+        nodes: GHComment[]
+      },
+    }[],
+  }
 }
 
-type GHUserReviewRequest = GHUser & {
-  __typename: "Bot" | "Mannequin" | "User"
+type GHReviewRequest = {
+  requestedReviewer: ({ __typename: "Bot"|"Mannequin"|"User" } & GHUser) | ({ __typename: "Team" } & GHTeam)
 }
-
-type GHTeamReviewRequest = GHTeam & {
-  __typename: "Team"
-}
-
-type GHReviewRequest = GHUserReviewRequest | GHTeamReviewRequest
 
 type GHReview = {
-  author: GHUser
+  id: string
+  author: GHUser|null
+  state: "PENDING"|"COMMENTED"|"APPROVED"|"CHANGES_REQUESTED"|"DISMISSED"
+  body: string
+  createdAt: string
+  authorCanPushToRepository: boolean
 }
 
 type GHUser = {
-    login: string
-    avatarUrl: string
+  login: string
+  avatarUrl: string
 }
 
 type GHTeam = {
   combinedSlug: string
 }
 
-export interface GitHubClient {
-  getViewer(connection: Connection): Promise<Profile>;
-  getPulls(connection: Connection, search: string): Promise<PullProps[]>;
-  getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]>;
+type GHComment = {
+  id: string
+  author: GHUser|null
+  createdAt: string
+  body: string
 }
 
 export class DefaultGitHubClient implements GitHubClient {
@@ -82,98 +98,19 @@ export class DefaultGitHubClient implements GitHubClient {
     const teams: Team[] = teamsResponse.map(obj => ({ name: `${obj.organization.login}/${obj.slug}` }));
     return { user, teams };
   }
-  async getPulls(connection: Connection, search: string): Promise<PullProps[]> {
-    const query = `query dashboard($search: String!) {
-        search(query: $search, type: ISSUE, first: ${MAX_PULLS_TO_FETCH}) {
-          issueCount
-          edges {
-            node {
-              ... on PullRequest {
-                id
-                number
-                title
-                author {
-                  login
-                  avatarUrl                  
-                }
-                statusCheckRollup {
-                  state
-                }
-                reviewRequests(first: 100) {
-                  nodes {
-                    requestedReviewer {
-                      __typename
-                      ... on Bot {
-                        login
-                        avatarUrl
-                      }
-                      ... on Mannequin {
-                        login
-                        avatarUrl
-                      }
-                      ... on User {
-                        login
-                        avatarUrl
-                      }
-                      ... on Team {
-                        combinedSlug
-                      }
-                    }
-                  }
-                }
-                latestOpinionatedReviews(first: 100) {
-                  nodes {
-                    author {
-                      login
-                      avatarUrl
-                    }
-                  }
-                }
-                repository {
-                  nameWithOwner
-                }
-                createdAt
-                updatedAt
-                state
-                url
-                isDraft
-                closed
-                merged
-                reviewDecision
-                additions
-                deletions
-                totalCommentsCount
-              }
-            }
-          }
-        }
-        rateLimit {
-          cost
-        }
-    }`;
-    type Data = {
-        search: {
-            issueCount: number,
-            edges: { node: GHPull }[],
-        },
-        rateLimit: {
-          cost: number,
-        },
-    }
+
+  async searchPulls(connection: Connection, search: string): Promise<PullResult[]> {
     // Enforce searching for PRs, and filter by org as required by the connection.
     const q = new SearchQuery(search);
     q.set("type", "pr");
-    q.set("sort", "updated");
     if (connection.orgs.length > 0) {
       q.setAll("org", connection.orgs);
     }
-
     if (!q.has("archived")) {
         // Unless the query explicitely allows PRs from archived repositories, exclude
         // them by default as we cannot act on them anymore.
         q.set("archived", "false");
     }
-
     if (q.has("org") && q.has("repo")) {
         // GitHub API does not seem to support having both terms with an "org"
         // and "repo" qualifier in a given query. In this situation, the term 
@@ -187,73 +124,207 @@ export class DefaultGitHubClient implements GitHubClient {
     }
     
     const octokit = this.getOctokit(connection);
-    const data = await octokit.graphql<Data>(query, {search: q.toString()});
-    return data.search.edges.map(edge => edge.node).map(pull => ({
-        uid: `${connection.id}:${pull.id}`,
-        host: connection.host,
-        repo: pull.repository.nameWithOwner,
-        number: pull.number,
-        title: pull.title,
-        state: pull.isDraft
-            ? PullState.Draft
-            : pull.merged
-            ? PullState.Merged
-            : pull.closed
-            ? PullState.Closed
-            : pull.reviewDecision == "APPROVED"
-            ? PullState.Approved
-            : PullState.Pending,
-        ciState: pull.statusCheckRollup?.state == "ERROR"
-            ? CheckState.Error
-            : pull.statusCheckRollup?.state == "FAILURE"
-            ? CheckState.Failure
-            : pull.statusCheckRollup?.state == "SUCCESS"
-            ? CheckState.Success
-            // Do not differentiate between "Pending" and "Expected".
-            : pull.statusCheckRollup?.state == "PENDING"
-            ? CheckState.Pending
-            : pull.statusCheckRollup?.state == "EXPECTED"
-            ? CheckState.Pending
-            : undefined,
-        createdAt: pull.createdAt,
-        updatedAt: pull.updatedAt,
-        url: pull.url,
-        additions: pull.additions,
-        deletions: pull.deletions,
-        comments: pull.totalCommentsCount,
-        author: this.makeUser(pull.author),
-        requestedReviewers: pull.reviewRequests.nodes
-          .filter(n => n.__typename != "Team")
-          .map(n => this.makeUser(n as GHUser)),
-        requestedTeams: pull.reviewRequests.nodes
-          .filter(n => n.__typename == "Team")
-          .map(n => this.makeTeam(n as GHTeam)),
-        reviewers: pull.latestOpinionatedReviews.nodes
-          .map(n => this.makeUser(n.author)),
-    }));
+    const response = await octokit.rest.search.issuesAndPullRequests({
+      q: q.toString(),
+      sort: "updated",
+      per_page: MAX_PULLS_TO_FETCH,
+    });
+    return response.data.items.map(obj => ({ id: obj.node_id, updatedAt: new Date(obj.updated_at) }));
   }
-  
-  async getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]> {
+
+  async getPull(connection: Connection, id: string): Promise<PullProps> {
+    const query = `query pull($id: ID!) {
+      node(id: $id) {
+        ... on PullRequest {
+          number
+          title
+          repository {
+            nameWithOwner
+          }
+          createdAt
+          updatedAt
+          state
+          url
+          isDraft
+          closed
+          merged
+          reviewDecision
+          additions
+          deletions
+          author {
+            login
+            avatarUrl                  
+          }
+          statusCheckRollup {
+            state
+          }
+          comments(first: 100) {
+            totalCount
+            nodes {
+              id
+              author {
+                login
+                avatarUrl
+              }
+              body
+              createdAt
+            }
+          }
+          reviewRequests(first: 100) {
+            totalCount
+            nodes {
+              requestedReviewer {
+                __typename
+                ... on Bot {
+                  login
+                  avatarUrl
+                }
+                ... on Mannequin {
+                  login
+                  avatarUrl
+                }
+                ... on User {
+                  login
+                  avatarUrl
+                }
+                ... on Team {
+                  combinedSlug
+                }
+              }
+            }
+          }
+          reviews(first: 100) {
+            totalCount
+            nodes {
+              id
+              author {
+                login
+                avatarUrl
+              }
+              authorCanPushToRepository
+              state
+              body
+              createdAt
+            }
+          }
+          reviewThreads(first: 100) {
+            totalCount
+            nodes {
+              isResolved
+              path
+              comments(first: 100) {
+                totalCount
+                nodes {
+                  id
+                  author {
+                    login
+                    avatarUrl
+                  }
+                  createdAt
+                  body
+                }
+              }
+            }
+          }
+        }
+      }
+      rateLimit {
+        cost
+      }
+    }`;
+    type Data = {
+        node: GHPull
+        rateLimit: {
+            cost: number
+        }
+    }
     const octokit = this.getOctokit(connection);
-    const [ repoOwner, repoName ] = repo.split("/");
-    const comments = await octokit.paginate(
-      "GET /repos/{owner}/{repo}/pulls/{pull_number}/comments",
-      { owner: repoOwner, repo: repoName, pull_number: pullNumber, per_page: 100 }
-    );
-    return comments.map(comment => ({
-      uid: `${connection.id}:${comment.id}`,
-      inReplyTo: comment.in_reply_to_id ? `${connection.id}:${comment.in_reply_to_id}` : undefined,
-      author: {
-        name: comment.user.login,
-        avatarUrl: comment.user.avatar_url,
-      },
-      createdAt: new Date(comment.created_at),
-    }));
+    const data = await octokit.graphql<Data>(query, { id });
+    const reviews: Review[] = data.node.reviews.nodes
+      .filter(n => n.authorCanPushToRepository)
+      .map(n => this.makeReview(n));
+
+    const topLevelComments: Comment[] = [];
+    data.node.comments.nodes.forEach(n => topLevelComments.push(this.makeComment(n)));
+    data.node.reviews.nodes.map(n => topLevelComments.push(this.makeComment(n)));
+    topLevelComments.sort((a, b) => a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0);
+    
+    const discussions: Discussion[] = [{
+      resolved: false,
+      comments: topLevelComments,
+    }];
+    data.node.reviewThreads.nodes.forEach(n => {
+      discussions.push({
+        resolved: n.isResolved,
+        comments: n.comments.nodes.map(n2 => this.makeComment(n2)),
+        file: { path: n.path },
+      });
+    });
+
+    return {
+        id,
+        repo: data.node.repository.nameWithOwner,
+        number: data.node.number,
+        title: data.node.title,
+        state: data.node.isDraft
+          ? PullState.Draft
+          : data.node.merged
+          ? PullState.Merged
+          : data.node.closed
+          ? PullState.Closed
+          : data.node.reviewDecision == "APPROVED"
+          ? PullState.Approved
+          : PullState.Pending,
+        ciState: data.node.statusCheckRollup?.state == "ERROR"
+          ? CheckState.Error
+          : data.node.statusCheckRollup?.state == "FAILURE"
+          ? CheckState.Failure
+          : data.node.statusCheckRollup?.state == "SUCCESS"
+          ? CheckState.Success
+          // Do not differentiate between "Pending" and "Expected".
+          : data.node.statusCheckRollup?.state == "PENDING"
+          ? CheckState.Pending
+          : data.node.statusCheckRollup?.state == "EXPECTED"
+          ? CheckState.Pending
+          : CheckState.None,
+        createdAt: new Date(data.node.createdAt),
+        updatedAt: new Date(data.node.updatedAt),
+        url: data.node.url,
+        additions: data.node.additions,
+        deletions: data.node.deletions,
+        author: this.makeUser(data.node.author),
+        requestedReviewers: data.node.reviewRequests.nodes
+          .filter(n => n.requestedReviewer.__typename != "Team")
+          .map(n => this.makeUser(n.requestedReviewer as GHUser)),
+        requestedTeams: data.node.reviewRequests.nodes
+          .filter(n => n.requestedReviewer.__typename == "Team")
+          .map(n => this.makeTeam(n.requestedReviewer as GHTeam)),
+        reviews,
+        discussions,
+    };
   }
 
   private getOctokit(connection: Connection): Octokit {
     if (!(connection.id in this.octokits)) {
-      this.octokits[connection.id] = new Octokit({auth: connection.auth, baseUrl: connection.baseUrl});
+      this.octokits[connection.id] = new MyOctokit({
+        auth: connection.auth,
+        baseUrl: connection.baseUrl,
+        throttle: {
+          // For now, allow retries in all situations.
+          onRateLimit: (retryAfter, options, octokit, retryCount) => {
+            octokit.log.warn(
+              `Request quota exhausted for request ${options.method} ${options.url}, retrying after ${retryAfter} seconds`,
+            );
+            return true;
+          },
+          onSecondaryRateLimit: (retryAfter, options, octokit) => {
+            octokit.log.warn(
+              `Secondary rate limit detected for request ${options.method} ${options.url}, retrying after ${retryAfter} seconds`,
+            );
+            return true;
+          },
+        },
+      });
     }
     return this.octokits[connection.id];
   }
@@ -265,11 +336,28 @@ export class DefaultGitHubClient implements GitHubClient {
   private makeTeam(team: GHTeam): Team {
     return { name: team.combinedSlug };
   }
+
+  private makeReview(review: GHReview): Review {
+    return {
+      author: (review.author !== null) ? this.makeUser(review.author) : undefined,
+      createdAt: new Date(review.createdAt),
+      lgtm: review.state === "APPROVED",
+    }
+  }
+
+  private makeComment(comment: GHComment): Comment {
+    return {
+      id: comment.id,
+      author: (comment.author !== null) ? this.makeUser(comment.author) : undefined,
+      createdAt: new Date(comment.createdAt),
+      body: comment.body,
+    };
+  }
 }
 
 export class TestGitHubClient implements GitHubClient {
-  private pulls: Record<string, PullProps[]> = {};
-  private comments: Record<string, Comment[]> = {};
+  private pullsByKey: Record<string, PullProps> = {};
+  private pullsBySearch: Record<string, PullResult[]> = {};
 
   getViewer(connection: Connection): Promise<Profile> {
     return Promise.resolve({
@@ -278,24 +366,26 @@ export class TestGitHubClient implements GitHubClient {
     });
   }
 
-  getPulls(connection: Connection, search: string): Promise<PullProps[]> {
-    return Promise.resolve(this.pulls[`${connection.id}/${search}`] || []);
+  searchPulls(connection: Connection, search: string): Promise<PullResult[]> {
+    return Promise.resolve(this.pullsBySearch[`${connection.id}:${search}`] || []);
   }
 
-  setPulls(connection: Connection, search: string, pulls: PullProps[]) {
-    this.pulls[`${connection.id}/${search}`] = pulls;
+  setPullsBySearch(connection: Connection, search: string, pulls: PullProps[]) {
+    this.pullsBySearch[`${connection.id}:${search}`] = pulls;
+    pulls.forEach(pull => this.addPull(connection, pull));
   }
 
-  getComments(connection: Connection, repo: string, pullNumber: number): Promise<Comment[]> {
-    return Promise.resolve(this.comments[`${connection.id}/${repo}/${pullNumber}`] || []);
+  addPull(connection: Connection, pull: PullProps) {
+    this.pullsByKey[`${connection.id}:${pull.id}`] = pull;
   }
 
-  setComments(connection: Connection, repo: string, pullNumber: number, comments: Comment[]) {
-    this.comments[`${connection.id}/${repo}/${pullNumber}`] = comments;
+  getPull(connection: Connection, id: string): Promise<PullProps> {
+    const pull = this.pullsByKey[`${connection.id}:${id}`];
+    return (pull !== undefined) ? Promise.resolve(pull) : Promise.reject(new Error("Not Found"));
   }
 
   clear(): void {
-    this.pulls = {};
-    this.comments = {};
+    this.pullsBySearch = {};
+    this.pullsByKey = {};
   }
 }

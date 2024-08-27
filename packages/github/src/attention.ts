@@ -1,7 +1,7 @@
-import { type Attention, type PullProps, type Comment, type Connection, PullState, CheckState } from "@repo/model";
-import { GitHubClient } from "./client.js";
+import type { Attention, PullProps, Connection } from "@repo/model";
+import { PullState, CheckState } from "@repo/model";
 
-export async function isInAttentionSet(client: GitHubClient, connection: Connection, pull: PullProps): Promise<Attention> {
+export function isInAttentionSet(connection: Connection, pull: PullProps): Attention {
     if (pull.state === PullState.Draft || pull.state === PullState.Merged || pull.state === PullState.Closed) {
         // Draft, merged and closed pull requests have no attention set.
         return { set: false };
@@ -12,7 +12,7 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
 
     const isAuthor = pull.author.name === viewerName;
     const isApproved = pull.state === PullState.Approved;
-    const isReviewer = pull.reviewers.some(r => r.name === viewerName);
+    const isReviewer = pull.reviews.some(r => r.author?.name === viewerName);
     const isRequestedReviewer = pull.requestedReviewers.some(r => r.name === viewerName)
       || pull.requestedTeams.some(r => viewerTeams.has(r.name));
 
@@ -21,33 +21,28 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
         return { set: false };
     }
 
-    const comments = await client.getComments(connection, pull.repo, pull.number);
-    const threads = groupByThread(comments);
-
-    const reviewerNames = new Set(pull.reviewers.map(r => r.name));
+    const reviewerNames = new Set(pull.reviews.map(r => r.author?.name));
     const commenterNames = new Set<string>();
-    for (const thread of threads) {
-        if (thread.every(c => c.author.name === pull.author.name)) {
-            // Threads containing only comments from the author are ignored. They are usually
-            // part of the initial remarks left by the author. If nobody replied, we consider
-            // they do not refer to any action to take.
+    for (const discussion of pull.discussions) {
+        if (discussion.resolved) {
+            // Resolved discussions are ignored.
             continue;
         }
-        const lastViewerCommentPos = thread.findLastIndex(c => c.author.name === viewerName);
+        const lastViewerCommentPos = discussion.comments.findLastIndex(c => c.author?.name === viewerName);
         const commentsAfterLastViewerComment = (lastViewerCommentPos === -1) 
-            ? comments 
-            : comments.slice(lastViewerCommentPos + 1);
+            ? discussion.comments 
+            : discussion.comments.slice(lastViewerCommentPos + 1);
         if (lastViewerCommentPos > -1 && commentsAfterLastViewerComment.length > 0) {
             // The author and reviewers are always notified when somebody replied to them.
             commentsAfterLastViewerComment
-                .filter(c => c.author.name !== viewerName)
-                .forEach(c => commenterNames.add(c.author.name));
+                .filter(c => c.author?.name !== viewerName)
+                .forEach(c => commenterNames.add(c.author?.name ?? "Anonymous"));
         } else if (isAuthor) {
             // The author (and only them) is notified when a reviewer left a comment in any thread,
             // even if the author did not participate in this thread.
             commentsAfterLastViewerComment
-                .filter(c => reviewerNames.has(c.author.name))
-                .forEach(c => commenterNames.add(c.author.name));
+                .filter(c => reviewerNames.has(c.author?.name))
+                .forEach(c => commenterNames.add(c.author?.name ?? "Anonymous"));
         }
     }
     if (commenterNames.size > 0) {
@@ -73,26 +68,4 @@ export async function isInAttentionSet(client: GitHubClient, connection: Connect
     } else {
         return { set: false };
     }
-}
-
-/**
- * Group all review comments of a pull request into threads.
- * 
- * @param comments Review comments of a pull request.
- * @returns Review comments, grouped by thread (in the same order).
- */
-function groupByThread(comments: Comment[]): Comment[][] {
-    // `inReplyTo` contains the identifier of the first comment of a thread.
-    // The first message in a thread does not have an `inReplyTo`. 
-    const threads: Record<string, Comment[]> = {};
-    for (const comment of comments) {
-        if (comment.inReplyTo === undefined) {
-            threads[comment.uid] = [comment];
-        } else if (comment.inReplyTo in threads) {
-            threads[comment.inReplyTo].push(comment);
-        } else {
-            threads[comment.inReplyTo] = [comment];
-        }
-    }
-    return Object.values(threads);
 }

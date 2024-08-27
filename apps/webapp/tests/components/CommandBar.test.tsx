@@ -12,8 +12,8 @@ describe("command bar", () => {
     beforeAll(async () => {
         user = userEvent.setup();
 
-        await db.pulls.add(mockPull({ uid: "1:1", title: "Some title" }));
-        await db.pulls.add(mockPull({ uid: "1:2", title: "Another title" }));
+        await db.pulls.add(mockPull({ id: "PR_1", title: "Some title" }));
+        await db.pulls.add(mockPull({ id: "PR_2", title: "Another title" }));
     })
 
     afterAll(async () => await db.pulls.clear());

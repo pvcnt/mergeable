@@ -30,8 +30,8 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "@octokit/core": "^6.1.2",
-    "@octokit/rest": "^20.1.1",
-    "@repo/model": "workspace:*"
+    "@octokit/plugin-throttling": "^9.3.1",
+    "@repo/model": "workspace:*",
+    "octokit": "^4.0.2"
   }
 }

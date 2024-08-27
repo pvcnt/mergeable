@@ -71,25 +71,25 @@ describe("sync pulls", () => {
         assert(connection !== undefined);
 
         const client = new TestGitHubClient();
-        client.setPulls(connection, "author:@me draft:true", [
-            mockPull({ uid: "1:1" }),
-            mockPull({ uid: "1:2" }),
+        client.setPullsBySearch(connection, "author:@me draft:true", [
+            mockPull({ id: "PR_1", connection: connection.id }),
+            mockPull({ id: "PR_2", connection: connection.id }),
         ]);
-        client.setPulls(connection, "author:@me draft:false", [
-            mockPull({ uid: "1:4" }),
+        client.setPullsBySearch(connection, "author:@me draft:false", [
+            mockPull({ id: "PR_4", connection: connection.id }),
         ]);
-        client.setPulls(connection, "author:@me review:approved", [
-            mockPull({ uid: "1:1" }),
-            mockPull({ uid: "1:3" }),
+        client.setPullsBySearch(connection, "author:@me review:approved", [
+            mockPull({ id: "PR_1", connection: connection.id }),
+            mockPull({ id: "PR_3", connection: connection.id }),
         ]);
 
         connection = await db.connections.get("2");
         assert(connection !== undefined);
-        client.setPulls(connection, "author:@me draft:true", [
-            mockPull({ uid: "2:1" }),
+        client.setPullsBySearch(connection, "author:@me draft:true", [
+            mockPull({ id: "PR_1", connection: connection.id }),
         ]);
-        client.setPulls(connection, "author:@me review:approved", [
-            mockPull({ uid: "2:2" }),
+        client.setPullsBySearch(connection, "author:@me review:approved", [
+            mockPull({ id: "PR_2", connection: connection.id }),
         ]);
 
         // WHEN syncing pull requests.
@@ -97,19 +97,23 @@ describe("sync pulls", () => {
 
         // THEN every pull request must be present in the database.
         const pks = await db.pulls.toCollection().primaryKeys();
-        expect(pks.sort()).toEqual(["1:1", "1:2", "1:3", "1:4", "2:1", "2:2"]);
+        expect(pks.sort()).toEqual(["1:PR_1", "1:PR_2", "1:PR_3", "1:PR_4", "2:PR_1", "2:PR_2"]);
 
         // THEN every pull request must be in the correct section(s).
-        let pull = await db.pulls.get("1:1");
+        let pull = await db.pulls.get("1:PR_1");
+        expect(pull).toBeDefined();
         expect(pull?.sections).toEqual(["1", "2"]);
 
-        pull = await db.pulls.get("1:2");
+        pull = await db.pulls.get("1:PR_2");
+        expect(pull).toBeDefined();
         expect(pull?.sections).toEqual(["1"]);
 
-        pull = await db.pulls.get("1:3");
+        pull = await db.pulls.get("1:PR_3");
+        expect(pull).toBeDefined();
         expect(pull?.sections).toEqual(["2"]);
 
-        pull = await db.pulls.get("1:4");
+        pull = await db.pulls.get("1:PR_4");
+        expect(pull).toBeDefined();
         expect(pull?.sections).toEqual(["1"]);
 
         // THEN the activity should have been updated.
