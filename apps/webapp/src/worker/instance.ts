@@ -1,8 +1,8 @@
 import * as Comlink from "comlink";
-import { groupBy, unique } from "remeda";
+import { groupBy, indexBy, prop, unique } from "remeda";
 import { db } from "../lib/db";
 import { splitQueries } from "@repo/github";
-import type { Pull, Connection } from "@repo/model";
+import type { Pull } from "@repo/model";
 import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
@@ -55,49 +55,70 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
     await executeActivity("syncPulls", syncPullsIntervalMillis, force, async () => {
         const connections = await db.connections.toArray();
         const sections = await db.sections.toArray();
-        const stars = new Set((await db.stars.toArray()).map(star => star.uid));
 
-        const connectionByPull: Record<string, Connection> = {};
-        const rawPulls: Pull[] = (
+        const rawResults = (
             await Promise.all(sections.flatMap(section => {
                 return connections.flatMap(connection => {
                     const queries = splitQueries(section.search);
                     return queries.flatMap(async query => {
-                        const pulls = await client.getPulls(connection, query);
-                        return pulls.map(pull => {
-                            connectionByPull[pull.uid] = connection;
-                            const sections = [section.id];
-                            const starred = stars.has(pull.uid) ? 1 : 0;
-                            return { ...pull, sections, starred };
-                        });
+                        const pulls = await client.searchPulls(connection, query);
+                        return pulls.map(res => ({
+                            ...res,
+                            uid: `${connection.id}:${res.id}`,
+                            sections: [section.id],
+                            connection: connection.id,
+                        }));
                     });
                 });
             }))
         ).flat();
 
         // Deduplicate pull requests present in multiple sections.
-        const pulls: Pull[] = Object.values(groupBy(rawPulls, pull => pull.uid))
+        const results = Object.values(groupBy(rawResults, pull => pull.uid))
             .map(vs => ({ ...vs[0], sections: vs.flatMap(v => unique(v.sections)) }));
         
-        
-        // Compute whether pull requests are in the attention set after they have been
-        // deduplicated, since this can be quite expensive to do.
+        const stars = new Set((await db.stars.toArray()).map(star => star.uid));
+        const connectionsById = indexBy(connections, prop("id"));
         const sectionsInAttentionSet = new Set(sections.filter(v => v.attention).map(v => v.id));
-        for (const pull of pulls) {
-            if (pull.sections.some(v => sectionsInAttentionSet.has(v))) {
-                pull.attention = await isInAttentionSet(client, connectionByPull[pull.uid], pull);
+        const currentKeys = new Set(await db.pulls.toCollection().primaryKeys());
+
+        const stats = { new: 0, unchanged: 0, updated: 0 };
+
+        const pulls: Pull[] = await Promise.all(results.map(async res => {
+            if (currentKeys.has(res.uid)) {
+                const currentPull = await db.pulls.get(res.uid);
+                if (currentPull !== undefined && res.updatedAt <= currentPull.updatedAt) {
+                    stats.unchanged += 1;
+                    return currentPull;
+                } else {
+                    stats.updated += 1;
+                }
+            } else {
+                stats.new += 1;
             }
-        }
+            const connection = connectionsById[res.connection];
+            const pull = await client.getPull(connection, res.id);
+            const mayBeInAttentionSet = res.sections.some(v => sectionsInAttentionSet.has(v));
+            return {
+                ...pull,
+                uid: res.uid,
+                connection: res.connection,
+                sections: res.sections,
+                host: connection.host,
+                starred: stars.has(res.uid) ? 1 : 0,
+                attention: mayBeInAttentionSet ? isInAttentionSet(connection, pull) : undefined,
+            }
+        }));
 
         // Upsert pull requests...
         await db.pulls.bulkPut(pulls);
 
         // ... and remove pull requests that are not anymore included in any sections.
-        const keys = new Set(await db.pulls.toCollection().primaryKeys());
-        pulls.forEach(pull => keys.delete(pull.uid));
-        await db.pulls.bulkDelete(Array.from(keys));
+        const staleKeys = new Set(currentKeys);
+        pulls.forEach(pull => staleKeys.delete(pull.uid));
+        await db.pulls.bulkDelete(Array.from(staleKeys));
 
-        console.log(`Synced ${pulls.length} pull requests`);
+        console.log(`Synced ${pulls.length} pull requests: ${stats.new} new, ${stats.updated} updated, ${stats.unchanged} unchanged, ${staleKeys.size} deleted`);
     });
 }
 
