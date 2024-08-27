@@ -26,7 +26,6 @@ The following dialog will open:
 The search query uses [GitHub's search language](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests), with the following modifications:
 
 * A `type:pr` term is implicitely added, you do not need to include it.
-* Pull requests are always sorted by last updated first (i.e., `sort:updated`).
 * Archived pull requests are excluded by default (i.e., `archived:false`), unless the search query is explicitely searching for archived pull requests.
 * Only pull requests from organizations configured in the connection are returned.
 * You may provide several individual search queries separated by a semi-colon (";").

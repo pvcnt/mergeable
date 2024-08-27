@@ -1,144 +1,191 @@
-import { test, expect, beforeEach } from "vitest";
+import { test, expect } from "vitest";
 import { isInAttentionSet } from "../src/attention.js";
-import { TestGitHubClient } from "../src/client.js";
 import { mockConnection, mockPull } from "@repo/testing";
 import { CheckState, PullState } from "@repo/model";
 
-const client = new TestGitHubClient();
 const me =  { name: "test", avatarUrl: "" };
 const user1 =  { name: "test1", avatarUrl: "" };
 const user2 =  { name: "test2", avatarUrl: "" };
 const user3 =  { name: "test3", avatarUrl: "" };
 const connection = mockConnection({ viewer: { user: me, teams: []}});
 
-beforeEach(() => {
-    client.clear();
-})
-
-test("should contain the author when pull is approved", async () => {
+test("should contain the author when pull is approved", () => {
     const pull = mockPull({ state: PullState.Approved, author: me });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "Pull request is approved" });
 })
 
-test("should contain only the author when pull is approved", async () => {
+test("should contain only the author when pull is approved", () => {
     const pull = mockPull({ state: PullState.Approved });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should contain the author when CI is failing", async () => {
+test("should contain the author when CI is failing", () => {
     const pull = mockPull({ author: me, ciState: CheckState.Failure });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "CI is failing" });
 })
 
-test("should contain only the author when CI is failing", async () => {
+test("should contain only the author when CI is failing", () => {
     const pull = mockPull({ ciState: CheckState.Failure });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should contain a requested reviewer when pull is not approved", async () => {
+test("should contain a requested reviewer when pull is not approved", () => {
     const pull = mockPull({ state: PullState.Pending, requestedReviewers: [me] });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "Review is requested" });
 })
 
-test("should be empty when pull is draft", async () => {
+test("should be empty when pull is draft", () => {
     const pull = mockPull({ state: PullState.Draft, author: me });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should be empty when pull is merged", async () => {
+test("should be empty when pull is merged", () => {
     const pull = mockPull({ state: PullState.Merged, author: me });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should be empty when pull is closed", async () => {
+test("should be empty when pull is closed", () => {
     const pull = mockPull({ state: PullState.Closed, author: me });
-    const attention = await isInAttentionSet(client, connection, pull);
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should contain the author when a user replied", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me });
-    const comments = [
-        { uid: "1", author: me, createdAt: new Date(0) },
-        { uid: "2", inReplyTo: "1", author: user1, createdAt: new Date(1) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should contain the author when a user replied", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user1, createdAt: new Date(1), body: "" },
+                ],
+            },
+        ],
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test1 left a comment" });
 })
 
-test("should contain the author when two users replied", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me });
-    const comments = [
-        { uid: "1", author: me, createdAt: new Date(0) },
-        { uid: "2", inReplyTo: "1", author: user1, createdAt: new Date(1) },
-        { uid: "3", inReplyTo: "1", author: user2, createdAt: new Date(2) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should contain the author when two users replied", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user1, createdAt: new Date(1), body: "" },
+                    { id: "3", author: user2, createdAt: new Date(2), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test1 and 1 other left a comment" });
 })
 
-test("should contain the author when three users replied", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me });
-    const comments = [
-        { uid: "1", author: me, createdAt: new Date(0) },
-        { uid: "2", inReplyTo: "1", author: user1, createdAt: new Date(1) },
-        { uid: "3", inReplyTo: "1", author: user2, createdAt: new Date(2) },
-        { uid: "4", inReplyTo: "1", author: user1, createdAt: new Date(3) },
-        { uid: "5", inReplyTo: "1", author: user3, createdAt: new Date(4) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should contain the author when three users replied", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user1, createdAt: new Date(1), body: "" },
+                    { id: "3", author: user2, createdAt: new Date(2), body: "" },
+                    { id: "4", author: user1, createdAt: new Date(3), body: "" },
+                    { id: "5", author: user3, createdAt: new Date(4), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test1 and 2 others left a comment" });
 })
 
-test("should contain a reviewer when a user replied", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: user1, reviewers: [me] });
-    const comments = [
-        { uid: "1", author: me, createdAt: new Date(0) },
-        { uid: "2", inReplyTo: "1", author: user2, createdAt: new Date(1) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should contain a reviewer when a user replied", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: user1,
+        reviews: [
+            { author: me, createdAt: new Date(0), lgtm: false },
+        ],
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user2, createdAt: new Date(1), body: "" },
+                ],
+            },
+        ],
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test2 left a comment" });
 })
 
-test("should not contain the author when nobody replied", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me });
-    const comments = [
-        { uid: "1", author: me, createdAt: new Date(0) },
-        { uid: "2", inReplyTo: "1", author: user1, createdAt: new Date(1) },
-        { uid: "3", inReplyTo: "1", author: me, createdAt: new Date(3) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should not contain the author when nobody replied", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: me, createdAt: new Date(0), body: "" },
+                    { id: "2", author: user1, createdAt: new Date(1), body: "" },
+                    { id: "3", author: me, createdAt: new Date(2), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })
 
-test("should contain the author when a reviewer left a comment", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me, reviewers: [user1] });
-    const comments = [
-        { uid: "1", author: user1, createdAt: new Date(0) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should contain the author when a reviewer left a comment", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        reviews: [{ author: user1, createdAt: new Date(0), lgtm: false }],
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: user1, createdAt: new Date(0), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: true, reason: "test1 left a comment" });
 })
 
-test("should not contain the author when a non-reviewer left a comment", async () => {
-    const pull = mockPull({ state: PullState.Pending, author: me });
-    const comments = [
-        { uid: "1", author: user1, createdAt: new Date(0) },
-    ];
-    client.setComments(connection, pull.repo, pull.number, comments);
-    const attention = await isInAttentionSet(client, connection, pull);
+test("should not contain the author when a non-reviewer left a comment", () => {
+    const pull = mockPull({
+        state: PullState.Pending,
+        author: me,
+        discussions: [
+            {
+                resolved: false,
+                comments: [
+                    { id: "1", author: user1, createdAt: new Date(0), body: "" },
+                ],
+            }
+        ]
+    });
+    const attention = isInAttentionSet(connection, pull);
     expect(attention).toEqual({ set: false });
 })

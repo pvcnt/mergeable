@@ -11,13 +11,13 @@ export type Props = {
     onStar?: (v: Pull) => void,
 }
 
-const formatDate = (d: string)  => {
+const formatDate = (d: Date|string)  => {
     return new Date(d).toLocaleDateString("en", {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric"
     });
 }
 
@@ -100,7 +100,7 @@ export default function PullTable({ pulls, onStar }: Props) {
                         </td>
                         <td>
                             <Tooltip content={formatDate(pull.updatedAt)}>
-                                <TimeAgo date={new Date(pull.updatedAt)} tooltip={false} timeStyle="round"/>
+                                <TimeAgo date={pull.updatedAt} tooltip={false} timeStyle="round"/>
                             </Tooltip>
                         </td>
                         <td>

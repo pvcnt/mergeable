@@ -1,25 +1,33 @@
-import { type Pull, type Section, type Connection, PullState } from "@repo/model";
+import { type Pull, type Section, type Connection, PullState, CheckState } from "@repo/model";
 
-export function mockPull(props?: Partial<Pull>): Pull {
+export function mockPull(props?: Omit<Partial<Pull>, "uid"|"url">): Pull {
+    const id = props?.id ?? "PR_1";
+    const repo = props?.repo ?? "pvcnt/mergeable";
+    const number = props?.number ?? 1;
+    const host = props?.host ?? "github.com";
+    const connection = props?.connection ?? "1";
     return {
-        uid: "1:1",
-        host: "github.com",
-        repo: "pvcnt/mergeable",
-        number: 1,
-        title: "Title",
+        id,
+        repo,
+        number,
+        title: "Pull request",
         state: PullState.Pending,
-        createdAt: "2024-08-05T15:57:00Z",
-        updatedAt: "2024-08-05T15:57:00Z",
-        url: "https://github.com/pvcnt/mergeable/1",
+        ciState: CheckState.None,
+        createdAt: new Date("2024-08-05T15:57:00Z"),
+        updatedAt: new Date("2024-08-05T15:57:00Z"),
+        url: `https://${host}/${repo}/${number}`,
         additions: 0,
         deletions: 0,
         author: { name: "pvcnt", avatarUrl: "" },
-        comments: 0,
         requestedReviewers: [],
         requestedTeams: [],
-        reviewers: [],
+        reviews: [],
+        discussions: [],
+        uid: `${connection}:${id}`,
+        host,
         starred: 0,
         sections: [],
+        connection,
         ...props,
     };
 }
