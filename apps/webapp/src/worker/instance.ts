@@ -13,7 +13,7 @@ declare const self: SharedWorkerGlobalScope;
 
 function syncViewers(client: GitHubClient) {
     syncViewersOnce(client)
-        .then(() => setInterval(syncViewers, syncViewersIntervalMillis))
+        .then(() => setInterval(() => syncViewers(client), syncViewersIntervalMillis))
         .catch(console.error);
 }
 
@@ -51,7 +51,7 @@ export async function syncViewersOnce(client: GitHubClient, force: boolean = fal
 
 function syncPulls(client: GitHubClient) {
     syncPullsOnce(client)
-        .then(() => setInterval(syncPulls, syncPullsIntervalMillis))
+        .then(() => setInterval(() => syncPulls(client), syncPullsIntervalMillis))
         .catch(console.error);
 }
 
