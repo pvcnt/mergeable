@@ -1,33 +1,37 @@
 import * as Comlink from "comlink";
 import { groupBy, indexBy, prop, unique } from "remeda";
+import { v4 as uuidv4 } from "uuid";
+import localforage from "localforage";
 import { db } from "../lib/db";
 import { splitQueries } from "@repo/github";
 import { LATEST_SCHEMA_VERSION, type Pull } from "@repo/model";
 import { GitHubClient, isInAttentionSet } from "@repo/github";
 import { gitHubClient } from "../github";
 
-const syncPullsIntervalMillis = 5 * 60_000;    // 5 minutes
-const syncViewersIntervalMillis = 60 * 60_000; // 1 hour
+const syncPullsIntervalMillis = 5 * 60_000;      // 5 minutes
+const syncViewersIntervalMillis = 60 * 60_000;   // 1 hour
+const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
-declare const self: SharedWorkerGlobalScope;
+declare const self: SharedWorkerGlobalScope & { __VITE_ENVS: ImportMetaEnv };
 
-function syncViewers(client: GitHubClient) {
-    syncViewersOnce(client)
-        .then(() => setInterval(() => syncViewers(client), syncViewersIntervalMillis))
+function schedule(fn: () => Promise<void>, intervalMillis: number) {
+    fn()
+        .then(() => setInterval(() => schedule(fn, intervalMillis), intervalMillis))
         .catch(console.error);
 }
 
 async function executeActivity(name: string, intervalMillis: number, force: boolean, fn: () => Promise<void>): Promise<void> {
     const activity = await db.activities.get(name);
-    if (!force && activity !== undefined && activity.refreshTime > new Date(Date.now() - intervalMillis)) {
-        return;
-    }
     if (activity !== undefined && activity.running) {
         // Do not run activities concurrently.
         return;
     }
+    if (!force && activity !== undefined && activity.refreshTime > new Date(Date.now() - intervalMillis)) {
+        // Do not run activity if it has already recently run (unless forced).
+        return;
+    }
     if (activity === undefined) {
-        await db.activities.add({ name, running: true, refreshTime: new Date(0) });
+        await db.activities.add({ name, running: true, refreshTime: new Date() });
     } else {
         await db.activities.update(name, { running: true });
     }
@@ -47,12 +51,6 @@ export async function syncViewersOnce(client: GitHubClient, force: boolean = fal
         }
         console.log(`Synced ${connections.length} connections`);
     });
-}
-
-function syncPulls(client: GitHubClient) {
-    syncPullsOnce(client)
-        .then(() => setInterval(() => syncPulls(client), syncPullsIntervalMillis))
-        .catch(console.error);
 }
 
 export async function syncPullsOnce(client: GitHubClient, force: boolean = false): Promise<void> {
@@ -135,6 +133,50 @@ export async function syncPullsOnce(client: GitHubClient, force: boolean = false
     });
 }
 
+async function sha256(s: string) {
+    const bytes = new TextEncoder().encode(s);
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    const result = [...new Uint8Array(digest)];
+    return result.map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+export async function sendTelemetry() {
+    if (import.meta.env.MERGEABLE_NO_TELEMETRY?.length === 0) {
+        return;
+    }
+    await executeActivity("sendTelemetry", sendTelemetryIntervalMillis, false, async () => {
+        // Send a browser "fingerprint", which is really just a unique identifier stored locally.
+        // I was not able to find a good open source fingerprinting library, so this looks like
+        // the second best alternative, despite not being as resilient.
+        let fingerprint = await localforage.getItem<string>("fingerprint");
+        if (null === fingerprint) {
+            fingerprint = uuidv4();
+            await localforage.setItem("fingerprint", fingerprint);
+        }
+        // Send a hash of the "host:port" string, unless it is running locally.
+        const domain = self.location.hostname === "localhost" ? "localhost" : await sha256(self.location.host);
+        const payload = {
+            domain,
+            browser: fingerprint,
+            version: import.meta.env.VITE_COMMIT_SHA || "devel",
+            numSections: await db.sections.count(),
+            numConnections: await db.connections.count(),
+            numPulls: await db.pulls.count(),
+            numStars: await db.stars.count(),
+        };
+        const response = await fetch("https://mergeable-telemetry.pvcnt.workers.dev/api/v1/sample", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+        if (response.status !== 200) {
+            throw new Error(`Error while sending telemetry: ${await response.text()}`);
+        }
+    });
+}
+
 export type Api = {
     refreshPulls: () => Promise<void>,
     refreshViewers: () => Promise<void>,
@@ -142,8 +184,11 @@ export type Api = {
 
 self.addEventListener("connect", (event: MessageEvent) => {
     // Start background sync with GitHub.
-    syncViewers(gitHubClient);
-    syncPulls(gitHubClient);
+    schedule(() => syncViewersOnce(gitHubClient), syncViewersIntervalMillis);
+    schedule(() => syncPullsOnce(gitHubClient),  syncPullsIntervalMillis);
+
+    // Send telemetry in background.
+    // schedule(sendTelemetry, sendTelemetryIntervalMillis);
 
     // Expose an API to our clients.
     const api: Api = {

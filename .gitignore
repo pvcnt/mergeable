@@ -31,6 +31,6 @@ dist/
 .astro/
 
 # env
-.env
+.env.local
 .env.production
 .dev.vars

@@ -1,8 +1,9 @@
 import { TestGitHubClient } from "@repo/github";
-import { afterEach, beforeEach, it, describe, expect, assert } from "vitest";
-import { syncPullsOnce, syncViewersOnce } from "../../src/worker/instance.js";
+import { afterEach, beforeEach, it, describe, expect, assert, vi } from "vitest";
+import { syncPullsOnce, syncViewersOnce, sendTelemetry } from "../../src/worker/instance.js";
 import { db } from "../../src/lib/db.js";
 import { mockPull, mockConnection, mockSection } from "@repo/testing";
+import nock from "nock";
 
 describe("sync viewers", () => {
     beforeEach(async () => {
@@ -130,5 +131,44 @@ describe("sync pulls", () => {
         await syncPullsOnce(client);
 
         expect(await db.pulls.count()).toBe(0);
+    })
+})
+
+describe("send telemetry", () => {
+    beforeEach(() => {
+        nock.disableNetConnect();
+    })
+
+    afterEach(async () => {
+        vi.unstubAllEnvs();
+        nock.enableNetConnect();
+        await db.activities.clear();
+    })
+
+    it("should send telemetry", async () => {
+        let activity = await db.activities.get("sendTelemetry");
+        expect(activity).toBeUndefined();
+
+        // WHEN sending telemetry.
+        nock("https://mergeable-telemetry.pvcnt.workers.dev")
+            .post("/api/v1/sample")
+            .reply(200);
+        await sendTelemetry();
+
+        // THEN the activity should have been updated.
+        activity = await db.activities.get("sendTelemetry");
+        expect(activity?.running).toBeFalsy();
+        expect(activity?.refreshTime.getTime()).toBeGreaterThan(0);
+        expect(activity?.refreshTime.getTime()).toBeLessThanOrEqual(Date.now());
+    })
+
+    it("should not send telemetry if recently completed", async () => {
+        await db.activities.add({ name: "sendTelemetry", running: false, refreshTime: new Date() });
+        await sendTelemetry();
+    })
+
+    it("should not send telemetry if disabled", async() => {
+        vi.stubEnv("MERGEABLE_NO_TELEMETRY", "1");
+        await sendTelemetry();
     })
 })

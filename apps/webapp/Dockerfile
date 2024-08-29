@@ -2,10 +2,9 @@
 
 FROM joseluisq/static-web-server:2.32.0-alpine
 
-RUN apk add --no-cache envsubst
-COPY --chmod=0755 docker/entrypoint.sh /
+WORKDIR /mergeable
 
-COPY <<EOF /config.toml
+COPY <<EOF config.toml
   [general]
 
   host = "::"
@@ -21,11 +20,16 @@ COPY <<EOF /config.toml
   redirect-trailing-slash = true
   compression-static = true
   ignore-hidden-files = true
+
+  # Block access to resources that are included in the public directory
+  # but should not be displayed.
+  [[advanced.redirects]]
+  source = "**/*.{sh,toml}"
+  destination = "/"
+  kind = 301
 EOF
 
-COPY ./dist /mergeable
+COPY ./dist .
 
-ENV SERVER_CONFIG_FILE=config.toml
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "./vite-envs.sh && static-web-server"]
 EXPOSE 80

@@ -27,3 +27,7 @@ Each pull request is associated with a size XS, X, M, L, XL or XXL.
 Size is computed by comparing the number of modified lines of a pull requests with some pre-defined thresholds.
 Those thresholds can be personalized using this environment variable.
 This environment variable should contain 5 integers to specify the boundaries between categories.
+
+## MERGEABLE_NO_TELEMETRY
+
+Set to a non-empty string to opt-out from anonymous telemetry.
