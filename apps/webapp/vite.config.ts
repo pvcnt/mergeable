@@ -13,6 +13,7 @@ export default defineConfig({
       keys: [
         "MERGEABLE_GITHUB_URLS",
         "MERGEABLE_PR_SIZES",
+        "MERGEABLE_NO_TELEMETRY",
       ],
     }),
     codecovVitePlugin({

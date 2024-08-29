@@ -51,6 +51,7 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "fake-indexeddb": "^6.0.0",
     "jsdom": "^24.1.1",
+    "nock": "^13.5.5",
     "sass": "^1.77.6",
     "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",
