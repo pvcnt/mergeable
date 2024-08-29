@@ -10,7 +10,6 @@ permissions:
   deployments: write
   id-token: write 
 
-
 # Prevent two versions from being deployed in parallel.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +33,7 @@ jobs:
         run: pnpm build --filter webapp...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
-          VITE_GITHUB_URLS: https://api.github.com
+          MERGEABLE_GITHUB_URLS: https://api.github.com
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
@@ -69,3 +68,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+  telemetry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Publish to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
+          workingDirectory: apps/telemetry

@@ -3,7 +3,11 @@ logs
 *.log
 pnpm-debug.log*
 
-node_modules
+# deps
+node_modules/
+.wrangler/
+
+# prod
 build/
 coverage/
 dist/
@@ -11,16 +15,22 @@ dist/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+!.vscode/launch.json
+!.vscode/*.code-snippets
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf
+
+# macOS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
 # Turbo
 .turbo/
 
 # Astro
 .astro/
+
+# env
+.env
+.env.production
+.dev.vars

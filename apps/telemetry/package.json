@@ -1,0 +1,24 @@
+{
+  "name": "telemetry",
+  "scripts": {
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "db:generate": "drizzle-kit generate",
+    "deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.2",
+    "@neondatabase/serverless": "^0.9.4",
+    "drizzle-orm": "^0.33.0",
+    "hono": "^4.5.9",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "eslint": "^8.57.0",
+    "drizzle-kit": "^0.24.2",
+    "typescript": "^5.5.4",
+    "wrangler": "^3.57.2"
+  }
+}
