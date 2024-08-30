@@ -12,6 +12,9 @@ const syncPullsIntervalMillis = 5 * 60_000;      // 5 minutes
 const syncViewersIntervalMillis = 60 * 60_000;   // 1 hour
 const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
+// Domains that we do not need to hash.
+const domainsWhitelist = new Set(["localhost", "mergeable.pages.dev"]);
+
 declare const self: SharedWorkerGlobalScope;
 
 function schedule(fn: () => Promise<void>, intervalMillis: number) {
@@ -153,8 +156,10 @@ export async function sendTelemetry() {
             fingerprint = uuidv4();
             await localforage.setItem("fingerprint", fingerprint);
         }
-        // Send a hash of the "host:port" string, unless it is running locally.
-        const domain = self.location.hostname === "localhost" ? "localhost" : await sha256(self.location.host);
+        // Send a hash of the "host:port" string, unless it is whitelisted.
+        const domain = domainsWhitelist.has(self.location.hostname) 
+            ? self.location.hostname 
+            : await sha256(self.location.host);
         const payload = {
             domain,
             browser: fingerprint,
