@@ -7,6 +7,8 @@ function memoize<T>(fn: () => T): () => T {
 }
 
 export const getWorker = memoize(() => {
-    const worker = new SharedWorker(new URL("./instance", import.meta.url), {type: "module"});
+    const worker = import.meta.env.DEV
+        ? new SharedWorker(new URL("./instance", import.meta.url), { type: "module" })
+        : new SharedWorker(new URL("./instance", import.meta.url), { type: "classic" });
     return Comlink.wrap<Api>(worker.port);
 });

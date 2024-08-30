@@ -141,6 +141,9 @@ async function sha256(s: string) {
 }
 
 export async function sendTelemetry() {
+    if (import.meta.env.MERGEABLE_NO_TELEMETRY.length > 0) {
+        return;
+    }
     await executeActivity("sendTelemetry", sendTelemetryIntervalMillis, false, async () => {
         // Send a browser "fingerprint", which is really just a unique identifier stored locally.
         // I was not able to find a good open source fingerprinting library, so this looks like
@@ -155,7 +158,7 @@ export async function sendTelemetry() {
         const payload = {
             domain,
             browser: fingerprint,
-            version: "devel",
+            version: import.meta.env.VITE_COMMIT_SHA || "devel",
             numSections: await db.sections.count(),
             numConnections: await db.connections.count(),
             numPulls: await db.pulls.count(),
@@ -185,7 +188,7 @@ self.addEventListener("connect", (event: MessageEvent) => {
     schedule(() => syncPullsOnce(gitHubClient),  syncPullsIntervalMillis);
 
     // Send telemetry in background.
-    // schedule(sendTelemetry, sendTelemetryIntervalMillis);
+    schedule(sendTelemetry, sendTelemetryIntervalMillis);
 
     // Expose an API to our clients.
     const api: Api = {

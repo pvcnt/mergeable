@@ -164,7 +164,11 @@ describe("send telemetry", () => {
 
     it("should not send telemetry if recently completed", async () => {
         await db.activities.add({ name: "sendTelemetry", running: false, refreshTime: new Date() });
+        await sendTelemetry();
+    })
 
+    it("should not send telemetry if disabled", async() => {
+        vi.stubEnv("MERGEABLE_NO_TELEMETRY", "1");
         await sendTelemetry();
     })
 })

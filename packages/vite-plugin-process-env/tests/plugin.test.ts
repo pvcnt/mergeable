@@ -1,8 +1,8 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { build } from "vite";
-import type { InlineConfig } from "vite";
 import { rmSync, readFileSync } from "fs";
 import { join } from "path";
+import { processEnv } from "../src/plugin.js";
 
 function readDistFile(filename: string) {
     const distPath = join(__dirname, "fixtures", "app", "dist");
@@ -10,9 +10,23 @@ function readDistFile(filename: string) {
     return readFileSync(filepath, { encoding: "utf8" });
 }
 
-async function buildFixture(options?: InlineConfig) {
+async function buildFixture() {
     const root = join(__dirname, "fixtures", "app")
-    await build({ root, logLevel: "warn", ...options })
+    await build({
+        root,
+        logLevel: "warn",
+        build: {
+            minify: false,
+            rollupOptions: {
+              output: {
+                entryFileNames: `assets/[name].js`,
+                chunkFileNames: `assets/[name].js`,
+                assetFileNames: `assets/[name].[ext]`
+              }
+            },
+        },
+        plugins: [processEnv()],
+    })
 }
 
 describe("vite-plugin-process-env", () => {
@@ -22,12 +36,14 @@ describe("vite-plugin-process-env", () => {
     })
 
     it("should build", async () => {
-        vi.stubEnv("APP_VERSION", "v1");
+        vi.stubEnv("VITE_APP_VERSION", "v1");
 
         await buildFixture();
 
-        expect(readDistFile("assets/index.js")).toContain("define_process_env_default.APP_VERSION");
-        expect(readDistFile("env.template.js")).toContain('export default {"APP_VERSION":"$APP_VERSION"};');
-        expect(readDistFile("index.html")).toContain("<script type=\"module\">globalThis.env = {\"APP_VERSION\":\"v1\"}; import rtenv from '/env.js'; globalThis.env = {...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0))};</script>");
+        expect(readDistFile("assets/index.js")).toContain("console.log(globalThis.env.VITE_APP_VERSION)");
+        expect(readDistFile("env.template.js")).toContain(`const rtenv = {"VITE_APP_VERSION":"$VITE_APP_VERSION"};globalThis.env = { ...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0)) };`);
+
+        expect(readDistFile("index.html")).toContain(`<script>globalThis.env = {"VITE_APP_VERSION":"v1"};</script>`);
+        expect(readDistFile("index.html")).toContain(`<script src="/env.js"></script>`);
     })
 })
