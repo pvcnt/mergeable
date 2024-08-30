@@ -151,6 +151,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0))
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -301,6 +304,10 @@ importers:
   packages/typescript-config: {}
 
   packages/vite-plugin-process-env:
+    dependencies:
+      magic-string:
+        specifier: ^0.30.11
+        version: 0.30.11
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -311,6 +318,9 @@ importers:
       '@types/node':
         specifier: ^22.5.0
         version: 22.5.0
+      '@vitest/coverage-istanbul':
+        specifier: ^2.0.5
+        version: 2.0.5(vitest@2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0))
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -7275,7 +7285,7 @@ snapshots:
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
       '@jridgewell/set-array': 1.2.1
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.0
       '@jridgewell/trace-mapping': 0.3.25
 
   '@jridgewell/resolve-uri@3.1.2': {}
@@ -7289,7 +7299,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   '@jridgewell/trace-mapping@0.3.9':
     dependencies:
@@ -7961,7 +7971,7 @@ snapshots:
   '@vitest/snapshot@2.0.5':
     dependencies:
       '@vitest/pretty-format': 2.0.5
-      magic-string: 0.30.10
+      magic-string: 0.30.11
       pathe: 1.1.2
 
   '@vitest/spy@2.0.5':
@@ -10328,7 +10338,7 @@ snapshots:
 
   magic-string@0.30.10:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   magic-string@0.30.11:
     dependencies:
@@ -12457,7 +12467,7 @@ snapshots:
       chai: 5.1.1
       debug: 4.3.5
       execa: 8.0.1
-      magic-string: 0.30.10
+      magic-string: 0.30.11
       pathe: 1.1.2
       std-env: 3.7.0
       tinybench: 2.9.0

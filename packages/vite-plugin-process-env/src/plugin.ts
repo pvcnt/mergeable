@@ -1,53 +1,115 @@
-import { Plugin } from "vite";
+import { Plugin, loadEnv } from "vite";
+import path from "node:path";
+import MagicString from "magic-string";
+import assert from "assert";
+
+type EnvVars = Record<string, string>;
 
 interface Options {
-  /**
-   * Name of environment variables that will be made available.
-   */
-  keys: string[]
+  extraEnv?: () => EnvVars;
 }
+
+// Constants that never change.
+const transformedExtensions = new Set([".js", ".jsx", ".ts", ".tsx"]);
+const workerUrlRE = /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\)/g;
+
+// Global state, to persist between consecutive invocations of Vite
+// (in practice, between worker and non-worker builds).
+const workerIds: Set<string> = new Set();
 
 /**
  * Expose `process.env` environment variables to your client code.
  *
  * @param {Options} options
  */
-export function processEnv({ keys }: Options): Plugin {
+export function processEnv({ extraEnv }: Options = {}): Plugin {
+  // Local state, that is reset between consecutive invocations of Vite.
+  let shouldGenerateSourcemap = false;
+  let env: EnvVars = {};
+  let workerScript = "";
+
   return {
     name: "vite-plugin-process-env",
-    config () {
-      const define = Object.fromEntries(keys.map(key => [`import.meta.env.${key}`, `globalThis.env.${key}`]));
-      return { define };
+    configResolved(config) {
+      shouldGenerateSourcemap = config.build.sourcemap !== false;
+
+      // Load build-time environment variables.
+      env = loadEnv(config.mode, config.envDir, config.envPrefix);
+      if (extraEnv !== undefined) {
+        env = { ...env, ...extraEnv };
+      }
+
+      if (config.isWorker) {
+        workerScript = `globalThis.env = ${JSON.stringify(env)};`
+        if (config.isProduction) {
+          workerScript += "importScripts('/env.js');";
+        }
+        workerScript += "\n";
+      }
+    },
+    buildStart() {
+      this.info(`Env vars: ${Object.keys(env).join(", ")}`);
     },
     generateBundle() {
       // Generate a template file that defines overrides for environment variables. This file is intended
       // to processed by envsubst to produce an `env.js` file.
-      const template = Object.fromEntries(keys.map(key => [key, `$${key}`]));
+      const rtenv = Object.fromEntries(Object.keys(env).map(key => [key, `$${key}`]));
+      const source = 
+          `const rtenv = ${JSON.stringify(rtenv)};`
+          + "globalThis.env = { ...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0)) };";
       this.emitFile({
         type: "asset",
         fileName: "env.template.js",
-        source: `export default ${JSON.stringify(template)};`,
+        source,
       });
     },
+    transform(code, id) {
+      const extension = path.extname(id);
+      if (!transformedExtensions.has(extension)) {
+        // Do not transform files that are not Javascript or Typescript files.
+        return;
+      }
+
+      for (const match of code.matchAll(workerUrlRE)) {
+        let filepath = match[1].slice(1, -1);
+        if (path.extname(filepath).length === 0) {
+          filepath = filepath + extension;
+        }
+        workerIds.add(path.join(path.dirname(id), filepath));
+      }
+
+      const s = new MagicString(code);
+      if (workerScript.length > 0 && workerIds.has(id)) {
+        s.prepend(workerScript);
+      }
+      s.replace(/import\.meta\.env\.([A-Za-z0-9$_]+)/g, (match, name) => {
+        assert(typeof name === "string");
+        return (name in env) ? `globalThis.env.${name}` : match;
+      });
+      if (!s.hasChanged()) {
+        return;
+      }
+      if (!shouldGenerateSourcemap) {
+        return s.toString();
+      }
+      const map = s.generateMap({ source: id, includeContent: true, hires: true });
+      return {
+        code: s.toString(),
+        map: map.toString(),
+      }
+    },
     transformIndexHtml() {
-      // Injects a script into `index.html` that provides values for environment variables.
-      // Value is one of the following, by order of precedence:
-      // - Runtime environment (i.e., env.js).
-      // - Build-time environment.
-      // - Fallback to an empty string.
-      const env = Object.fromEntries(keys.map(key => [key, process.env[key] !== undefined ? process.env[key] : ""]));
-      const script = [
-        `globalThis.env = ${JSON.stringify(env)};`,
-        "import rtenv from '/env.js';",
-        "globalThis.env = {...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0))};",
-      ];
       return [
         {
           tag: "script",
-          attrs: { type: "module" },
-          children: script.join(" "),
           injectTo: "head-prepend",
+          children: `globalThis.env = ${JSON.stringify(env)};`,
         },
+        {
+          tag: "script",
+          injectTo: "head-prepend",
+          attrs: { src: "/env.js" },
+        }
       ];
     }
   }

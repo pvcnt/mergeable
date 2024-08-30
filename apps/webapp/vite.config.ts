@@ -9,13 +9,7 @@ export default defineConfig({
   plugins: [
     comlink(),
     react(),
-    processEnv({
-      keys: [
-        "MERGEABLE_GITHUB_URLS",
-        "MERGEABLE_PR_SIZES",
-        "MERGEABLE_NO_TELEMETRY",
-      ],
-    }),
+    processEnv(),
     codecovVitePlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
       bundleName: "webapp",
@@ -23,6 +17,10 @@ export default defineConfig({
     }),
   ],
   worker: {
-    plugins: () => [comlink()],
+    plugins: () => [
+      comlink(),
+      processEnv(),
+    ],
   },
+  envPrefix: ["VITE_", "MERGEABLE_"],
 })
