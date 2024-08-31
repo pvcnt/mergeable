@@ -1,33 +1,33 @@
 @import "@blueprintjs/core/lib/scss/variables";
 
 .sidebar {
-    width: 3rem;
-    height: 100vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 0.5rem;
-    padding-bottom: 1rem;
-    gap: 0.5rem;
-    border-right: 1px solid $gray5;
+  width: 3rem;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+  gap: 0.5rem;
+  border-right: 1px solid $gray5;
 }
 
 .logo {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .bottom {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .separator {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }

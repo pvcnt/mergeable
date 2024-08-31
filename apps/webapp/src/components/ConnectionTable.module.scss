@@ -1,25 +1,29 @@
 @import "@blueprintjs/core/lib/scss/variables";
 
 .table {
-    width: 100%;
-    thead th {
-        color: $pt-text-color-disabled;
-        font-size: $pt-font-size-small;
-    }
-    tbody td {
-        overflow: hidden;
-        vertical-align: middle !important;
-    }
-    tbody td:nth-child(1) { /* Host */
-        width: 200px;
-    }
-    tbody td:nth-child(2) { /* Label */
-        width: 200px;
-    }
-    tbody td:nth-child(3) { /* Viewer */
-        width: 150px;
-    }
-    tbody td:nth-child(5) { /* Actions */
-        text-align: right;
-    }
+  width: 100%;
+  thead th {
+    color: $pt-text-color-disabled;
+    font-size: $pt-font-size-small;
+  }
+  tbody td {
+    overflow: hidden;
+    vertical-align: middle !important;
+  }
+  tbody td:nth-child(1) {
+    /* Host */
+    width: 200px;
+  }
+  tbody td:nth-child(2) {
+    /* Label */
+    width: 200px;
+  }
+  tbody td:nth-child(3) {
+    /* Viewer */
+    width: 150px;
+  }
+  tbody td:nth-child(5) {
+    /* Actions */
+    text-align: right;
+  }
 }

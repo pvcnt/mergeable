@@ -19,7 +19,9 @@
       "dependsOn": ["build"],
       "outputs": ["coverage/**"]
     },
-    "format": {},
+    "format": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

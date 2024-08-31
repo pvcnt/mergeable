@@ -1,26 +1,32 @@
 @import "@blueprintjs/core/lib/scss/variables";
 
 *:focus {
-    outline: 0;
+  outline: 0;
 }
 
 #root {
-    width: 100%;
+  width: 100%;
 }
 
 .bp5-dark {
-    background-color: #2f343c;
+  background-color: #2f343c;
 
-    & table.bp5-html-table td, & table.bp5-html-table th, & span, & div, & p, & time {
-        color: $light-gray5;
-    }
-    & a, & a:hover {
-        color: $pt-dark-link-color;
-      }
-    & .bp5-tag:not([class*="bp5-intent-primary"])>span {
-        color: $pt-text-color;
-    }
-    & .bp5-icon>svg {
-        color: $light-gray5;
-    }
+  & table.bp5-html-table td,
+  & table.bp5-html-table th,
+  & span,
+  & div,
+  & p,
+  & time {
+    color: $light-gray5;
+  }
+  & a,
+  & a:hover {
+    color: $pt-dark-link-color;
+  }
+  & .bp5-tag:not([class*="bp5-intent-primary"]) > span {
+    color: $pt-text-color;
+  }
+  & .bp5-icon > svg {
+    color: $light-gray5;
+  }
 }

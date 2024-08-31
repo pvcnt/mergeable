@@ -8,9 +8,6 @@ module.exports = {
     project: true,
   },
   rules: {
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { args: "none" },
-    ]
+    "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
   },
 };

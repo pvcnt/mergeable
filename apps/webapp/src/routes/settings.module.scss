@@ -1,19 +1,19 @@
 .container {
-    max-width: 1080px;
-    margin-right: auto;
-    margin-left: auto;
+  max-width: 1080px;
+  margin-right: auto;
+  margin-left: auto;
 
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .header {
-    display: flex;
-    width: 100%;
-    gap: 1rem;
+  display: flex;
+  width: 100%;
+  gap: 1rem;
 }
 
 .title {
-    flex-grow: 1;
+  flex-grow: 1;
 }

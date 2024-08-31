@@ -15,64 +15,64 @@ Polly.register(require("@pollyjs/adapter-fetch"));
  * @see https://github.com/Netflix/pollyjs/issues/499
  */
 export function useRecording(
-    options: { recordingName?: string; recordingPath?: string } = {},
-  ) {
-    let polly: Polly|undefined;
-    let recordIfMissing = true;
-    let mode: PollyConfig["mode"] = "replay";
+  options: { recordingName?: string; recordingPath?: string } = {},
+) {
+  let polly: Polly | undefined;
+  let recordIfMissing = true;
+  let mode: PollyConfig["mode"] = "replay";
 
-    switch (process.env.POLLY_MODE) {
-        case "record":
-            mode = "record";
-            break;
+  switch (process.env.POLLY_MODE) {
+    case "record":
+      mode = "record";
+      break;
 
-        case "replay":
-            mode = "replay";
-            break;
-        case "offline":
-            mode = "replay";
-            recordIfMissing = false;
-            break;
-    }
+    case "replay":
+      mode = "replay";
+      break;
+    case "offline":
+      mode = "replay";
+      recordIfMissing = false;
+      break;
+  }
 
-    beforeEach((context) => {
-      polly = new Polly(options.recordingName ?? context.task.name, {
-        adapters: ["fetch"],
-        mode,
-        recordIfMissing,
-        recordFailedRequests: true,
-        persister: "fs",
-        persisterOptions: {
-          fs: {
-            recordingsDir:
-              options.recordingPath ??
-              `${context.task.file.filepath.substring(0, context.task.file.filepath.lastIndexOf("/"))}/__recordings__`,
-          },
+  beforeEach((context) => {
+    polly = new Polly(options.recordingName ?? context.task.name, {
+      adapters: ["fetch"],
+      mode,
+      recordIfMissing,
+      recordFailedRequests: true,
+      persister: "fs",
+      persisterOptions: {
+        fs: {
+          recordingsDir:
+            options.recordingPath ??
+            `${context.task.file.filepath.substring(0, context.task.file.filepath.lastIndexOf("/"))}/__recordings__`,
         },
-        matchRequestsBy: {
-          method: true,
-          headers: { exclude: ["Authorization"] },
-          body: true,
-          order: true,
-          url: {
-            protocol: true,
-            username: true,
-            password: true,
-            hostname: true,
-            port: true,
-            pathname: true,
-            query: true,
-            hash: false
-          }
-        }
-      });
+      },
+      matchRequestsBy: {
+        method: true,
+        headers: { exclude: ["Authorization"] },
+        body: true,
+        order: true,
+        url: {
+          protocol: true,
+          username: true,
+          password: true,
+          hostname: true,
+          port: true,
+          pathname: true,
+          query: true,
+          hash: false,
+        },
+      },
     });
-  
-    afterEach(async () => {
-      if (polly) {
-        await polly.stop();
-      }
-    });
-  
-    return;
+  });
+
+  afterEach(async () => {
+    if (polly) {
+      await polly.stop();
+    }
+  });
+
+  return;
 }
