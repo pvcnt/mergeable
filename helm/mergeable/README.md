@@ -6,43 +6,42 @@ A Helm chart for Mergeable, a better inbox for GitHub pull requests.
 
 ## Maintainers
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| pvcnt |  |  |
+| Name  | Email | Url |
+| ----- | ----- | --- |
+| pvcnt |       |     |
 
 ## Values
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| affinity | object | `{}` |  |
-| env | object | `{}` |  |
-| fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"ghcr.io/pvcnt/mergeable"` |  |
-| image.tag | string | `"latest"` |  |
-| imagePullSecrets | list | `[]` |  |
-| ingress.annotations | object | `{}` |  |
-| ingress.className | string | `""` |  |
-| ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"chart-example.local"` |  |
-| ingress.hosts[0].paths[0].path | string | `"/"` |  |
-| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
-| ingress.tls | list | `[]` |  |
-| nameOverride | string | `""` |  |
-| nodeSelector | object | `{}` |  |
-| podAnnotations | object | `{}` |  |
-| podLabels | object | `{}` |  |
-| podSecurityContext | object | `{}` |  |
-| replicaCount | int | `1` |  |
-| resources | object | `{}` |  |
-| securityContext | object | `{}` |  |
-| service.port | int | `80` |  |
-| service.type | string | `"ClusterIP"` |  |
-| serviceAccount.annotations | object | `{}` |  |
-| serviceAccount.automount | bool | `true` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `""` |  |
-| tolerations | list | `[]` |  |
-| volumeMounts | list | `[]` |  |
-| volumes | list | `[]` |  |
-
+| Key                                | Type   | Default                     | Description |
+| ---------------------------------- | ------ | --------------------------- | ----------- |
+| affinity                           | object | `{}`                        |             |
+| env                                | object | `{}`                        |             |
+| fullnameOverride                   | string | `""`                        |             |
+| image.pullPolicy                   | string | `"Always"`                  |             |
+| image.repository                   | string | `"ghcr.io/pvcnt/mergeable"` |             |
+| image.tag                          | string | `"latest"`                  |             |
+| imagePullSecrets                   | list   | `[]`                        |             |
+| ingress.annotations                | object | `{}`                        |             |
+| ingress.className                  | string | `""`                        |             |
+| ingress.enabled                    | bool   | `false`                     |             |
+| ingress.hosts[0].host              | string | `"chart-example.local"`     |             |
+| ingress.hosts[0].paths[0].path     | string | `"/"`                       |             |
+| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"`  |             |
+| ingress.tls                        | list   | `[]`                        |             |
+| nameOverride                       | string | `""`                        |             |
+| nodeSelector                       | object | `{}`                        |             |
+| podAnnotations                     | object | `{}`                        |             |
+| podLabels                          | object | `{}`                        |             |
+| podSecurityContext                 | object | `{}`                        |             |
+| replicaCount                       | int    | `1`                         |             |
+| resources                          | object | `{}`                        |             |
+| securityContext                    | object | `{}`                        |             |
+| service.port                       | int    | `80`                        |             |
+| service.type                       | string | `"ClusterIP"`               |             |
+| serviceAccount.annotations         | object | `{}`                        |             |
+| serviceAccount.automount           | bool   | `true`                      |             |
+| serviceAccount.create              | bool   | `true`                      |             |
+| serviceAccount.name                | string | `""`                        |             |
+| tolerations                        | list   | `[]`                        |             |
+| volumeMounts                       | list   | `[]`                        |             |
+| volumes                            | list   | `[]`                        |             |

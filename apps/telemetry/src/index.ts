@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { cors } from 'hono/cors'
+import { cors } from "hono/cors";
 import { drizzle } from "drizzle-orm/neon-http";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";

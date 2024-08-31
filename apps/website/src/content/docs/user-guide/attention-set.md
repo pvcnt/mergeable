@@ -13,7 +13,7 @@ Code review is a turn-based process: at any time, somebody is expected to take a
 For example, when the author first opens a pull request and assigns reviewers, the latter are in the attention set because they are expected to leave a review.
 Later, when the reviewer leave some comments, the author is in the attention set because they are expected to reply to those comments.
 
-Tracking whose turn it is to take action is instrumental in helping pull requests move towards being merged. 
+Tracking whose turn it is to take action is instrumental in helping pull requests move towards being merged.
 The general expectation is that when a reviewer or author is in the attention set, they should respond in a timely manner.
 
 ## View the attention set
@@ -46,13 +46,13 @@ For example, if there are three such pull requests, the title of the tab would b
 
 Whether a user is in the attention set of a pull request is determined by a set of rules:
 
-* A draft, merged or closed pull request has an empty attention set.
-* A requested reviewer (either directly or via a team) is in the attention set if the pull request is not already approved.
-Once they leave a review, they will not be "requested" anymore.
-* An author or reviewer is in the attention set when somebody replied in an unresolved discussion.
-* An author is in the attention set when a reviewer left a comment in an unresolved discussion.
-* An author is in the attention set when CI is failing.
-* An author is in the attention set when the pull request is approved.
+- A draft, merged or closed pull request has an empty attention set.
+- A requested reviewer (either directly or via a team) is in the attention set if the pull request is not already approved.
+  Once they leave a review, they will not be "requested" anymore.
+- An author or reviewer is in the attention set when somebody replied in an unresolved discussion.
+- An author is in the attention set when a reviewer left a comment in an unresolved discussion.
+- An author is in the attention set when CI is failing.
+- An author is in the attention set when the pull request is approved.
 
 :::note
 Those rules are designed to be "mostly correct", but they are not expected to be perfect and work for all use cases.
