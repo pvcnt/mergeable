@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
     "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "format": "prettier . --write"
   },
   "devDependencies": {
     "@pollyjs/adapter-fetch": "^6.0.6",
@@ -26,6 +27,7 @@
     "@repo/typescript-config": "workspace:*",
     "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },

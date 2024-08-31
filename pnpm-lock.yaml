@@ -48,6 +48,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -172,6 +175,9 @@ importers:
       nock:
         specifier: ^13.5.5
         version: 13.5.5
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       sass:
         specifier: ^1.77.6
         version: 1.77.6
@@ -260,6 +266,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -278,6 +287,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -297,6 +309,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -324,6 +339,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
