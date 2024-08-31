@@ -46,6 +46,6 @@ GitHub personal access tokens come in two flavours: classic and fine-grained.
 For now, Mergeable has only been tested with classic access tokens.
 To be used with Mergeable, an access token needs at least the following scopes:
 
-* `read:org`: Access which teams a user is a member of, used to determine if it is a requested reviewer via a requested team.
-* `repo`: Search for pull requests and related information, such as reviews and CI checks.
-* `user`: Access basic information about the user, such as their name.
+- `read:org`: Access which teams a user is a member of, used to determine if it is a requested reviewer via a requested team.
+- `repo`: Search for pull requests and related information, such as reviews and CI checks.
+- `user`: Access basic information about the user, such as their name.

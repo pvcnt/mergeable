@@ -1,14 +1,14 @@
 export type User = {
-    name: string
-    avatarUrl: string
-    bot: boolean
-}
+  name: string;
+  avatarUrl: string;
+  bot: boolean;
+};
 
 export type Team = {
-    name: string
-}
+  name: string;
+};
 
 export type Profile = {
-    user: User
-    teams: Team[]
-}
+  user: User;
+  teams: Team[];
+};

@@ -9,12 +9,13 @@ Mergeable is a better inbox for GitHub pull requests.
 ## Features
 
 Mergeable provides the following features:
-* Organize pull requests into sections, defined by flexible search queries.
-* Data is all stored locally, in the browser storage.
-* Keyboard shortcuts (e.g., `cmd+k`) allow to navigate quickly.
-* Connect to multiple GitHub instances, including GitHub Enterprise.
-* Attention set, highlighting pull requests for which it is your turn to act.
-* Does not require any GitHub app to be installed. 
+
+- Organize pull requests into sections, defined by flexible search queries.
+- Data is all stored locally, in the browser storage.
+- Keyboard shortcuts (e.g., `cmd+k`) allow to navigate quickly.
+- Connect to multiple GitHub instances, including GitHub Enterprise.
+- Attention set, highlighting pull requests for which it is your turn to act.
+- Does not require any GitHub app to be installed.
 
 ## Public instance
 

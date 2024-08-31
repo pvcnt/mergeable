@@ -10,8 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "vitest run",
-    "coverage": "vitest run --coverage",
-    "format": "prettier . --write"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@blueprintjs/core": "^5.10.3",
@@ -54,7 +53,6 @@
     "fake-indexeddb": "^6.0.0",
     "jsdom": "^24.1.1",
     "nock": "^13.5.5",
-    "prettier": "^3.2.5",
     "sass": "^1.77.6",
     "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",

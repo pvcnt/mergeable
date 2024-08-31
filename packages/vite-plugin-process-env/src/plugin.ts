@@ -11,7 +11,8 @@ interface Options {
 
 // Constants that never change.
 const transformedExtensions = new Set([".js", ".jsx", ".ts", ".tsx"]);
-const workerUrlRE = /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\)/g;
+const workerUrlRE =
+  /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\)/g;
 
 // Global state, to persist between consecutive invocations of Vite
 // (in practice, between worker and non-worker builds).
@@ -40,7 +41,7 @@ export function processEnv({ extraEnv }: Options = {}): Plugin {
       }
 
       if (config.isWorker) {
-        workerScript = `globalThis.env = ${JSON.stringify(env)};`
+        workerScript = `globalThis.env = ${JSON.stringify(env)};`;
         if (config.isProduction) {
           workerScript += "importScripts('/env.js');";
         }
@@ -53,10 +54,12 @@ export function processEnv({ extraEnv }: Options = {}): Plugin {
     generateBundle() {
       // Generate a template file that defines overrides for environment variables. This file is intended
       // to processed by envsubst to produce an `env.js` file.
-      const rtenv = Object.fromEntries(Object.keys(env).map(key => [key, `$${key}`]));
-      const source = 
-          `const rtenv = ${JSON.stringify(rtenv)};`
-          + "globalThis.env = { ...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0)) };";
+      const rtenv = Object.fromEntries(
+        Object.keys(env).map((key) => [key, `$${key}`]),
+      );
+      const source =
+        `const rtenv = ${JSON.stringify(rtenv)};` +
+        "globalThis.env = { ...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0)) };";
       this.emitFile({
         type: "asset",
         fileName: "env.template.js",
@@ -84,7 +87,7 @@ export function processEnv({ extraEnv }: Options = {}): Plugin {
       }
       s.replace(/import\.meta\.env\.([A-Za-z0-9$_]+)/g, (match, name) => {
         assert(typeof name === "string");
-        return (name in env) ? `globalThis.env.${name}` : match;
+        return name in env ? `globalThis.env.${name}` : match;
       });
       if (!s.hasChanged()) {
         return;
@@ -92,11 +95,15 @@ export function processEnv({ extraEnv }: Options = {}): Plugin {
       if (!shouldGenerateSourcemap) {
         return s.toString();
       }
-      const map = s.generateMap({ source: id, includeContent: true, hires: true });
+      const map = s.generateMap({
+        source: id,
+        includeContent: true,
+        hires: true,
+      });
       return {
         code: s.toString(),
         map: map.toString(),
-      }
+      };
     },
     transformIndexHtml() {
       return [
@@ -109,8 +116,8 @@ export function processEnv({ extraEnv }: Options = {}): Plugin {
           tag: "script",
           injectTo: "head-prepend",
           attrs: { src: "/env.js" },
-        }
+        },
       ];
-    }
-  }
+    },
+  };
 }
