@@ -30,10 +30,10 @@ async function executeActivity(
   fn: () => Promise<void>,
 ): Promise<void> {
   const activity = await db.activities.get(name);
-  if (activity !== undefined && activity.running) {
+  /*if (activity !== undefined && activity.running) {
     // Do not run activities concurrently.
     return;
-  }
+  }*/
   if (
     !force &&
     activity !== undefined &&
