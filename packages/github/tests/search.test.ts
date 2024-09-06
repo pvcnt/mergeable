@@ -4,7 +4,9 @@ import {
   SearchOp,
   SearchTerm,
   splitQueries,
+  prepareQuery,
 } from "../src/search.js";
+import { mockConnection } from "@repo/testing";
 
 const expectTerms = (str: string, terms: SearchTerm[]) => {
   const q = new SearchQuery(str);
@@ -99,6 +101,16 @@ test("delete term(s) with qualifier", () => {
   expect(q.toString()).toEqual("stars:>10");
 });
 
+test("delete term(s) with qualifier and value", () => {
+  const q = new SearchQuery("org:foo org:bar user:pvcnt");
+
+  q.delete("org", "foobar");
+  expect(q.toString()).toEqual("org:foo org:bar user:pvcnt");
+
+  q.delete("org", "foo");
+  expect(q.toString()).toEqual("org:bar user:pvcnt");
+});
+
 test("set term(s) with qualifier", () => {
   const q = new SearchQuery("user:pvcnt org:foo org:bar");
 
@@ -118,4 +130,38 @@ test("split a search string into queries", () => {
   expect(splitQueries("   a ;  b ")).toEqual(["a", "b"]);
   expect(splitQueries('"a;b";c')).toEqual(["a;b", "c"]);
   expect(splitQueries("a; ;c")).toEqual(["a", "c"]);
+});
+
+test("should search for non-archived pulls only", () => {
+  expect(prepareQuery("is:open", mockConnection())).toEqual(
+    "is:open type:pr archived:false",
+  );
+
+  expect(prepareQuery("is:open type:pr", mockConnection())).toEqual(
+    "is:open type:pr archived:false",
+  );
+
+  expect(prepareQuery("is:open is:pr", mockConnection())).toEqual(
+    "is:open type:pr archived:false",
+  );
+
+  expect(prepareQuery("archived:true", mockConnection())).toEqual(
+    "archived:true type:pr",
+  );
+});
+
+test("should filter by orgs", () => {
+  const connection = mockConnection({ orgs: ["apache", "kubernetes"] });
+
+  expect(prepareQuery("is:open", connection)).toEqual(
+    "is:open type:pr archived:false org:apache org:kubernetes",
+  );
+
+  expect(prepareQuery("is:open org:pvcnt", connection)).toEqual(
+    "is:open type:pr archived:false org:apache org:kubernetes",
+  );
+
+  expect(prepareQuery("is:open repo:apache/solr", connection)).toEqual(
+    "is:open repo:apache/solr type:pr archived:false",
+  );
 });

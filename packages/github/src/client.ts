@@ -13,7 +13,7 @@ import {
   type Review,
   Discussion,
 } from "@repo/model";
-import { SearchQuery } from "./search.js";
+import { prepareQuery } from "./search.js";
 
 const MAX_PULLS_TO_FETCH = 50;
 
@@ -135,32 +135,11 @@ export class DefaultGitHubClient implements GitHubClient {
     connection: Connection,
     search: string,
   ): Promise<PullResult[]> {
-    // Enforce searching for PRs, and filter by org as required by the connection.
-    const q = new SearchQuery(search);
-    q.set("type", "pr");
-    if (connection.orgs.length > 0) {
-      q.setAll("org", connection.orgs);
-    }
-    if (!q.has("archived")) {
-      // Unless the query explicitely allows PRs from archived repositories, exclude
-      // them by default as we cannot act on them anymore.
-      q.set("archived", "false");
-    }
-    if (q.has("org") && q.has("repo")) {
-      // GitHub API does not seem to support having both terms with an "org"
-      // and "repo" qualifier in a given query. In this situation, the term
-      // with the "repo" qualifier is apparently ignored. We remediate to this
-      // situation by keeping droping terms with the "org" qualifier, and
-      // keeping the more precise "repo" qualifier.
-      //
-      // Note: We ignore the situation where the targeted repo(s) are not within
-      // the originally targeted org(s).
-      q.delete("org");
-    }
+    const q = prepareQuery(search, connection);
 
     const octokit = this.getOctokit(connection);
     const response = await octokit.rest.search.issuesAndPullRequests({
-      q: q.toString(),
+      q,
       sort: "updated",
       per_page: MAX_PULLS_TO_FETCH,
     });
