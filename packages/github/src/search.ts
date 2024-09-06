@@ -20,6 +20,7 @@ export function splitQueries(search: string): string[] {
       query = "";
     } else if (c === '"') {
       quoted = !quoted;
+      query += c;
     } else {
       query += c;
     }

@@ -135,7 +135,9 @@ export class DefaultGitHubClient implements GitHubClient {
     connection: Connection,
     search: string,
   ): Promise<PullResult[]> {
+    console.log("search", search);
     const q = prepareQuery(search, connection);
+    console.log("q", q);
 
     const octokit = this.getOctokit(connection);
     const response = await octokit.rest.search.issuesAndPullRequests({
