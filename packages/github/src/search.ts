@@ -1,3 +1,5 @@
+import { Connection } from "@repo/model";
+
 /**
  * Split a search string into multiple GitHub search queries.
  *
@@ -24,6 +26,39 @@ export function splitQueries(search: string): string[] {
   }
   queries.push(query);
   return queries.map((s) => s.trim()).filter((s) => s.length > 0);
+}
+
+export function prepareQuery(search: string, connection: Connection): string {
+  const q = new SearchQuery(search);
+  // Enforce searching for PRs. There are two syntaxes to search for PRs: "type:pr"
+  // and "is:pr". We make sure there are no duplicate filters, which would return
+  // no results.
+  q.set("type", "pr");
+  q.delete("is", "pr");
+
+  if (!q.has("archived")) {
+    // Unless the query explicitely allows PRs from archived repositories, exclude
+    // them by default as we cannot act on them anymore.
+    q.set("archived", "false");
+  }
+
+  // Filter by org as required by the connection.
+  if (connection.orgs.length > 0) {
+    q.setAll("org", connection.orgs);
+  }
+  if (q.has("org") && q.has("repo")) {
+    // GitHub API does not seem to support having both terms with an "org"
+    // and "repo" qualifier in a given query. In this situation, the term
+    // with the "repo" qualifier is apparently ignored. We remediate to this
+    // situation by keeping droping terms with the "org" qualifier, and
+    // keeping the more precise "repo" qualifier.
+    //
+    // Note: We ignore the situation where the targeted repo(s) are not within
+    // the originally targeted org(s).
+    q.delete("org");
+  }
+
+  return q.toString();
 }
 
 /**
@@ -66,8 +101,11 @@ export class SearchQuery {
     );
   }
 
-  delete(qualifier: string): undefined {
-    this.terms = this.terms.filter((t) => t.qualifier !== qualifier);
+  delete(qualifier: string, value?: string): undefined {
+    const matches = (t: SearchTerm) =>
+      t.qualifier === qualifier &&
+      (value === undefined || (t.values.length === 1 && t.values[0] === value));
+    this.terms = this.terms.filter((t) => !matches(t));
   }
 
   toString(): string {
