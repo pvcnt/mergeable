@@ -135,7 +135,11 @@ export default function PullRow({ pull, onStar }: Props) {
         <div className={styles.title}>
           <span>{pull.title}</span>
           {active && (
-            <CopyToClipboardIcon title="Copy URL to clipboard" text={pull.url} className={styles.copy}/>
+            <CopyToClipboardIcon
+              title="Copy URL to clipboard"
+              text={pull.url}
+              className={styles.copy}
+            />
           )}
         </div>
         <div className={styles.source}>

@@ -21,7 +21,13 @@ export default function IconWithTooltip({
 }: Props) {
   return (
     <Tooltip content={title} openOnTargetFocus={false} usePortal={false}>
-      <Icon icon={icon} color={color} size={size} className={className} onClick={onClick} />
+      <Icon
+        icon={icon}
+        color={color}
+        size={size}
+        className={className}
+        onClick={onClick}
+      />
     </Tooltip>
   );
 }

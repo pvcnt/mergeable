@@ -32,7 +32,13 @@ export default function PullTable({ pulls, onStar }: Props) {
         </tr>
       </thead>
       <tbody>
-        {pulls.map((pull, idx) => <PullRow key={idx} pull={pull} onStar={() => onStar && onStar(pull)} />)}
+        {pulls.map((pull, idx) => (
+          <PullRow
+            key={idx}
+            pull={pull}
+            onStar={() => onStar && onStar(pull)}
+          />
+        ))}
       </tbody>
     </HTMLTable>
   );
