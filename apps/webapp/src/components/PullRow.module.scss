@@ -1,0 +1,75 @@
+@import "@blueprintjs/core/lib/scss/variables";
+
+.row {
+    td {
+        overflow: hidden;
+        vertical-align: middle !important;
+    }
+    td:nth-child(1) { /* Star */
+        text-align: center;
+        width: 25px;
+        padding: 0.5rem;
+    }
+    td:nth-child(2) { /* Attention */
+        text-align: center;
+        width: 25px;
+        padding: 0.5rem;
+    }
+    td:nth-child(3) { /* Author */
+        text-align: center;
+        width: 50px;
+        padding: 0.5rem;
+    }
+    td:nth-child(4) { /* Status */
+        text-align: center;
+        width: 25px;
+        padding: 0.5rem;
+    }
+    td:nth-child(5) { /* CI Status */
+        text-align: center;
+        width: 25px;
+        padding: 0.5rem;
+    }
+    td:nth-child(6) { /* Last Action */
+        width: 160px;
+    }
+    td:nth-child(7) { /* Size */
+        text-align: center;
+        width: 50px;
+    }
+}
+
+.title {
+    margin-bottom: 0.25 * $pt-grid-size;
+    span {
+        font-weight: 600;
+    }
+}
+
+.source {
+    font-size: $pt-font-size-small;
+}
+
+.author img {
+    border-radius: 5rem;
+    height: 32px;
+}
+
+.status {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.additions {
+    color: $green4 !important;
+}
+
+.deletions {
+    color: $red4 !important;
+}
+
+.copy {
+    color: $gray1;
+    padding-left: $pt-grid-size;
+    padding-right: $pt-grid-size;
+}
