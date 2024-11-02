@@ -32,10 +32,6 @@ export default function PullRow({ pull, onStar }: Props) {
       window.location.href = pull.url;
     }
   };
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    await navigator.clipboard.writeText(pull.url);
-  };
   const handleStar = (e: React.MouseEvent) => {
     e.stopPropagation();
     onStar && onStar();
