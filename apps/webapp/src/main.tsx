@@ -13,7 +13,7 @@ import Settings from "./routes/settings.tsx";
 import Stars from "./routes/stars.tsx";
 import "./main.scss";
 
-const router = createBrowserRouter([
+const routes = [
   {
     path: "/",
     element: <App />,
@@ -37,12 +37,20 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+const router = createBrowserRouter(routes, {
+  future: {
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+  }
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BlueprintProvider>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} future={{v7_startTransition: true}} />
     </BlueprintProvider>
   </React.StrictMode>,
 );
