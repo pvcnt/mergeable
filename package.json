@@ -6,6 +6,7 @@
     "test": "turbo test",
     "coverage": "turbo coverage",
     "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
     "dev": "turbo dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

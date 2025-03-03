@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Test
-        run: pnpm lint && pnpm coverage
+        run: pnpm typecheck && pnpm lint && pnpm coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           POLLY_MODE: offline
