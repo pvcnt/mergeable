@@ -42,7 +42,7 @@ export type Review = {
 
 export type Comment = {
   id: string;
-  author?: User;
+  author: User;
   body: string;
   createdAt: Date;
 };

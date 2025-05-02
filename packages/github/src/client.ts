@@ -1,6 +1,20 @@
 import { Octokit } from "octokit";
 import { throttling } from "@octokit/plugin-throttling";
 import {
+  type Bot,
+  type EnterpriseUserAccount,
+  type IssueComment,
+  type Mannequin,
+  type Organization,
+  type PullRequest,
+  type PullRequestReview,
+  type PullRequestReviewComment,
+  type RateLimit,
+  type User as GHUser,
+  type Team as GHTeam,
+  type RequestedReviewer,
+} from "@octokit/graphql-schema";
+import {
   type Comment,
   PullState,
   type PullProps,
@@ -13,10 +27,17 @@ import {
   type Discussion,
 } from "./types";
 import { prepareQuery } from "./search";
+import { isNonNull } from "remeda";
 
 const MAX_PULLS_TO_FETCH = 50;
 
 const MyOctokit = Octokit.plugin(throttling);
+
+const anonymousUser = {
+  name: "Anonymous",
+  avatarUrl: "/anonymous-32px.png",
+  bot: false,
+};
 
 export type Endpoint = {
   auth: string;
@@ -32,92 +53,6 @@ export interface GitHubClient {
   ): Promise<PullResult[]>;
   getPull(endpoint: Endpoint, id: string): Promise<PullProps>;
 }
-
-type GHPull = {
-  number: number;
-  title: string;
-  repository: {
-    nameWithOwner: string;
-  };
-  author: GHUser;
-  createdAt: string;
-  updatedAt: string;
-  url: string;
-  additions: number;
-  deletions: number;
-  isDraft: boolean;
-  merged: boolean;
-  closed: boolean;
-  reviewDecision: "CHANGES_REQUESTED" | "APPROVED" | "REVIEW_REQUIRED" | null;
-  statusCheckRollup: {
-    state: "EXPECTED" | "ERROR" | "FAILURE" | "PENDING" | "SUCCESS";
-  } | null;
-  comments: {
-    totalCount: number;
-    nodes: GHComment[];
-  };
-  reviewRequests: {
-    totalCount: number;
-    nodes: GHReviewRequest[];
-  };
-  reviews: {
-    totalCount: number;
-    nodes: GHReview[];
-  };
-  reviewThreads: {
-    totalCount: number;
-    nodes: {
-      isResolved: boolean;
-      path: string;
-      comments: {
-        totalCount: number;
-        nodes: GHComment[];
-      };
-    }[];
-  };
-};
-
-type GHReviewRequest = {
-  requestedReviewer:
-    | ({ __typename: "Bot" | "Mannequin" | "User" } & GHUser)
-    | ({ __typename: "Team" } & GHTeam);
-};
-
-type GHReview = {
-  id: string;
-  author: GHUser | null;
-  state:
-    | "PENDING"
-    | "COMMENTED"
-    | "APPROVED"
-    | "CHANGES_REQUESTED"
-    | "DISMISSED";
-  body: string;
-  createdAt: string;
-  authorCanPushToRepository: boolean;
-};
-
-type GHUser = {
-  __typename:
-    | "Bot"
-    | "EnterpriseUserAccount"
-    | "Mannequin"
-    | "Organization"
-    | "User";
-  login: string;
-  avatarUrl: string;
-};
-
-type GHTeam = {
-  combinedSlug: string;
-};
-
-type GHComment = {
-  id: string;
-  author: GHUser | null;
-  createdAt: string;
-  body: string;
-};
 
 export class DefaultGitHubClient implements GitHubClient {
   private octokits: Record<string, Octokit> = {};
@@ -262,25 +197,25 @@ export class DefaultGitHubClient implements GitHubClient {
         cost
       }
     }`;
-    type Data = {
-      node: GHPull;
-      rateLimit: {
-        cost: number;
-      };
-    };
+    type Data = { node: PullRequest | null; rateLimit: RateLimit };
     const octokit = this.getOctokit(endpoint);
     const data = await octokit.graphql<Data>(query, { id });
-    const reviews: Review[] = data.node.reviews.nodes
-      .filter((n) => n.authorCanPushToRepository)
-      .map((n) => this.makeReview(n));
+    if (!data.node) {
+      return Promise.reject(new Error("Not Found"));
+    }
+    const reviews: Review[] =
+      data.node.reviews?.nodes
+        ?.filter(isNonNull)
+        .filter((n) => n.authorCanPushToRepository)
+        .map((n) => this.makeReview(n)) ?? [];
 
     const topLevelComments: Comment[] = [];
-    data.node.comments.nodes.forEach((n) =>
-      topLevelComments.push(this.makeComment(n)),
-    );
-    data.node.reviews.nodes.map((n) =>
-      topLevelComments.push(this.makeComment(n)),
-    );
+    data.node.comments?.nodes
+      ?.filter(isNonNull)
+      .forEach((n) => topLevelComments.push(this.makeComment(n)));
+    data.node.reviews?.nodes
+      ?.filter(isNonNull)
+      .forEach((n) => topLevelComments.push(this.makeComment(n)));
     topLevelComments.sort((a, b) =>
       a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0,
     );
@@ -291,10 +226,13 @@ export class DefaultGitHubClient implements GitHubClient {
         comments: topLevelComments,
       },
     ];
-    data.node.reviewThreads.nodes.forEach((n) => {
+    data.node.reviewThreads.nodes?.filter(isNonNull).forEach((n) => {
       discussions.push({
         resolved: n.isResolved,
-        comments: n.comments.nodes.map((n2) => this.makeComment(n2)),
+        comments:
+          n.comments.nodes
+            ?.filter(isNonNull)
+            .map((n2) => this.makeComment(n2)) ?? [],
         file: { path: n.path },
       });
     });
@@ -326,18 +264,22 @@ export class DefaultGitHubClient implements GitHubClient {
                 : data.node.statusCheckRollup?.state == "EXPECTED"
                   ? CheckState.Pending
                   : CheckState.None,
-      createdAt: new Date(data.node.createdAt),
-      updatedAt: new Date(data.node.updatedAt),
-      url: data.node.url,
+      createdAt: this.toDate(data.node.createdAt),
+      updatedAt: this.toDate(data.node.updatedAt),
+      url: `${data.node.url}`,
       additions: data.node.additions,
       deletions: data.node.deletions,
       author: this.makeUser(data.node.author),
-      requestedReviewers: data.node.reviewRequests.nodes
-        .filter((n) => n.requestedReviewer.__typename != "Team")
-        .map((n) => this.makeUser(n.requestedReviewer as GHUser)),
-      requestedTeams: data.node.reviewRequests.nodes
-        .filter((n) => n.requestedReviewer.__typename == "Team")
-        .map((n) => this.makeTeam(n.requestedReviewer as GHTeam)),
+      requestedReviewers:
+        data.node.reviewRequests?.nodes
+          ?.filter(isNonNull)
+          .filter((n) => n.requestedReviewer?.__typename != "Team")
+          .map((n) => this.makeUser(n.requestedReviewer as Exclude<RequestedReviewer, Team>)) ?? [],
+      requestedTeams:
+        data.node.reviewRequests?.nodes
+          ?.filter(isNonNull)
+          .filter((n) => n.requestedReviewer?.__typename == "Team")
+          .map((n) => this.makeTeam(n.requestedReviewer as GHTeam)) ?? [],
       reviews,
       discussions,
     };
@@ -369,34 +311,79 @@ export class DefaultGitHubClient implements GitHubClient {
     return this.octokits[key];
   }
 
-  private makeUser(user: GHUser): User {
-    return {
-      name: user.login,
-      avatarUrl: user.avatarUrl,
-      bot: user.__typename === "Bot",
-    };
+  private makeUser(
+    user:
+      | Bot
+      | EnterpriseUserAccount
+      | Mannequin
+      | Organization
+      | GHUser
+      | undefined
+      | null,
+  ): User {
+    if (user?.__typename === "Bot" || user?.__typename === "Mannequin" || user?.__typename === "User") {
+      return {
+        name: user.login,
+        avatarUrl: `${user.avatarUrl}`,
+        bot: user.__typename === "Bot",
+      };
+    } else {
+      // No user provided, or unsupported type.
+      return anonymousUser;
+    }
   }
 
   private makeTeam(team: GHTeam): Team {
     return { name: team.combinedSlug };
   }
 
-  private makeReview(review: GHReview): Review {
+  private makeReview(review: PullRequestReview): Review {
     return {
       author: review.author !== null ? this.makeUser(review.author) : undefined,
-      createdAt: new Date(review.createdAt),
+      createdAt: this.toDate(review.createdAt),
       lgtm: review.state === "APPROVED",
     };
   }
 
-  private makeComment(comment: GHComment): Comment {
-    return {
-      id: comment.id,
-      author:
-        comment.author !== null ? this.makeUser(comment.author) : undefined,
-      createdAt: new Date(comment.createdAt),
-      body: comment.body,
-    };
+  private makeComment(
+    comment: IssueComment | PullRequestReviewComment | PullRequestReview,
+  ): Comment {
+    if (comment.__typename === "PullRequestReview") {
+      return {
+        id: comment.id,
+        author: this.makeUser(comment.author),
+        createdAt: this.toDate(comment.createdAt),
+        body: comment.body,
+      };
+    } else if (comment.__typename === "IssueComment") {
+      return {
+        id: comment.id,
+        author: this.makeUser(comment.author),
+        createdAt: this.toDate(comment.createdAt),
+        body: comment.body,
+      };
+    } else {
+      return {
+        id: comment.id,
+        author: this.makeUser(comment.author),
+        createdAt: this.toDate(comment.createdAt),
+        body: comment.body,
+      };
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private toDate(v: any) {
+    if (typeof v === "string") {
+      return new Date(v);
+    }
+    if (typeof v === "number") {
+      return new Date(v);
+    }
+    if (v instanceof Date) {
+      return v;
+    }
+    return new Date(0);
   }
 }
 
@@ -412,12 +399,15 @@ export class TestGitHubClient implements GitHubClient {
   }
 
   searchPulls(endpoint: Endpoint, search: string): Promise<PullResult[]> {
-    const pulls = this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] || [];
+    const pulls =
+      this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] ||
+      [];
     return Promise.resolve(pulls);
   }
 
   setPullsBySearch(endpoint: Endpoint, search: string, pulls: PullProps[]) {
-    this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] = pulls;
+    this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] =
+      pulls;
     pulls.forEach((pull) => this.addPull(endpoint, pull));
   }
 
