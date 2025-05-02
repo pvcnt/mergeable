@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import localforage from "localforage";
 import { db } from "../lib/db";
 import { splitQueries } from "@repo/github";
-import { LATEST_SCHEMA_VERSION, type Pull } from "@repo/model";
-import { GitHubClient, isInAttentionSet } from "@repo/github";
+import { GitHubClient, isInAttentionSet, type Pull } from "@repo/github";
 import { gitHubClient } from "../github";
 
 const syncPullsIntervalMillis = 5 * 60_000; // 5 minutes
@@ -14,6 +13,11 @@ const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
 // Domains that we do not need to hash.
 const domainsWhitelist = new Set(["localhost", "mergeable.pages.dev"]);
+
+// Schema version is used to force bursting the local cache of pull requests
+// when there is a change that requires it (e.g., adding a new field that must
+// be populated).
+export const LATEST_SCHEMA_VERSION = "v1";
 
 declare const self: SharedWorkerGlobalScope;
 
@@ -97,7 +101,11 @@ export async function syncPullsOnce(
             return connections.flatMap((connection) => {
               const queries = splitQueries(section.search);
               return queries.flatMap(async (query) => {
-                const pulls = await client.searchPulls(connection, query);
+                const pulls = await client.searchPulls(
+                  connection,
+                  query,
+                  connection.orgs,
+                );
                 return pulls.map((res) => ({
                   ...res,
                   uid: `${connection.id}:${res.id}`,
@@ -160,7 +168,7 @@ export async function syncPullsOnce(
             schemaVersion: LATEST_SCHEMA_VERSION,
             starred: stars.has(res.uid) ? 1 : 0,
             attention: mayBeInAttentionSet
-              ? isInAttentionSet(connection, pull)
+              ? isInAttentionSet(connection.viewer ?? null, pull)
               : undefined,
           };
         }),

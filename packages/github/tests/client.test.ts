@@ -1,18 +1,16 @@
 import { test, expect } from "vitest";
-import { DefaultGitHubClient } from "../src/client.js";
-import { mockConnection } from "@repo/testing";
 import { useRecording } from "./polly.js";
-import { CheckState, PullState } from "@repo/model";
+import { DefaultGitHubClient } from "../src/client";
+import { CheckState, PullState } from "../src/types";
 
 useRecording();
 
-const auth = "ghp_token";
+const endpoint = { auth: "ghp_token", baseUrl: "https://api.github.com" };
 
 test("should return viewer", async () => {
   const client = new DefaultGitHubClient();
-  const connection = mockConnection({ auth });
 
-  const viewer = await client.getViewer(connection);
+  const viewer = await client.getViewer(endpoint);
 
   expect(viewer).toEqual({
     user: {
@@ -26,9 +24,8 @@ test("should return viewer", async () => {
 
 test("should search pulls", async () => {
   const client = new DefaultGitHubClient();
-  const connection = mockConnection({ auth });
 
-  const pulls = await client.searchPulls(connection, "repo:pvcnt/sandbox");
+  const pulls = await client.searchPulls(endpoint, "repo:pvcnt/sandbox", []);
 
   expect(pulls).toEqual([
     {
@@ -48,9 +45,8 @@ test("should search pulls", async () => {
 
 test("should get pull", async () => {
   const client = new DefaultGitHubClient();
-  const connection = mockConnection({ auth });
 
-  const pull = await client.getPull(connection, "PR_kwDOKCpCz85keYan");
+  const pull = await client.getPull(endpoint, "PR_kwDOKCpCz85keYan");
 
   expect(pull).toEqual({
     id: "PR_kwDOKCpCz85keYan",
@@ -159,7 +155,6 @@ test("should get pull", async () => {
 
 test("should error when pull does not exist", async () => {
   const client = new DefaultGitHubClient();
-  const connection = mockConnection({ auth });
 
-  await expect(client.getPull(connection, "PR_none")).rejects.toThrowError();
+  await expect(client.getPull(endpoint, "PR_none")).rejects.toThrowError();
 });

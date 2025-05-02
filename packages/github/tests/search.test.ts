@@ -5,8 +5,7 @@ import {
   SearchTerm,
   splitQueries,
   prepareQuery,
-} from "../src/search.js";
-import { mockConnection } from "@repo/testing";
+} from "../src/search";
 
 const expectTerms = (str: string, terms: SearchTerm[]) => {
   const q = new SearchQuery(str);
@@ -134,35 +133,31 @@ test("split a search string into queries", () => {
 });
 
 test("should search for non-archived pulls only", () => {
-  expect(prepareQuery("is:open", mockConnection())).toEqual(
+  expect(prepareQuery("is:open", [])).toEqual("is:open type:pr archived:false");
+
+  expect(prepareQuery("is:open type:pr", [])).toEqual(
     "is:open type:pr archived:false",
   );
 
-  expect(prepareQuery("is:open type:pr", mockConnection())).toEqual(
+  expect(prepareQuery("is:open is:pr", [])).toEqual(
     "is:open type:pr archived:false",
   );
 
-  expect(prepareQuery("is:open is:pr", mockConnection())).toEqual(
-    "is:open type:pr archived:false",
-  );
-
-  expect(prepareQuery("archived:true", mockConnection())).toEqual(
-    "archived:true type:pr",
-  );
+  expect(prepareQuery("archived:true", [])).toEqual("archived:true type:pr");
 });
 
 test("should filter by orgs", () => {
-  const connection = mockConnection({ orgs: ["apache", "kubernetes"] });
+  const orgs = ["apache", "kubernetes"];
 
-  expect(prepareQuery("is:open", connection)).toEqual(
+  expect(prepareQuery("is:open", orgs)).toEqual(
     "is:open type:pr archived:false org:apache org:kubernetes",
   );
 
-  expect(prepareQuery("is:open org:pvcnt", connection)).toEqual(
+  expect(prepareQuery("is:open org:pvcnt", orgs)).toEqual(
     "is:open type:pr archived:false org:apache org:kubernetes",
   );
 
-  expect(prepareQuery("is:open repo:apache/solr", connection)).toEqual(
+  expect(prepareQuery("is:open repo:apache/solr", orgs)).toEqual(
     "is:open repo:apache/solr type:pr archived:false",
   );
 });

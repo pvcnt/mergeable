@@ -1,10 +1,10 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import ConnectionDialog from "../../src/components/ConnectionDialog.js";
-import { AppToaster } from "../../src/lib/toaster.js";
-import type { ConnectionProps } from "@repo/model";
-import { mockConnection } from "@repo/testing";
+import ConnectionDialog from "../../src/components/ConnectionDialog";
+import { AppToaster } from "../../src/lib/toaster";
+import type { ConnectionProps } from "../../src/lib/types";
+import { mockConnection } from "../testing";
 
 describe("connection dialog", () => {
   let user: UserEvent | undefined;

@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import SectionCard from "../../src/components/SectionCard.js";
-import { mockPull } from "@repo/testing";
+import SectionCard from "../../src/components/SectionCard";
+import { mockPull } from "../testing";
 
 test("should display a spinner when loading", () => {
   render(<SectionCard label="Test" pulls={[]} isLoading={true} />);

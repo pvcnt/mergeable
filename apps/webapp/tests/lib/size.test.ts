@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { mockPull } from "@repo/testing";
-import { computeSize } from "../../src/lib/size.js";
+import { mockPull } from "../testing";
+import { computeSize } from "../../src/lib/size";
 
 describe("computeSize", () => {
   it("should return the size of a pull request", () => {

@@ -44,13 +44,13 @@ const router = createBrowserRouter(routes, {
     v7_fetcherPersist: true,
     v7_normalizeFormMethod: true,
     v7_partialHydration: true,
-  }
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BlueprintProvider>
-      <RouterProvider router={router} future={{v7_startTransition: true}} />
+      <RouterProvider router={router} future={{ v7_startTransition: true }} />
     </BlueprintProvider>
   </React.StrictMode>,
 );

@@ -1,10 +1,5 @@
-import {
-  type Pull,
-  type Section,
-  type Connection,
-  PullState,
-  CheckState,
-} from "@repo/model";
+import { CheckState, type Pull, PullState } from "@repo/github";
+import { type Section, type Connection } from "../src/lib/types";
 
 export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
   const id = props?.id ?? "PR_1";

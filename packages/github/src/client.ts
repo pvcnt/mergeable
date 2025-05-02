@@ -1,7 +1,6 @@
 import { Octokit } from "octokit";
 import { throttling } from "@octokit/plugin-throttling";
 import {
-  type Connection,
   type Comment,
   PullState,
   type PullProps,
@@ -12,17 +11,26 @@ import {
   type PullResult,
   type Review,
   type Discussion,
-} from "@repo/model";
-import { prepareQuery } from "./search.js";
+} from "./types";
+import { prepareQuery } from "./search";
 
 const MAX_PULLS_TO_FETCH = 50;
 
 const MyOctokit = Octokit.plugin(throttling);
 
+export type Endpoint = {
+  auth: string;
+  baseUrl: string;
+};
+
 export interface GitHubClient {
-  getViewer(connection: Connection): Promise<Profile>;
-  searchPulls(connection: Connection, search: string): Promise<PullResult[]>;
-  getPull(connection: Connection, id: string): Promise<PullProps>;
+  getViewer(endpoint: Endpoint): Promise<Profile>;
+  searchPulls(
+    endpoint: Endpoint,
+    search: string,
+    orgs: string[],
+  ): Promise<PullResult[]>;
+  getPull(endpoint: Endpoint, id: string): Promise<PullProps>;
 }
 
 type GHPull = {
@@ -114,8 +122,8 @@ type GHComment = {
 export class DefaultGitHubClient implements GitHubClient {
   private octokits: Record<string, Octokit> = {};
 
-  async getViewer(connection: Connection): Promise<Profile> {
-    const octokit = this.getOctokit(connection);
+  async getViewer(endpoint: Endpoint): Promise<Profile> {
+    const octokit = this.getOctokit(endpoint);
     const userResponse = await octokit.rest.users.getAuthenticated();
     const user: User = {
       name: userResponse.data.login,
@@ -132,12 +140,13 @@ export class DefaultGitHubClient implements GitHubClient {
   }
 
   async searchPulls(
-    connection: Connection,
+    endpoint: Endpoint,
     search: string,
+    orgs: string[],
   ): Promise<PullResult[]> {
-    const q = prepareQuery(search, connection);
+    const q = prepareQuery(search, orgs);
 
-    const octokit = this.getOctokit(connection);
+    const octokit = this.getOctokit(endpoint);
     const response = await octokit.rest.search.issuesAndPullRequests({
       q,
       sort: "updated",
@@ -149,7 +158,7 @@ export class DefaultGitHubClient implements GitHubClient {
     }));
   }
 
-  async getPull(connection: Connection, id: string): Promise<PullProps> {
+  async getPull(endpoint: Endpoint, id: string): Promise<PullProps> {
     const query = `query pull($id: ID!) {
       node(id: $id) {
         ... on PullRequest {
@@ -259,7 +268,7 @@ export class DefaultGitHubClient implements GitHubClient {
         cost: number;
       };
     };
-    const octokit = this.getOctokit(connection);
+    const octokit = this.getOctokit(endpoint);
     const data = await octokit.graphql<Data>(query, { id });
     const reviews: Review[] = data.node.reviews.nodes
       .filter((n) => n.authorCanPushToRepository)
@@ -334,11 +343,12 @@ export class DefaultGitHubClient implements GitHubClient {
     };
   }
 
-  private getOctokit(connection: Connection): Octokit {
-    if (!(connection.id in this.octokits)) {
-      this.octokits[connection.id] = new MyOctokit({
-        auth: connection.auth,
-        baseUrl: connection.baseUrl,
+  private getOctokit(endpoint: Endpoint): Octokit {
+    const key = `${endpoint.baseUrl}:${endpoint.auth}`;
+    if (!(key in this.octokits)) {
+      this.octokits[key] = new MyOctokit({
+        auth: endpoint.auth,
+        baseUrl: endpoint.baseUrl,
         throttle: {
           // For now, allow retries in all situations.
           onRateLimit: (retryAfter, options, octokit) => {
@@ -356,7 +366,7 @@ export class DefaultGitHubClient implements GitHubClient {
         },
       });
     }
-    return this.octokits[connection.id];
+    return this.octokits[key];
   }
 
   private makeUser(user: GHUser): User {
@@ -394,30 +404,29 @@ export class TestGitHubClient implements GitHubClient {
   private pullsByKey: Record<string, PullProps> = {};
   private pullsBySearch: Record<string, PullResult[]> = {};
 
-  getViewer(connection: Connection): Promise<Profile> {
+  getViewer(endpoint: Endpoint): Promise<Profile> {
     return Promise.resolve({
-      user: { name: `test[${connection.id}]`, avatarUrl: "", bot: false },
-      teams: [{ name: `test[${connection.id}]` }],
+      user: { name: `test[${endpoint.baseUrl}]`, avatarUrl: "", bot: false },
+      teams: [{ name: `test[${endpoint.baseUrl}]` }],
     });
   }
 
-  searchPulls(connection: Connection, search: string): Promise<PullResult[]> {
-    return Promise.resolve(
-      this.pullsBySearch[`${connection.id}:${search}`] || [],
-    );
+  searchPulls(endpoint: Endpoint, search: string): Promise<PullResult[]> {
+    const pulls = this.pullsBySearch[`${endpoint.baseUrl}:${search}`] || [];
+    return Promise.resolve(pulls);
   }
 
-  setPullsBySearch(connection: Connection, search: string, pulls: PullProps[]) {
-    this.pullsBySearch[`${connection.id}:${search}`] = pulls;
-    pulls.forEach((pull) => this.addPull(connection, pull));
+  setPullsBySearch(endpoint: Endpoint, search: string, pulls: PullProps[]) {
+    this.pullsBySearch[`${endpoint.baseUrl}:${search}`] = pulls;
+    pulls.forEach((pull) => this.addPull(endpoint, pull));
   }
 
-  addPull(connection: Connection, pull: PullProps) {
-    this.pullsByKey[`${connection.id}:${pull.id}`] = pull;
+  addPull(endpoint: Endpoint, pull: PullProps) {
+    this.pullsByKey[`${endpoint.baseUrl}:${pull.id}`] = pull;
   }
 
-  getPull(connection: Connection, id: string): Promise<PullProps> {
-    const pull = this.pullsByKey[`${connection.id}:${id}`];
+  getPull(endpoint: Endpoint, id: string): Promise<PullProps> {
+    const pull = this.pullsByKey[`${endpoint.baseUrl}:${id}`];
     return pull !== undefined
       ? Promise.resolve(pull)
       : Promise.reject(new Error("Not Found"));

@@ -1,8 +1,8 @@
-import type { Attention, PullProps, Connection } from "@repo/model";
-import { PullState, CheckState } from "@repo/model";
+import type { Attention, PullProps, Profile } from "./types";
+import { PullState, CheckState } from "./types";
 
 export function isInAttentionSet(
-  connection: Connection,
+  viewer: Profile | null,
   pull: PullProps,
 ): Attention {
   if (
@@ -14,8 +14,8 @@ export function isInAttentionSet(
     return { set: false };
   }
 
-  const viewerName = connection.viewer?.user.name;
-  const viewerTeams = new Set(connection.viewer?.teams.map((r) => r.name));
+  const viewerName = viewer?.user.name;
+  const viewerTeams = new Set(viewer?.teams.map((r) => r.name));
 
   const isAuthor = pull.author.name === viewerName;
   const isApproved = pull.state === PullState.Approved;

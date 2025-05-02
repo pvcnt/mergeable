@@ -1,6 +1,6 @@
 import { Tooltip, Tag, Icon } from "@blueprintjs/core";
 import TimeAgo from "./TimeAgo";
-import { CheckState, type Pull, PullState } from "@repo/model";
+import { CheckState, type Pull, PullState } from "@repo/github";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
 import styles from "./PullRow.module.scss";

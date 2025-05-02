@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { defaultSections } from "@repo/model";
+import { defaultSections } from "../lib/types";
 
 // Defaults to populate after adding new fields.
 const connectionDefaults = { orgs: [] };

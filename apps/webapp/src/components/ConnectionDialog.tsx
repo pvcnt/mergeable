@@ -9,11 +9,10 @@ import {
   Intent,
 } from "@blueprintjs/core";
 import { useState } from "react";
-import ConfirmDialog from "./ConfirmDialog";
-import type { ConnectionProps } from "@repo/model";
 import { isTruthy } from "remeda";
+import ConfirmDialog from "./ConfirmDialog";
+import type { ConnectionProps } from "../lib/types";
 import { AppToaster } from "../lib/toaster";
-
 import OrgSelector from "./OrgSelector";
 
 type Props = {

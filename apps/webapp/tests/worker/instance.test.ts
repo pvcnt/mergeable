@@ -12,9 +12,9 @@ import {
   syncPullsOnce,
   syncViewersOnce,
   sendTelemetry,
-} from "../../src/worker/instance.js";
-import { db } from "../../src/lib/db.js";
-import { mockPull, mockConnection, mockSection } from "@repo/testing";
+} from "../../src/worker/instance";
+import { db } from "../../src/lib/db";
+import { mockPull, mockConnection, mockSection } from "../testing";
 import nock from "nock";
 
 describe("sync viewers", () => {

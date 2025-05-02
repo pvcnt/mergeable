@@ -1,6 +1,6 @@
 import { Card, Collapse, H5, Icon, Spinner, Tag } from "@blueprintjs/core";
 import { ReactNode, useState } from "react";
-import type { Pull } from "@repo/model";
+import type { Pull } from "@repo/github";
 import PullTable from "./PullTable";
 import styles from "./SectionCard.module.scss";
 
