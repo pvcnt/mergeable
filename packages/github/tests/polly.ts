@@ -25,7 +25,6 @@ export function useRecording(
     case "record":
       mode = "record";
       break;
-
     case "replay":
       mode = "replay";
       break;
@@ -51,7 +50,7 @@ export function useRecording(
       },
       matchRequestsBy: {
         method: true,
-        headers: { exclude: ["Authorization"] },
+        headers: { exclude: ["authorization", "user-agent"] },
         body: true,
         order: true,
         url: {

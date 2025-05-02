@@ -19,8 +19,10 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install
-      - name: Test
-        run: pnpm typecheck && pnpm lint && pnpm coverage
+      - name: Run static analysis
+        run: pnpm typecheck && pnpm lint
+      - name: Run tests with coverage
+        run: pnpm coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           POLLY_MODE: offline
