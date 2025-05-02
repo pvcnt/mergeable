@@ -8,7 +8,7 @@
     "src"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "lint": "eslint \"**/*.ts\"",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
@@ -19,6 +19,7 @@
     "@pollyjs/persister-fs": "^6.0.6",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.5.0",
     "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
     "typescript": "^5.5.4",

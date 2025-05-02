@@ -270,6 +270,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.5.0
+        version: 22.5.0
       '@vitest/coverage-istanbul':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0))
