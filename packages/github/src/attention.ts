@@ -19,7 +19,7 @@ export function isInAttentionSet(
 
   const isAuthor = pull.author.name === viewerName;
   const isApproved = pull.state === PullState.Approved;
-  const isReviewer = pull.reviews.some((r) => r.author?.name === viewerName);
+  const isReviewer = pull.reviews.some((r) => r.author.name === viewerName);
   const isRequestedReviewer =
     pull.requestedReviewers.some((r) => r.name === viewerName) ||
     pull.requestedTeams.some((r) => viewerTeams.has(r.name));
@@ -29,7 +29,7 @@ export function isInAttentionSet(
     return { set: false };
   }
 
-  const reviewerNames = new Set(pull.reviews.map((r) => r.author?.name));
+  const reviewerNames = new Set(pull.reviews.map((r) => r.author.name));
   const commenterNames = new Set<string>();
   for (const discussion of pull.discussions) {
     if (discussion.resolved) {
@@ -37,7 +37,7 @@ export function isInAttentionSet(
       continue;
     }
     const lastViewerCommentPos = discussion.comments.findLastIndex(
-      (c) => c.author?.name === viewerName,
+      (c) => c.author.name === viewerName,
     );
     let commentsAfterLastViewerComment =
       lastViewerCommentPos === -1
@@ -47,7 +47,7 @@ export function isInAttentionSet(
       // Ignore bot comments in top-level discussions, since this particular one tends
       // to be catch-all, and not really a threaded discussion.
       commentsAfterLastViewerComment = commentsAfterLastViewerComment.filter(
-        (c) => c.author === undefined || !c.author.bot,
+        (c) => !c.author.bot,
       );
     }
     if (
@@ -56,14 +56,14 @@ export function isInAttentionSet(
     ) {
       // The author and reviewers are always notified when somebody replied to them.
       commentsAfterLastViewerComment
-        .filter((c) => c.author?.name !== viewerName)
-        .forEach((c) => commenterNames.add(c.author?.name ?? "Anonymous"));
+        .filter((c) => c.author.name !== viewerName)
+        .forEach((c) => commenterNames.add(c.author.name ?? "Anonymous"));
     } else if (isAuthor) {
       // The author (and only them) is notified when a reviewer left a comment in any thread,
       // even if the author did not participate in this thread.
       commentsAfterLastViewerComment
-        .filter((c) => reviewerNames.has(c.author?.name))
-        .forEach((c) => commenterNames.add(c.author?.name ?? "Anonymous"));
+        .filter((c) => reviewerNames.has(c.author.name))
+        .forEach((c) => commenterNames.add(c.author.name ?? "Anonymous"));
     }
   }
   if (commenterNames.size > 0) {

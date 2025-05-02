@@ -35,14 +35,14 @@ export enum CheckState {
 }
 
 export type Review = {
-  author?: User;
+  author: User;
   createdAt: Date;
   lgtm: boolean;
 };
 
 export type Comment = {
   id: string;
-  author?: User;
+  author: User;
   body: string;
   createdAt: Date;
 };
