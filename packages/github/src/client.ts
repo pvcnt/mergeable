@@ -339,7 +339,7 @@ export class DefaultGitHubClient implements GitHubClient {
 
   private makeReview(review: PullRequestReview): Review {
     return {
-      author: review.author !== null ? this.makeUser(review.author) : undefined,
+      author: this.makeUser(review.author),
       createdAt: this.toDate(review.createdAt),
       lgtm: review.state === "APPROVED",
     };

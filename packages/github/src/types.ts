@@ -35,7 +35,7 @@ export enum CheckState {
 }
 
 export type Review = {
-  author?: User;
+  author: User;
   createdAt: Date;
   lgtm: boolean;
 };
