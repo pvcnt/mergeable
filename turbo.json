@@ -13,11 +13,13 @@
       "dependsOn": ["build", "^lint"]
     },
     "test": {
-      "dependsOn": ["build", "^test"]
+      "dependsOn": ["build", "^test"],
+      "env": ["POLLY_MODE"]
     },
     "coverage": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "env": ["POLLY_MODE"]
     },
     "dev": {
       "cache": false,
