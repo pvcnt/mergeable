@@ -7,13 +7,13 @@
       "env": ["VITE_*", "MERGEABLE_*", "CODECOV_TOKEN"]
     },
     "typecheck": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "^typecheck"]
     },
     "lint": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "^lint"]
     },
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "^test"]
     },
     "coverage": {
       "dependsOn": ["build"],
