@@ -15,6 +15,8 @@ export type Profile = {
 
 export type PullResult = {
   id: string;
+  repo: string;
+  number: number;
   updatedAt: Date;
 };
 

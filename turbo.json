@@ -1,23 +1,26 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "codegen": {
+      "outputs": ["generated/**"]
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "codegen"],
       "outputs": ["build/**", "dist/**"],
       "env": ["VITE_*", "MERGEABLE_*", "CODECOV_TOKEN"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck", "codegen"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint", "codegen"]
     },
     "test": {
-      "dependsOn": ["^test"],
+      "dependsOn": ["^test", "codegen"],
       "env": ["POLLY_MODE"]
     },
     "coverage": {
-      "dependsOn": ["^coverage"],
+      "dependsOn": ["^coverage", "codegen"],
       "outputs": ["coverage/**"],
       "env": ["POLLY_MODE"]
     },

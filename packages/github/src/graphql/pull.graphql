@@ -1,0 +1,104 @@
+query pull($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      id
+      number
+      title
+      repository {
+        nameWithOwner
+      }
+      createdAt
+      updatedAt
+      state
+      url
+      isDraft
+      closed
+      merged
+      reviewDecision
+      additions
+      deletions
+      author {
+        __typename
+        login
+        avatarUrl
+      }
+      statusCheckRollup {
+        state
+      }
+      comments(first: 100) {
+        totalCount
+        nodes {
+          id
+          author {
+            __typename
+            login
+            avatarUrl
+          }
+          body
+          createdAt
+        }
+      }
+      reviewRequests(first: 100) {
+        totalCount
+        nodes {
+          requestedReviewer {
+            __typename
+            ... on Bot {
+              login
+              avatarUrl
+            }
+            ... on Mannequin {
+              login
+              avatarUrl
+            }
+            ... on User {
+              login
+              avatarUrl
+            }
+            ... on Team {
+              combinedSlug
+            }
+          }
+        }
+      }
+      reviews(first: 100) {
+        totalCount
+        nodes {
+          id
+          author {
+            __typename
+            login
+            avatarUrl
+          }
+          authorCanPushToRepository
+          state
+          body
+          createdAt
+        }
+      }
+      reviewThreads(first: 100) {
+        totalCount
+        nodes {
+          isResolved
+          path
+          comments(first: 100) {
+            totalCount
+            nodes {
+              id
+              author {
+                __typename
+                login
+                avatarUrl
+              }
+              createdAt
+              body
+            }
+          }
+        }
+      }
+    }
+  }
+  rateLimit {
+    cost
+  }
+}

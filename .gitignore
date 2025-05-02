@@ -9,6 +9,7 @@ node_modules/
 build/
 coverage/
 dist/
+generated/
 
 # Wrangler
 .wrangler/
