@@ -1,12 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
-  "include": ["src", "tests"],
+  "include": [".eslintrs.cjs"],
   "compilerOptions": {
     "composite": true,
-    "lib": ["ES2023"],
+    "types": ["node"],
+    "lib": ["ES2022"],
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "bundler",
-  },
+    "moduleResolution": "bundler"
+  }
 }

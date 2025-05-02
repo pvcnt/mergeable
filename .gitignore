@@ -3,14 +3,15 @@ logs
 *.log
 pnpm-debug.log*
 
-# deps
+# Typescript
+*.tsbuildinfo
 node_modules/
-.wrangler/
-
-# prod
 build/
 coverage/
 dist/
+
+# Wrangler
+.wrangler/
 
 # Editor directories and files
 .vscode/*

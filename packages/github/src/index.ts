@@ -1,3 +1,3 @@
-export * from "./attention.js";
-export * from "./client.js";
-export * from "./search.js";
+export * from "./attention";
+export * from "./client";
+export * from "./search";

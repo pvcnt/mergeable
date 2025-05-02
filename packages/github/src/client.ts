@@ -11,7 +11,7 @@ import {
   CheckState,
   type PullResult,
   type Review,
-  Discussion,
+  type Discussion,
 } from "@repo/model";
 import { prepareQuery } from "./search.js";
 
@@ -341,7 +341,7 @@ export class DefaultGitHubClient implements GitHubClient {
         baseUrl: connection.baseUrl,
         throttle: {
           // For now, allow retries in all situations.
-          onRateLimit: (retryAfter, options, octokit, retryCount) => {
+          onRateLimit: (retryAfter, options, octokit) => {
             octokit.log.warn(
               `Request quota exhausted for request ${options.method} ${options.url}, retrying after ${retryAfter} seconds`,
             );

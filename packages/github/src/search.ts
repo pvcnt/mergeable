@@ -1,4 +1,4 @@
-import { Connection } from "@repo/model";
+import { type Connection } from "@repo/model";
 
 /**
  * Split a search string into multiple GitHub search queries.
