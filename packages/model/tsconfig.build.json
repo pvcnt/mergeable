@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
-  "include": ["src", "tests"],
+  "include": ["src"],
   "compilerOptions": {
     "composite": true,
     "lib": ["ES2023"],

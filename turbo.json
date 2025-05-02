@@ -3,27 +3,28 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
+      "outputs": ["build/**", "dist/**"],
       "env": ["VITE_*", "MERGEABLE_*", "CODECOV_TOKEN"]
     },
     "typecheck": {
-      "dependsOn": ["build", "^typecheck"]
+      "dependsOn": ["^typecheck"]
     },
     "lint": {
-      "dependsOn": ["build", "^lint"]
+      "dependsOn": ["^lint"]
     },
     "test": {
-      "dependsOn": ["build", "^test"],
+      "dependsOn": ["^test"],
       "env": ["POLLY_MODE"]
     },
     "coverage": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^coverage"],
       "outputs": ["coverage/**"],
       "env": ["POLLY_MODE"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
     }
   }
 }

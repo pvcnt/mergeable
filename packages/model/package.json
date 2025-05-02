@@ -2,16 +2,10 @@
   "name": "@repo/model",
   "version": "0.0.0",
   "type": "module",
-  "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
   "license": "MIT",
+  "main": "src/index.ts",
+  "files": ["src"],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\""
   },

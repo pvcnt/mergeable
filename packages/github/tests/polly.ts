@@ -1,5 +1,5 @@
 import { beforeEach, afterEach } from "vitest";
-import { Polly, PollyConfig } from "@pollyjs/core";
+import { Polly, type PollyConfig } from "@pollyjs/core";
 
 /* eslint-disable */
 Polly.register(require("@pollyjs/persister-fs"));
