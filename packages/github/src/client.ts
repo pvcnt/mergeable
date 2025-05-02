@@ -412,21 +412,21 @@ export class TestGitHubClient implements GitHubClient {
   }
 
   searchPulls(endpoint: Endpoint, search: string): Promise<PullResult[]> {
-    const pulls = this.pullsBySearch[`${endpoint.baseUrl}:${search}`] || [];
+    const pulls = this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] || [];
     return Promise.resolve(pulls);
   }
 
   setPullsBySearch(endpoint: Endpoint, search: string, pulls: PullProps[]) {
-    this.pullsBySearch[`${endpoint.baseUrl}:${search}`] = pulls;
+    this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] = pulls;
     pulls.forEach((pull) => this.addPull(endpoint, pull));
   }
 
   addPull(endpoint: Endpoint, pull: PullProps) {
-    this.pullsByKey[`${endpoint.baseUrl}:${pull.id}`] = pull;
+    this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${pull.id}`] = pull;
   }
 
   getPull(endpoint: Endpoint, id: string): Promise<PullProps> {
-    const pull = this.pullsByKey[`${endpoint.baseUrl}:${id}`];
+    const pull = this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${id}`];
     return pull !== undefined
       ? Promise.resolve(pull)
       : Promise.reject(new Error("Not Found"));

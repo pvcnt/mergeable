@@ -38,7 +38,7 @@ describe("sync viewers", () => {
     let connection = await db.connections.get("1");
     expect(connection?.viewer).toBeDefined();
     expect(connection?.viewer?.user).toEqual({
-      name: "test[1]",
+      name: "test[https://api.github.com]",
       avatarUrl: "",
       bot: false,
     });
@@ -46,7 +46,7 @@ describe("sync viewers", () => {
     connection = await db.connections.get("2");
     expect(connection?.viewer).toBeDefined();
     expect(connection?.viewer?.user).toEqual({
-      name: "test[2]",
+      name: "test[https://api.github.com]",
       avatarUrl: "",
       bot: false,
     });
@@ -74,8 +74,8 @@ describe("sync viewers", () => {
 
 describe("sync pulls", () => {
   beforeEach(async () => {
-    await db.connections.add(mockConnection({ id: "1" }));
-    await db.connections.add(mockConnection({ id: "2" }));
+    await db.connections.add(mockConnection({ id: "1", auth: "ghp_xxx" }));
+    await db.connections.add(mockConnection({ id: "2", auth: "ghp_yyy" }));
     await db.sections.add(
       mockSection({
         id: "1",
