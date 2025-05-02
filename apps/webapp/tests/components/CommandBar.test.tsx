@@ -1,10 +1,10 @@
 import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
-import { db } from "../../src/lib/db.js";
-import CommandBar from "../../src/components/CommandBar.js";
+import { db } from "../../src/lib/db";
+import CommandBar from "../../src/components/CommandBar";
 import { HotkeysProvider } from "@blueprintjs/core";
-import { mockPull } from "@repo/testing";
+import { mockPull } from "../testing";
 
 describe("command bar", () => {
   let user: UserEvent | undefined;

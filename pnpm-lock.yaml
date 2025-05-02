@@ -91,9 +91,6 @@ importers:
       '@repo/github':
         specifier: workspace:*
         version: link:../../packages/github
-      '@repo/model':
-        specifier: workspace:*
-        version: link:../../packages/model
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
@@ -143,9 +140,6 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@repo/testing':
-        specifier: workspace:*
-        version: link:../../packages/testing
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -251,9 +245,6 @@ importers:
       '@octokit/plugin-throttling':
         specifier: ^9.3.1
         version: 9.3.1(@octokit/core@6.1.2)
-      '@repo/model':
-        specifier: workspace:*
-        version: link:../model
       octokit:
         specifier: ^4.0.2
         version: 4.0.2
@@ -270,9 +261,6 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@repo/testing':
-        specifier: workspace:*
-        version: link:../testing
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -288,40 +276,6 @@ importers:
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.6)(stylus@0.62.0)
-
-  packages/model:
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
-
-  packages/testing:
-    dependencies:
-      '@repo/model':
-        specifier: workspace:*
-        version: link:../model
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
 
   packages/typescript-config: {}
 

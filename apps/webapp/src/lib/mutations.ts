@@ -1,10 +1,6 @@
 import { db } from "./db";
-import {
-  defaultSections,
-  type Connection,
-  type Pull,
-  type Section,
-} from "@repo/model";
+import { type Pull } from "@repo/github";
+import { defaultSections, type Connection, type Section } from "../lib/types";
 import { omit } from "remeda";
 
 export async function saveConnection(value: Connection): Promise<void> {

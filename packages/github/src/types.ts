@@ -1,4 +1,17 @@
-import type { Team, User } from "./user.js";
+export type User = {
+  name: string;
+  avatarUrl: string;
+  bot: boolean;
+};
+
+export type Team = {
+  name: string;
+};
+
+export type Profile = {
+  user: User;
+  teams: Team[];
+};
 
 export type PullResult = {
   id: string;
@@ -65,11 +78,6 @@ export type Attention = {
   set: boolean;
   reason?: string;
 };
-
-// Schema version is used to force bursting the local cache of pull requests
-// when there is a change that requires it (e.g., adding a new field that must
-// be populated).
-export const LATEST_SCHEMA_VERSION = "v1";
 
 export type Pull = PullProps & {
   uid: string;

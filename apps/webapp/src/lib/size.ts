@@ -1,5 +1,5 @@
 import { reverse, zip } from "remeda";
-import type { PullProps } from "@repo/model";
+import type { PullProps } from "@repo/github";
 
 // Defaults come from Prow:
 // https://github.com/kubernetes/test-infra/blob/master/prow/plugins/size/size.go

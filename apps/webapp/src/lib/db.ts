@@ -1,5 +1,6 @@
-import type { Connection, Pull, Section, Star } from "@repo/model";
 import Dexie, { type EntityTable } from "dexie";
+import type { Connection, Section, Star } from "../lib/types";
+import { Pull } from "@repo/github";
 
 export type Activity = {
   name: string;

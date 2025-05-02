@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import { render } from "@testing-library/react";
-import Footer from "../../src/components/Footer.js";
+import Footer from "../../src/components/Footer";
 
 test("Footer renders a link to the commit", () => {
   const { getByRole } = render(<Footer commit="abcdef" />);

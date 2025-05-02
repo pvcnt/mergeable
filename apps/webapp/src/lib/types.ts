@@ -1,4 +1,4 @@
-import type { Profile } from "./user.js";
+import type { Profile } from "@repo/github";
 
 /**
  * Properties for a section, as provided by a user in a form or API.

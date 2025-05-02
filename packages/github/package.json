@@ -16,7 +16,6 @@
     "@pollyjs/core": "^6.0.6",
     "@pollyjs/persister-fs": "^6.0.6",
     "@repo/eslint-config": "workspace:*",
-    "@repo/testing": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@vitest/coverage-istanbul": "^2.0.5",
     "eslint": "^8.57.0",
@@ -25,7 +24,6 @@
   },
   "dependencies": {
     "@octokit/plugin-throttling": "^9.3.1",
-    "@repo/model": "workspace:*",
     "octokit": "^4.0.2"
   }
 }

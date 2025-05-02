@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { AppToaster } from "../lib/toaster";
 import ConfirmDialog from "./ConfirmDialog";
-import { type SectionProps, defaultSectionProps } from "@repo/model";
+import { type SectionProps, defaultSectionProps } from "../lib/types";
 
 type Props = {
   title: string;

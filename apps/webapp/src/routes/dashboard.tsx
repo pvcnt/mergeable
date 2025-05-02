@@ -7,7 +7,7 @@ import {
   type Section,
   type SectionProps,
   defaultSectionProps,
-} from "@repo/model";
+} from "../lib/types";
 import { useSections, usePulls } from "../lib/queries";
 import {
   deleteSection,

@@ -1,7 +1,8 @@
 import { Button } from "@blueprintjs/core";
 import { useState } from "react";
+import type { Pull } from "@repo/github";
+import type { Section } from "../lib/types";
 import SectionDialog from "./SectionDialog";
-import type { Pull, Section } from "@repo/model";
 import SectionCard from "./SectionCard";
 
 export type Props = {

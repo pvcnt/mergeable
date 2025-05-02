@@ -1,5 +1,3 @@
-import { type Connection } from "@repo/model";
-
 /**
  * Split a search string into multiple GitHub search queries.
  *
@@ -29,7 +27,7 @@ export function splitQueries(search: string): string[] {
   return queries.map((s) => s.trim()).filter((s) => s.length > 0);
 }
 
-export function prepareQuery(search: string, connection: Connection): string {
+export function prepareQuery(search: string, orgs: string[]): string {
   const q = new SearchQuery(search);
   // Enforce searching for PRs. There are two syntaxes to search for PRs: "type:pr"
   // and "is:pr". We make sure there are no duplicate filters, which would return
@@ -44,8 +42,8 @@ export function prepareQuery(search: string, connection: Connection): string {
   }
 
   // Filter by org as required by the connection.
-  if (connection.orgs.length > 0) {
-    q.setAll("org", connection.orgs);
+  if (orgs.length > 0) {
+    q.setAll("org", orgs);
   }
   if (q.has("org") && q.has("repo")) {
     // GitHub API does not seem to support having both terms with an "org"
