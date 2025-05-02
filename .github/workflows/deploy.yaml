@@ -78,7 +78,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           workingDirectory: apps/telemetry
-  login:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
