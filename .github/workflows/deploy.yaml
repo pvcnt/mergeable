@@ -87,4 +87,4 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          workingDirectory: apps/login
+          workingDirectory: apps/backend
