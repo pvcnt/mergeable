@@ -30,14 +30,20 @@ test("should search pulls", async () => {
   expect(pulls).toEqual([
     {
       id: "PR_kwDOMoYZC86UfoU-",
+      repo: "pvcnt/sandbox",
+      number: 3,
       updatedAt: new Date("2025-04-30T19:17:30.000Z"),
     },
     {
       id: "PR_kwDOMoYZC86UYQCq",
+      repo: "pvcnt/sandbox",
+      number: 2,
       updatedAt: new Date("2025-04-29T16:24:02.000Z"),
     },
     {
       id: "PR_kwDOMoYZC855afun",
+      repo: "pvcnt/sandbox",
+      number: 1,
       updatedAt: new Date("2024-08-27T13:45:07.000Z"),
     },
   ]);
@@ -46,7 +52,7 @@ test("should search pulls", async () => {
 test("should get pull", async () => {
   const client = new DefaultGitHubClient();
 
-  const pull = await client.getPull(endpoint, "PR_kwDOKCpCz85keYan");
+  const pull = await client.getPull(endpoint, "pvcnt/mergeable", 13);
 
   expect(pull).toEqual({
     id: "PR_kwDOKCpCz85keYan",
@@ -156,5 +162,5 @@ test("should get pull", async () => {
 test("should error when pull does not exist", async () => {
   const client = new DefaultGitHubClient();
 
-  await expect(client.getPull(endpoint, "PR_none")).rejects.toThrowError();
+  await expect(client.getPull(endpoint, "pvcnt/mergeable", 99999)).rejects.toThrowError();
 });

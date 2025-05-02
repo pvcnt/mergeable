@@ -1,20 +1,6 @@
 import { Octokit } from "octokit";
 import { throttling } from "@octokit/plugin-throttling";
 import {
-  type Bot,
-  type EnterpriseUserAccount,
-  type IssueComment,
-  type Mannequin,
-  type Organization,
-  type PullRequest,
-  type PullRequestReview,
-  type PullRequestReviewComment,
-  type RateLimit,
-  type User as GHUser,
-  type Team as GHTeam,
-  type RequestedReviewer,
-} from "@octokit/graphql-schema";
-import {
   type Comment,
   PullState,
   type PullProps,
@@ -23,11 +9,18 @@ import {
   type Profile,
   CheckState,
   type PullResult,
-  type Review,
   type Discussion,
+  Review,
 } from "./types";
 import { prepareQuery } from "./search";
-import { isNonNull } from "remeda";
+import { isNonNull, isNonNullish } from "remeda";
+import {
+  PullDocument,
+  type PullQuery,
+  PullRequestReviewDecision,
+  StatusState,
+  PullRequestReviewState,
+} from "../generated/gql/graphql";
 
 const MAX_PULLS_TO_FETCH = 50;
 
@@ -51,7 +44,7 @@ export interface GitHubClient {
     search: string,
     orgs: string[],
   ): Promise<PullResult[]>;
-  getPull(endpoint: Endpoint, id: string): Promise<PullProps>;
+  getPull(endpoint: Endpoint, repo: string, number: number): Promise<PullProps>;
 }
 
 export class DefaultGitHubClient implements GitHubClient {
@@ -87,135 +80,54 @@ export class DefaultGitHubClient implements GitHubClient {
       sort: "updated",
       per_page: MAX_PULLS_TO_FETCH,
     });
-    return response.data.items.map((obj) => ({
-      id: obj.node_id,
-      updatedAt: new Date(obj.updated_at),
-    }));
+    return response.data.items.map((obj) => {
+      const url = new URL(obj.html_url);
+      const [owner, repoName] = url.pathname.slice(1).split("/").slice(0, 2);
+      return {
+        id: obj.node_id,
+        repo: `${owner}/${repoName}`,
+        number: obj.number,
+        updatedAt: new Date(obj.updated_at),
+      }
+    });
   }
 
-  async getPull(endpoint: Endpoint, id: string): Promise<PullProps> {
-    const query = `query pull($id: ID!) {
-      node(id: $id) {
-        ... on PullRequest {
-          number
-          title
-          repository {
-            nameWithOwner
-          }
-          createdAt
-          updatedAt
-          state
-          url
-          isDraft
-          closed
-          merged
-          reviewDecision
-          additions
-          deletions
-          author {
-            __typename
-            login
-            avatarUrl
-          }
-          statusCheckRollup {
-            state
-          }
-          comments(first: 100) {
-            totalCount
-            nodes {
-              id
-              author {
-                __typename
-                login
-                avatarUrl
-              }
-              body
-              createdAt
-            }
-          }
-          reviewRequests(first: 100) {
-            totalCount
-            nodes {
-              requestedReviewer {
-                __typename
-                ... on Bot {
-                  login
-                  avatarUrl
-                }
-                ... on Mannequin {
-                  login
-                  avatarUrl
-                }
-                ... on User {
-                  login
-                  avatarUrl
-                }
-                ... on Team {
-                  combinedSlug
-                }
-              }
-            }
-          }
-          reviews(first: 100) {
-            totalCount
-            nodes {
-              id
-              author {
-                __typename
-                login
-                avatarUrl
-              }
-              authorCanPushToRepository
-              state
-              body
-              createdAt
-            }
-          }
-          reviewThreads(first: 100) {
-            totalCount
-            nodes {
-              isResolved
-              path
-              comments(first: 100) {
-                totalCount
-                nodes {
-                  id
-                  author {
-                    __typename
-                    login
-                    avatarUrl
-                  }
-                  createdAt
-                  body
-                }
-              }
-            }
-          }
-        }
-      }
-      rateLimit {
-        cost
-      }
-    }`;
-    type Data = { node: PullRequest | null; rateLimit: RateLimit };
+  async getPull(endpoint: Endpoint, repo: string, number: number): Promise<PullProps> {
+    const query = PullDocument.toString() as string;
+    const [owner, repoName] = repo.split("/");
     const octokit = this.getOctokit(endpoint);
-    const data = await octokit.graphql<Data>(query, { id });
-    if (!data.node) {
+    const data = await octokit.graphql<PullQuery>(query, { owner, repo: repoName, number });
+    const root = data.repository?.pullRequest;
+    if (!root) {
       return Promise.reject(new Error("Not Found"));
     }
     const reviews: Review[] =
-      data.node.reviews?.nodes
+      root.reviews?.nodes
         ?.filter(isNonNull)
         .filter((n) => n.authorCanPushToRepository)
-        .map((n) => this.makeReview(n)) ?? [];
+        .map((n) => ({
+          author: this.makeUser(n.author),
+          createdAt: this.toDate(n.createdAt),
+          lgtm: n.state === PullRequestReviewState.Approved,
+        })) ?? [];
 
     const topLevelComments: Comment[] = [];
-    data.node.comments?.nodes
-      ?.filter(isNonNull)
-      .forEach((n) => topLevelComments.push(this.makeComment(n)));
-    data.node.reviews?.nodes
-      ?.filter(isNonNull)
-      .forEach((n) => topLevelComments.push(this.makeComment(n)));
+    root.comments?.nodes?.filter(isNonNull).forEach((n) =>
+      topLevelComments.push({
+        id: n.id,
+        author: this.makeUser(n.author),
+        createdAt: this.toDate(n.createdAt),
+        body: n.body,
+      }),
+    );
+    root.reviews?.nodes?.filter(isNonNull).forEach((n) =>
+      topLevelComments.push({
+        id: n.id,
+        author: this.makeUser(n.author),
+        createdAt: this.toDate(n.createdAt),
+        body: n.body,
+      }),
+    );
     topLevelComments.sort((a, b) =>
       a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0,
     );
@@ -226,60 +138,65 @@ export class DefaultGitHubClient implements GitHubClient {
         comments: topLevelComments,
       },
     ];
-    data.node.reviewThreads.nodes?.filter(isNonNull).forEach((n) => {
+    root.reviewThreads.nodes?.filter(isNonNull).forEach((n) => {
       discussions.push({
         resolved: n.isResolved,
         comments:
-          n.comments.nodes
-            ?.filter(isNonNull)
-            .map((n2) => this.makeComment(n2)) ?? [],
+          n.comments.nodes?.filter(isNonNull).map((nn) => ({
+            id: nn.id,
+            author: this.makeUser(nn.author),
+            createdAt: this.toDate(nn.createdAt),
+            body: nn.body,
+          })) ?? [],
         file: { path: n.path },
       });
     });
 
     return {
-      id,
-      repo: data.node.repository.nameWithOwner,
-      number: data.node.number,
-      title: data.node.title,
-      state: data.node.isDraft
+      id: root.id,
+      repo: root.repository.nameWithOwner,
+      number: root.number,
+      title: root.title,
+      state: root.isDraft
         ? PullState.Draft
-        : data.node.merged
+        : root.merged
           ? PullState.Merged
-          : data.node.closed
+          : root.closed
             ? PullState.Closed
-            : data.node.reviewDecision == "APPROVED"
+            : root.reviewDecision == PullRequestReviewDecision.Approved
               ? PullState.Approved
               : PullState.Pending,
       ciState:
-        data.node.statusCheckRollup?.state == "ERROR"
+        root.statusCheckRollup?.state == StatusState.Error
           ? CheckState.Error
-          : data.node.statusCheckRollup?.state == "FAILURE"
+          : root.statusCheckRollup?.state == StatusState.Failure
             ? CheckState.Failure
-            : data.node.statusCheckRollup?.state == "SUCCESS"
+            : root.statusCheckRollup?.state == StatusState.Success
               ? CheckState.Success
               : // Do not differentiate between "Pending" and "Expected".
-                data.node.statusCheckRollup?.state == "PENDING"
+                root.statusCheckRollup?.state == StatusState.Pending
                 ? CheckState.Pending
-                : data.node.statusCheckRollup?.state == "EXPECTED"
+                : root.statusCheckRollup?.state == StatusState.Expected
                   ? CheckState.Pending
                   : CheckState.None,
-      createdAt: this.toDate(data.node.createdAt),
-      updatedAt: this.toDate(data.node.updatedAt),
-      url: `${data.node.url}`,
-      additions: data.node.additions,
-      deletions: data.node.deletions,
-      author: this.makeUser(data.node.author),
+      createdAt: this.toDate(root.createdAt),
+      updatedAt: this.toDate(root.updatedAt),
+      url: `${root.url}`,
+      additions: root.additions,
+      deletions: root.deletions,
+      author: this.makeUser(root.author),
       requestedReviewers:
-        data.node.reviewRequests?.nodes
-          ?.filter(isNonNull)
-          .filter((n) => n.requestedReviewer?.__typename != "Team")
-          .map((n) => this.makeUser(n.requestedReviewer as Exclude<RequestedReviewer, Team>)) ?? [],
+        root.reviewRequests?.nodes
+          ?.map((n) => n?.requestedReviewer)
+          .filter(isNonNullish)
+          .filter((n) => n?.__typename != "Team")
+          .map((n) => this.makeUser(n)) ?? [],
       requestedTeams:
-        data.node.reviewRequests?.nodes
-          ?.filter(isNonNull)
-          .filter((n) => n.requestedReviewer?.__typename == "Team")
-          .map((n) => this.makeTeam(n.requestedReviewer as GHTeam)) ?? [],
+        root.reviewRequests?.nodes
+          ?.map((n) => n?.requestedReviewer)
+          .filter(isNonNullish)
+          .filter((n) => n.__typename == "Team")
+          .map((n) => ({ name: n.combinedSlug })) ?? [],
       reviews,
       discussions,
     };
@@ -313,15 +230,15 @@ export class DefaultGitHubClient implements GitHubClient {
 
   private makeUser(
     user:
-      | Bot
-      | EnterpriseUserAccount
-      | Mannequin
-      | Organization
-      | GHUser
+      | { __typename: string; login: string; avatarUrl: string }
       | undefined
       | null,
   ): User {
-    if (user?.__typename === "Bot" || user?.__typename === "Mannequin" || user?.__typename === "User") {
+    if (
+      user?.__typename === "Bot" ||
+      user?.__typename === "Mannequin" ||
+      user?.__typename === "User"
+    ) {
       return {
         name: user.login,
         avatarUrl: `${user.avatarUrl}`,
@@ -330,45 +247,6 @@ export class DefaultGitHubClient implements GitHubClient {
     } else {
       // No user provided, or unsupported type.
       return anonymousUser;
-    }
-  }
-
-  private makeTeam(team: GHTeam): Team {
-    return { name: team.combinedSlug };
-  }
-
-  private makeReview(review: PullRequestReview): Review {
-    return {
-      author: this.makeUser(review.author),
-      createdAt: this.toDate(review.createdAt),
-      lgtm: review.state === "APPROVED",
-    };
-  }
-
-  private makeComment(
-    comment: IssueComment | PullRequestReviewComment | PullRequestReview,
-  ): Comment {
-    if (comment.__typename === "PullRequestReview") {
-      return {
-        id: comment.id,
-        author: this.makeUser(comment.author),
-        createdAt: this.toDate(comment.createdAt),
-        body: comment.body,
-      };
-    } else if (comment.__typename === "IssueComment") {
-      return {
-        id: comment.id,
-        author: this.makeUser(comment.author),
-        createdAt: this.toDate(comment.createdAt),
-        body: comment.body,
-      };
-    } else {
-      return {
-        id: comment.id,
-        author: this.makeUser(comment.author),
-        createdAt: this.toDate(comment.createdAt),
-        body: comment.body,
-      };
     }
   }
 
@@ -412,11 +290,11 @@ export class TestGitHubClient implements GitHubClient {
   }
 
   addPull(endpoint: Endpoint, pull: PullProps) {
-    this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${pull.id}`] = pull;
+    this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${pull.repo}:${pull.number}`] = pull;
   }
 
-  getPull(endpoint: Endpoint, id: string): Promise<PullProps> {
-    const pull = this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${id}`];
+  getPull(endpoint: Endpoint, repo: string, number: number): Promise<PullProps> {
+    const pull = this.pullsByKey[`${endpoint.baseUrl}:${endpoint.auth}:${repo}:${number}`];
     return pull !== undefined
       ? Promise.resolve(pull)
       : Promise.reject(new Error("Not Found"));

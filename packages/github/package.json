@@ -5,15 +5,18 @@
   "license": "MIT",
   "main": "src/index.ts",
   "files": [
-    "src"
+    "src",
+    "generated"
   ],
   "scripts": {
     "typecheck": "tsc -b",
     "lint": "eslint \"**/*.ts\"",
     "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "codegen": "graphql-codegen --config ./codegen.ts"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.5",
     "@pollyjs/adapter-fetch": "^6.0.6",
     "@pollyjs/core": "^6.0.6",
     "@pollyjs/persister-fs": "^6.0.6",
@@ -26,8 +29,9 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "@octokit/graphql-schema": "^15.26.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@octokit/plugin-throttling": "^9.3.1",
+    "graphql": "^16.11.0",
     "octokit": "^4.0.2",
     "remeda": "^2.0.5"
   }

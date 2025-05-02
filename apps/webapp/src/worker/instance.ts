@@ -155,7 +155,7 @@ export async function syncPullsOnce(
             stats.new += 1;
           }
           const connection = connectionsById[res.connection];
-          const pull = await client.getPull(connection, res.id);
+          const pull = await client.getPull(connection, res.repo, res.number);
           const mayBeInAttentionSet = res.sections.some((v) =>
             sectionsInAttentionSet.has(v),
           );
