@@ -1,0 +1,218 @@
+query search($q: String!, $limit: Int!) {
+  search(query: $q, type: ISSUE, first: $limit) {
+    issueCount
+    edges {
+      node {
+        __typename
+        ... on PullRequest {
+          id
+          number
+          title
+          body
+          createdAt
+          updatedAt
+          mergedAt
+          closedAt
+          state
+          url
+          isDraft
+          locked
+          closed
+          merged
+          reviewDecision
+          additions
+          deletions
+          repository {
+            name
+            owner {
+              login
+            }
+          }
+          author {
+            __typename
+            ... on User {
+              id
+              login
+              avatarUrl
+            }
+            ... on Bot {
+              id
+              login
+              avatarUrl
+            }
+            ... on Mannequin {
+              id
+              login
+              avatarUrl
+            }
+            ... on EnterpriseUserAccount {
+              id
+              login
+              avatarUrl
+            }
+          }
+          labels (first: 100) {
+            nodes {
+              name
+            }
+          }
+          statusCheckRollup {
+            state
+            contexts(first: 100) {
+              nodes {
+                __typename
+                ... on StatusContext {
+                  context
+                  description
+                  state
+                  targetUrl
+                }
+                ... on CheckRun {
+                  name
+                  title
+                  conclusion
+                  url
+                }
+              }
+            }
+          }
+          reviewRequests (first: 100) {
+            nodes {
+              requestedReviewer {
+                __typename
+                ... on User {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Bot {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Mannequin {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Team {
+                  id
+                  combinedSlug
+                }
+              }
+            }
+          }
+          latestOpinionatedReviews(first: 100) {
+            nodes {
+              state
+              createdAt
+              publishedAt
+              authorCanPushToRepository
+              author {
+                __typename
+                ... on User {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Bot {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Mannequin {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on EnterpriseUserAccount {
+                  id
+                  login
+                  avatarUrl
+                }
+              }
+            }
+          }
+          reviewThreads (first: 100) {
+            nodes {
+              isResolved
+              line
+              startLine
+              path
+              comments (last: 50) {
+                totalCount
+                nodes {
+                  createdAt
+                  publishedAt
+                  path
+                  line
+                  startLine
+                  author {
+                    __typename
+                    ... on User {
+                      id
+                      login
+                      avatarUrl
+                    }
+                    ... on Bot {
+                      id
+                      login
+                      avatarUrl
+                    }
+                    ... on Mannequin {
+                      id
+                      login
+                      avatarUrl
+                    }
+                    ... on EnterpriseUserAccount {
+                      id
+                      login
+                      avatarUrl
+                    }
+                  }
+                }
+              }
+            }
+          }
+          comments (first: 100) {
+            totalCount
+            nodes {
+              createdAt
+              publishedAt
+              author {
+                __typename
+                ... on User {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Bot {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on Mannequin {
+                  id
+                  login
+                  avatarUrl
+                }
+                ... on EnterpriseUserAccount {
+                  id
+                  login
+                  avatarUrl
+                }
+              }
+            }
+          }
+          mergeQueueEntry {
+            enqueuedAt
+          }
+        }
+      }
+    }
+  }
+  rateLimit {
+    cost
+    remaining
+  }
+}

@@ -1,136 +1,135 @@
 import { test, expect } from "vitest";
 import { isInAttentionSet } from "../src/attention";
-import { CheckState, PullState, type Pull } from "../src/types";
+import { type Pull } from "../src/types";
 
-const me = { name: "test", avatarUrl: "", bot: false };
-const user1 = { name: "test1", avatarUrl: "", bot: false };
-const user2 = { name: "test2", avatarUrl: "", bot: false };
-const user3 = { name: "test3", avatarUrl: "", bot: false };
-const user4 = { name: "test4", avatarUrl: "", bot: true };
+const me = { id: "99", name: "test", avatarUrl: "", bot: false };
+const user1 = { id: "1", name: "test1", avatarUrl: "", bot: false };
+const user2 = { id: "2", name: "test2", avatarUrl: "", bot: false };
+const bot = { id: "4", name: "test4", avatarUrl: "", bot: true };
 const viewer = { user: me, teams: [] };
 
 test("should contain the author when pull is approved", () => {
-  const pull = mockPull({ state: PullState.Approved, author: me });
+  const pull = mockPull({ state: "approved", author: me });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: true, reason: "Pull request is approved" });
 });
 
 test("should contain only the author when pull is approved", () => {
-  const pull = mockPull({ state: PullState.Approved });
+  const pull = mockPull({ state: "approved" });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: false });
 });
 
 test("should contain the author when CI is failing", () => {
-  const pull = mockPull({ author: me, ciState: CheckState.Failure });
+  const pull = mockPull({ author: me, checkState: "failure" });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: true, reason: "CI is failing" });
 });
 
 test("should contain only the author when CI is failing", () => {
-  const pull = mockPull({ ciState: CheckState.Failure });
+  const pull = mockPull({ checkState: "failure" });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: false });
 });
 
 test("should contain a requested reviewer when pull is not approved", () => {
-  const pull = mockPull({ state: PullState.Pending, requestedReviewers: [me] });
+  const pull = mockPull({ state: "pending", requestedReviewers: [me] });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: true, reason: "Review is requested" });
 });
 
 test("should be empty when pull is draft", () => {
-  const pull = mockPull({ state: PullState.Draft, author: me });
+  const pull = mockPull({ state: "draft", author: me });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: false });
 });
 
 test("should be empty when pull is merged", () => {
-  const pull = mockPull({ state: PullState.Merged, author: me });
+  const pull = mockPull({ state: "merged", author: me });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: false });
 });
 
 test("should be empty when pull is closed", () => {
-  const pull = mockPull({ state: PullState.Closed, author: me });
+  const pull = mockPull({ state: "closed", author: me });
   const attention = isInAttentionSet(viewer, pull);
   expect(attention).toEqual({ set: false });
 });
 
-test("should contain the author when a user replied", () => {
+test("should contain the author when somebody replied", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
     author: me,
     discussions: [
       {
         resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user1, createdAt: new Date(1), body: "" },
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
   });
   const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: true, reason: "test1 left a comment" });
+  expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
 });
 
-test("should contain the author when two users replied", () => {
+test("should contain the author when somebody left a comment", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
     author: me,
     discussions: [
       {
         resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user1, createdAt: new Date(1), body: "" },
-          { id: "3", author: user2, createdAt: new Date(2), body: "" },
+        numComments: 2,
+        participants: [
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
   });
   const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({
-    set: true,
-    reason: "test1 and 1 other left a comment",
-  });
+  expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
 });
 
-test("should contain the author when three users replied", () => {
+test("should contain the author when somebody left a comment and somebody replied in different discussions", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
     author: me,
     discussions: [
       {
         resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user1, createdAt: new Date(1), body: "" },
-          { id: "3", author: user2, createdAt: new Date(2), body: "" },
-          { id: "4", author: user1, createdAt: new Date(3), body: "" },
-          { id: "5", author: user3, createdAt: new Date(4), body: "" },
+        numComments: 2,
+        participants: [
+          { user: user2, numComments: 1, lastActiveAt: "2025-05-05T10:50:00Z" },
+        ],
+      },
+      {
+        resolved: false,
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
   });
   const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({
-    set: true,
-    reason: "test1 and 2 others left a comment",
-  });
+  expect(attention).toEqual({ set: true, reason: "2 unread discussions" });
 });
 
 test("should not contain the author when a user replied in a resolved discussion", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
     author: me,
     discussions: [
       {
         resolved: true,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user1, createdAt: new Date(1), body: "" },
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
@@ -139,16 +138,37 @@ test("should not contain the author when a user replied in a resolved discussion
   expect(attention).toEqual({ set: false });
 });
 
-test("should not contain the author when a bot replied to the top-level discussion", () => {
+test("should contain the author when only bots replied", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
     author: me,
     discussions: [
       {
         resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user4, createdAt: new Date(1), body: "" },
+        numComments: 2,
+        file: { path: "README.md" },
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: bot, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
+        ],
+      },
+    ],
+  });
+  const attention = isInAttentionSet(viewer, pull);
+  expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
+});
+
+test("should not contain the author when only bots replied to the top-level discussion", () => {
+  const pull = mockPull({
+    state: "pending",
+    author: me,
+    discussions: [
+      {
+        resolved: false,
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: bot, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
@@ -157,77 +177,42 @@ test("should not contain the author when a bot replied to the top-level discussi
   expect(attention).toEqual({ set: false });
 });
 
-test("should contain a reviewer when a user replied", () => {
+test("should not contain the author when only the author posted", () => {
   const pull = mockPull({
-    state: PullState.Pending,
+    state: "pending",
+    author: me,
+    discussions: [
+      {
+        resolved: false,
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 2, lastActiveAt: "2025-05-05T10:30:00Z" },
+        ],
+      },
+    ],
+  });
+  const attention = isInAttentionSet(viewer, pull);
+  expect(attention).toEqual({ set: false });
+});
+
+test("should contain a reviewer when somebody replied", () => {
+  const pull = mockPull({
+    state: "pending",
     author: user1,
-    reviews: [{ author: me, createdAt: new Date(0), lgtm: false }],
+    reviews: [{ author: me, collaborator: true, approved: false }],
     discussions: [
       {
         resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user2, createdAt: new Date(1), body: "" },
+        numComments: 2,
+        participants: [
+          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
       },
     ],
   });
   const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: true, reason: "test2 left a comment" });
-});
-
-test("should not contain the author when nobody replied", () => {
-  const pull = mockPull({
-    state: PullState.Pending,
-    author: me,
-    discussions: [
-      {
-        resolved: false,
-        comments: [
-          { id: "1", author: me, createdAt: new Date(0), body: "" },
-          { id: "2", author: user1, createdAt: new Date(1), body: "" },
-          { id: "3", author: me, createdAt: new Date(2), body: "" },
-        ],
-      },
-    ],
-  });
-  const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: false });
-});
-
-test("should contain the author when a reviewer left a comment", () => {
-  const pull = mockPull({
-    state: PullState.Pending,
-    author: me,
-    reviews: [{ author: user1, createdAt: new Date(0), lgtm: false }],
-    discussions: [
-      {
-        resolved: false,
-        comments: [
-          { id: "1", author: user1, createdAt: new Date(0), body: "" },
-        ],
-      },
-    ],
-  });
-  const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: true, reason: "test1 left a comment" });
-});
-
-test("should not contain the author when a non-reviewer left a comment", () => {
-  const pull = mockPull({
-    state: PullState.Pending,
-    author: me,
-    discussions: [
-      {
-        resolved: false,
-        comments: [
-          { id: "1", author: user1, createdAt: new Date(0), body: "" },
-        ],
-      },
-    ],
-  });
-  const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: false });
+  expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
 });
 
 function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
@@ -236,18 +221,22 @@ function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
     repo: "pvcnt/mergeable",
     number: 1,
     title: "Pull request",
-    state: PullState.Pending,
-    ciState: CheckState.None,
-    createdAt: new Date("2024-08-05T15:57:00Z"),
-    updatedAt: new Date("2024-08-05T15:57:00Z"),
+    body: "",
+    state: "pending",
+    checkState: "pending",
+    createdAt: "2024-08-05T15:57:00Z",
+    updatedAt: "2024-08-05T15:57:00Z",
+    locked: false,
     url: "https://github.com/pvncnt/mergeable/pull/1",
     additions: 0,
     deletions: 0,
-    author: { name: "pvcnt", avatarUrl: "", bot: false },
+    author: { id: "1", name: "pvcnt", avatarUrl: "", bot: false },
     requestedReviewers: [],
     requestedTeams: [],
     reviews: [],
     discussions: [],
+    checks: [],
+    labels: [],
     uid: `1:1`,
     host: "github.com",
     starred: 0,

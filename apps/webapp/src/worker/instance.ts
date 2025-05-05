@@ -17,7 +17,7 @@ const domainsWhitelist = new Set(["localhost", "mergeable.pages.dev"]);
 // Schema version is used to force bursting the local cache of pull requests
 // when there is a change that requires it (e.g., adding a new field that must
 // be populated).
-export const LATEST_SCHEMA_VERSION = "v1";
+export const LATEST_SCHEMA_VERSION = "v2";
 
 declare const self: SharedWorkerGlobalScope;
 
@@ -155,21 +155,18 @@ export async function syncPullsOnce(
             stats.new += 1;
           }
           const connection = connectionsById[res.connection];
-          const pull = await client.getPull(connection, res.repo, res.number);
           const mayBeInAttentionSet = res.sections.some((v) =>
             sectionsInAttentionSet.has(v),
           );
           return {
-            ...pull,
-            uid: res.uid,
-            connection: res.connection,
-            sections: res.sections,
+            ...res,
             host: connection.host,
             schemaVersion: LATEST_SCHEMA_VERSION,
             starred: stars.has(res.uid) ? 1 : 0,
-            attention: mayBeInAttentionSet
-              ? isInAttentionSet(connection.viewer ?? null, pull)
-              : undefined,
+            attention:
+              mayBeInAttentionSet && connection.viewer
+                ? isInAttentionSet(connection.viewer, res)
+                : undefined,
           };
         }),
       );

@@ -38,6 +38,7 @@ describe("sync viewers", () => {
     let connection = await db.connections.get("1");
     expect(connection?.viewer).toBeDefined();
     expect(connection?.viewer?.user).toEqual({
+      id: "u1",
       name: "test[https://api.github.com]",
       avatarUrl: "",
       bot: false,
@@ -46,6 +47,7 @@ describe("sync viewers", () => {
     connection = await db.connections.get("2");
     expect(connection?.viewer).toBeDefined();
     expect(connection?.viewer?.user).toEqual({
+      id: "u1",
       name: "test[https://api.github.com]",
       avatarUrl: "",
       bot: false,

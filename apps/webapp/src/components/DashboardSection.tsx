@@ -15,7 +15,6 @@ export type Props = {
   onMoveDown: () => void;
   onChange: (v: Section) => void;
   onDelete: () => void;
-  onStar: (v: Pull) => void;
 };
 
 export default function DashboardSection({
@@ -28,7 +27,6 @@ export default function DashboardSection({
   onMoveUp,
   onMoveDown,
   onDelete,
-  onStar,
 }: Props) {
   const [isEditing, setEditing] = useState(false);
   return (
@@ -37,7 +35,6 @@ export default function DashboardSection({
         label={section.label}
         pulls={pulls}
         isLoading={isLoading}
-        onStar={onStar}
         actions={
           <>
             <Button

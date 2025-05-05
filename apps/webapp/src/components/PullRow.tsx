@@ -1,18 +1,18 @@
 import { Tooltip, Tag, Icon } from "@blueprintjs/core";
 import TimeAgo from "./TimeAgo";
-import { CheckState, type Pull, PullState } from "@repo/github";
+import { type Pull } from "@repo/github";
 import IconWithTooltip from "./IconWithTooltip";
 import { computeSize } from "../lib/size";
 import styles from "./PullRow.module.scss";
 import { useState } from "react";
 import CopyToClipboardIcon from "./CopyToClipboardIcon";
+import { toggleStar } from "../lib/mutations";
 
 export type Props = {
   pull: Pull;
-  onStar?: () => void;
 };
 
-const formatDate = (d: Date | string) => {
+const formatDate = (d: string) => {
   return new Date(d).toLocaleDateString("en", {
     year: "numeric",
     month: "long",
@@ -22,7 +22,7 @@ const formatDate = (d: Date | string) => {
   });
 };
 
-export default function PullRow({ pull, onStar }: Props) {
+export default function PullRow({ pull }: Props) {
   const [active, setActive] = useState(false);
   const handleClick = (e: React.MouseEvent) => {
     // Manually reproduce the behaviour of CTRL+click or middle mouse button.
@@ -34,7 +34,7 @@ export default function PullRow({ pull, onStar }: Props) {
   };
   const handleStar = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onStar && onStar();
+    toggleStar(pull).catch(console.error);
   };
   return (
     <tr
@@ -65,52 +65,62 @@ export default function PullRow({ pull, onStar }: Props) {
       </td>
       <td>
         <div className={styles.author}>
-          <Tooltip content={pull.author.name}>
-            {pull.author.avatarUrl ? (
-              <img src={pull.author.avatarUrl} />
-            ) : (
-              <Icon icon="user" />
-            )}
-          </Tooltip>
+          {pull.author && (
+            <Tooltip content={pull.author.name}>
+              {pull.author.avatarUrl ? (
+                <img src={pull.author.avatarUrl} />
+              ) : (
+                <Icon icon="user" />
+              )}
+            </Tooltip>
+          )}
         </div>
       </td>
       <td>
-        {pull.state == PullState.Draft ? (
+        {pull.state == "draft" ? (
           <IconWithTooltip icon="document" title="Draft" color="#5F6B7C" />
-        ) : pull.state == PullState.Merged ? (
+        ) : pull.state == "merged" ? (
           <IconWithTooltip icon="git-merge" title="Merged" color="#634DBF" />
-        ) : pull.state == PullState.Closed ? (
+        ) : pull.state == "enqueued" ? (
+          <IconWithTooltip
+            icon="many-to-one"
+            title="Enqueued"
+            color="#1C6E42"
+          />
+        ) : pull.state == "closed" ? (
           <IconWithTooltip icon="cross-circle" title="Closed" color="#AC2F33" />
-        ) : pull.state == PullState.Approved ? (
+        ) : pull.state == "approved" ? (
           <IconWithTooltip icon="git-pull" title="Approved" color="#1C6E42" />
-        ) : pull.state == PullState.Pending ? (
+        ) : pull.state == "pending" ? (
           <IconWithTooltip icon="git-pull" title="Pending" color="#C87619" />
         ) : null}
       </td>
       <td>
-        {pull.ciState == CheckState.Error ? (
+        {pull.checkState == "error" ? (
           <IconWithTooltip icon="error" title="Error" color="#AC2F33" />
-        ) : pull.ciState == CheckState.Failure ? (
+        ) : pull.checkState == "failure" ? (
           <IconWithTooltip
             icon="cross-circle"
             title="Some checks are failing"
             color="#AC2F33"
           />
-        ) : pull.ciState == CheckState.Success ? (
+        ) : pull.checkState == "success" ? (
           <IconWithTooltip
             icon="tick-circle"
             title="All checks passing"
             color="#1C6E42"
           />
-        ) : pull.ciState == CheckState.Pending ? (
-          <IconWithTooltip icon="circle" title="Pending" color="#C87619" />
         ) : (
-          <IconWithTooltip icon="remove" title="No status" color="#5F6B7C" />
+          <IconWithTooltip icon="circle" title="Pending" color="#C87619" />
         )}
       </td>
       <td>
         <Tooltip content={formatDate(pull.updatedAt)}>
-          <TimeAgo date={pull.updatedAt} tooltip={false} timeStyle="round" />
+          <TimeAgo
+            date={new Date(pull.updatedAt)}
+            tooltip={false}
+            timeStyle="round"
+          />
         </Tooltip>
       </td>
       <td>
