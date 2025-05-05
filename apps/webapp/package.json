@@ -13,9 +13,9 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@blueprintjs/core": "^5.10.3",
-    "@blueprintjs/icons": "^5.9.0",
-    "@blueprintjs/select": "^5.1.5",
+    "@blueprintjs/core": "^5.19.0",
+    "@blueprintjs/icons": "^5.22.0",
+    "@blueprintjs/select": "^5.3.20",
     "@repo/github": "workspace:*",
     "@types/uuid": "^10.0.0",
     "clsx": "^2.1.1",
