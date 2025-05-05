@@ -49,10 +49,18 @@ Whether a user is in the attention set of a pull request is determined by a set 
 - A draft, merged or closed pull request has an empty attention set.
 - A requested reviewer (either directly or via a team) is in the attention set if the pull request is not already approved.
   Once they leave a review, they will not be "requested" anymore.
-- An author or reviewer is in the attention set when somebody replied in an unresolved discussion.
-- An author is in the attention set when a reviewer left a comment in an unresolved discussion.
-- An author is in the attention set when CI is failing.
-- An author is in the attention set when the pull request is approved.
+- A reviewer is in the attention set when somebody replied to them in an unresolved discussion.
+- A reviewer is in the attention set when the pull request is not approved despite having no unresolved discussions.
+- An author is in the attention set when somebody left a comment in an unresolved discussion.
+- An author is in the attention set when a check is failing.
+- An author is in the attention set when the pull request is approved but not merged.
+- An author is in the attention set when the pull request is enqueued but unmergeable.
+
+Moreover, the following are ignored for the purpose of computing the attention set:
+- Comments from bot in the top-level discussion.
+The latter tends to be a catch-all thread where bot post random comments (such as coverage reports or preview deployments) that usually do not require any action.
+- Threads that only have comments from the pull request author.
+Those are usually indications to the reviewers that do not require any action.
 
 :::note
 Those rules are designed to be "mostly correct", but they are not expected to be perfect and work for all use cases.
