@@ -88,6 +88,7 @@ export default function Dashboard() {
 
       {useAttentionSet && (
         <SectionCard
+          id="attention"
           label="Needs attention"
           isLoading={pulls.isLoading}
           pulls={pullsWithAttention}
