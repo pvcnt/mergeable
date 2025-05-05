@@ -83,7 +83,7 @@ export default function PullRow({ pull }: Props) {
           <IconWithTooltip icon="git-merge" title="Merged" color="#634DBF" />
         ) : pull.state == "enqueued" ? (
           <IconWithTooltip
-            icon="many-to-one"
+            icon="time"
             title="Enqueued"
             color="#1C6E42"
           />
