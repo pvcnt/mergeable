@@ -12,12 +12,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: $pt-text-color;
     cursor: pointer;
-    &:hover {
-        color: $pt-text-color;
-        text-decoration: none;
-    }
 }
 
 .actions {
