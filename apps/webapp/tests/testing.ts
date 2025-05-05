@@ -1,4 +1,10 @@
-import { type Pull } from "@repo/github";
+import {
+  Endpoint,
+  GitHubClient,
+  Profile,
+  PullProps,
+  type Pull,
+} from "@repo/github";
 import { type Section, type Connection } from "../src/lib/types";
 
 export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
@@ -58,4 +64,36 @@ export function mockConnection(props?: Partial<Connection>): Connection {
     orgs: [],
     ...props,
   };
+}
+
+export class TestGitHubClient implements GitHubClient {
+  private pullsBySearch: Record<string, PullProps[]> = {};
+
+  getViewer(endpoint: Endpoint): Promise<Profile> {
+    return Promise.resolve({
+      user: {
+        id: "u1",
+        name: `test[${endpoint.baseUrl}]`,
+        avatarUrl: "",
+        bot: false,
+      },
+      teams: [{ id: "t1", name: "test" }],
+    });
+  }
+
+  searchPulls(endpoint: Endpoint, search: string): Promise<PullProps[]> {
+    const pulls =
+      this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] ||
+      [];
+    return Promise.resolve(pulls);
+  }
+
+  setPullsBySearch(endpoint: Endpoint, search: string, pulls: PullProps[]) {
+    this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] =
+      pulls;
+  }
+
+  clear(): void {
+    this.pullsBySearch = {};
+  }
 }

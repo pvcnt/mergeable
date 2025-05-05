@@ -77,14 +77,8 @@ export function prepareQuery(search: string, orgs: string[]): string {
 export class SearchQuery {
   terms: SearchTerm[];
 
-  constructor(init?: SearchTerm[] | string) {
-    if (init === undefined) {
-      this.terms = [];
-    } else if (typeof init === "string") {
-      this.terms = this.parseTerms(init);
-    } else {
-      this.terms = init;
-    }
+  constructor(q: string) {
+    this.terms = this.parseTerms(q);
   }
 
   has(qualifier: string): boolean {

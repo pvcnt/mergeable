@@ -373,35 +373,3 @@ export class DefaultGitHubClient implements GitHubClient {
     }
   }
 }
-
-export class TestGitHubClient implements GitHubClient {
-  private pullsBySearch: Record<string, PullProps[]> = {};
-
-  getViewer(endpoint: Endpoint): Promise<Profile> {
-    return Promise.resolve({
-      user: {
-        id: "u1",
-        name: `test[${endpoint.baseUrl}]`,
-        avatarUrl: "",
-        bot: false,
-      },
-      teams: [{ id: "t1", name: "test" }],
-    });
-  }
-
-  searchPulls(endpoint: Endpoint, search: string): Promise<PullProps[]> {
-    const pulls =
-      this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] ||
-      [];
-    return Promise.resolve(pulls);
-  }
-
-  setPullsBySearch(endpoint: Endpoint, search: string, pulls: PullProps[]) {
-    this.pullsBySearch[`${endpoint.baseUrl}:${endpoint.auth}:${search}`] =
-      pulls;
-  }
-
-  clear(): void {
-    this.pullsBySearch = {};
-  }
-}
