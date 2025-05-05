@@ -1,9 +1,18 @@
-import { AnchorButton, Button, Icon, Intent, Tooltip } from "@blueprintjs/core";
+import {
+  AnchorButton,
+  Button,
+  HotkeyConfig,
+  Icon,
+  Intent,
+  Tooltip,
+  useHotkeys,
+} from "@blueprintjs/core";
 import { NavLink } from "react-router-dom";
 import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
 import styles from "./Sidebar.module.scss";
 import TimeAgo from "./TimeAgo";
 import { useActivity } from "../lib/queries";
+import { useCallback, useMemo } from "react";
 
 function SidebarLink({
   title,
@@ -35,7 +44,25 @@ type Props = {
 
 export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
   const refreshActivity = useActivity("syncPulls");
-  const handleRefresh = () => onRefresh().catch(console.error);
+  const handleRefresh = useCallback(
+    () => onRefresh().catch(console.error),
+    [onRefresh],
+  );
+
+  const hotkeys: HotkeyConfig[] = useMemo(
+    () => [
+      {
+        combo: "r",
+        global: true,
+        label: "Refresh pull requests",
+        preventDefault: true,
+        onKeyDown: handleRefresh,
+      },
+    ],
+    [handleRefresh],
+  );
+  useHotkeys(hotkeys);
+
   return (
     <div className={styles.sidebar}>
       <img src="/logo.svg" height="30" className={styles.logo} />

@@ -9,6 +9,8 @@ test("should display a spinner when loading", () => {
 });
 
 test("should display a table when loaded", () => {
-  render(<SectionCard id="1" label="Test" pulls={[mockPull()]} isLoading={false} />);
+  render(
+    <SectionCard id="1" label="Test" pulls={[mockPull()]} isLoading={false} />,
+  );
   expect(screen.queryByRole("table")).toBeDefined();
 });
