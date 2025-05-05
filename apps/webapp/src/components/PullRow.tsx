@@ -111,7 +111,7 @@ export default function PullRow({ pull }: Props) {
             color="#1C6E42"
           />
         ) : (
-          <IconWithTooltip icon="circle" title="Pending" color="#C87619" />
+          <IconWithTooltip icon="remove" title="Pending" color="#5F6B7C" />
         )}
       </td>
       <td>
