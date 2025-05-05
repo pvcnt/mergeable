@@ -134,23 +134,12 @@ export async function syncPullsOnce(
       );
       const previousKeys = new Set(await db.pulls.toCollection().primaryKeys());
 
-      const stats = { new: 0, unchanged: 0, updated: 0 };
+      const stats = { new: 0, updated: 0 };
 
       const pulls: Pull[] = await Promise.all(
-        results.map(async (res) => {
+        results.map((res) => {
           if (previousKeys.has(res.uid)) {
-            const previousPull = await db.pulls.get(res.uid);
-            // Avoid fetching information if the pull request did not change.
-            if (
-              previousPull !== undefined &&
-              res.updatedAt <= previousPull.updatedAt &&
-              previousPull.schemaVersion === LATEST_SCHEMA_VERSION
-            ) {
-              stats.unchanged += 1;
-              return previousPull;
-            } else {
-              stats.updated += 1;
-            }
+            stats.updated += 1;
           } else {
             stats.new += 1;
           }
@@ -180,7 +169,7 @@ export async function syncPullsOnce(
       await db.pulls.bulkDelete(Array.from(staleKeys));
 
       console.log(
-        `Synced ${pulls.length} pull requests: ${stats.new} new, ${stats.updated} updated, ${stats.unchanged} unchanged, ${staleKeys.size} deleted`,
+        `Synced ${pulls.length} pull requests: ${stats.new} new, ${stats.updated} updated, ${staleKeys.size} deleted`,
       );
     },
   );
