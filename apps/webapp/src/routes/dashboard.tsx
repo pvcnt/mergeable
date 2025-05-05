@@ -4,9 +4,10 @@ import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
 import {
+  DEFAULT_SECTION_LIMIT,
   type Section,
   type SectionProps,
-  defaultSectionProps,
+  emptySection,
 } from "../lib/types";
 import { useSections, usePulls } from "../lib/queries";
 import {
@@ -25,7 +26,7 @@ export default function Dashboard() {
 
   const [isEditing, setEditing] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [newSection, setNewSection] = useState(defaultSectionProps);
+  const [newSection, setNewSection] = useState(emptySection);
 
   const useAttentionSet = sections.data.some((section) => section.attention);
 
@@ -39,10 +40,12 @@ export default function Dashboard() {
   // Open a "New section" dialog if URL is a share link.
   useEffect(() => {
     if (searchParams.get("action") === "share") {
+      const limit = searchParams.get("limit");
       setNewSection({
         label: searchParams.get("label") || "",
         search: searchParams.get("search") || "",
-        attention: defaultSectionProps.attention,
+        limit: limit ? parseInt(limit) : DEFAULT_SECTION_LIMIT,
+        attention: emptySection.attention,
       });
       setEditing(true);
     }
@@ -79,7 +82,7 @@ export default function Dashboard() {
         />
       </Navbar>
       <SectionDialog
-        newSection={newSection}
+        section={newSection}
         title="New section"
         isOpen={sections.isLoaded && isEditing}
         onClose={() => setEditing(false)}

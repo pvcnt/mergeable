@@ -21,8 +21,6 @@ import {
   CheckConclusionState,
 } from "../generated/gql/graphql";
 
-const MAX_PULLS_TO_FETCH = 50;
-
 const MyOctokit = Octokit.plugin(throttling);
 
 export type Endpoint = {
@@ -36,6 +34,7 @@ export interface GitHubClient {
     endpoint: Endpoint,
     search: string,
     orgs: string[],
+    limit: number,
   ): Promise<PullProps[]>;
 }
 
@@ -80,15 +79,13 @@ export class DefaultGitHubClient implements GitHubClient {
     endpoint: Endpoint,
     search: string,
     orgs: string[],
+    limit: number,
   ): Promise<PullProps[]> {
     const q = prepareQuery(search, orgs);
     const query = SearchDocument.toString() as string;
 
     const octokit = this.getOctokit(endpoint);
-    const data = await octokit.graphql<SearchQuery>(query, {
-      q,
-      limit: MAX_PULLS_TO_FETCH,
-    });
+    const data = await octokit.graphql<SearchQuery>(query, { q, limit });
     return (
       data.search.edges
         ?.filter(isNonNull)

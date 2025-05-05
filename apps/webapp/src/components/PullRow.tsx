@@ -82,11 +82,7 @@ export default function PullRow({ pull }: Props) {
         ) : pull.state == "merged" ? (
           <IconWithTooltip icon="git-merge" title="Merged" color="#634DBF" />
         ) : pull.state == "enqueued" ? (
-          <IconWithTooltip
-            icon="time"
-            title="Enqueued"
-            color="#1C6E42"
-          />
+          <IconWithTooltip icon="time" title="Enqueued" color="#1C6E42" />
         ) : pull.state == "closed" ? (
           <IconWithTooltip icon="cross-circle" title="Closed" color="#AC2F33" />
         ) : pull.state == "approved" ? (

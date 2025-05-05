@@ -35,6 +35,7 @@ test("should search pulls", async () => {
     endpoint,
     "repo:pvcnt/mergeable 'multiple connections'",
     [],
+    50,
   );
 
   expect(pulls).toEqual([

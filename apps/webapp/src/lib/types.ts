@@ -1,5 +1,8 @@
 import type { Profile } from "@repo/github";
 
+export const DEFAULT_SECTION_LIMIT = 50;
+export const MAX_SECTION_LIMIT = 50;
+
 /**
  * Properties for a section, as provided by a user in a form or API.
  */
@@ -7,6 +10,7 @@ export type SectionProps = {
   label: string;
   search: string;
   attention: boolean;
+  limit?: number;
 };
 
 export const defaultSections: SectionProps[] = [
@@ -15,16 +19,19 @@ export const defaultSections: SectionProps[] = [
     search:
       "is:open -author:@me review-requested:@me ; is:open -author:@me involves:@me",
     attention: true,
+    limit: DEFAULT_SECTION_LIMIT,
   },
   {
     label: "Outgoing reviews",
     search: "is:open author:@me draft:false",
     attention: true,
+    limit: DEFAULT_SECTION_LIMIT,
   },
   {
     label: "Draft reviews",
     search: "is:open author:@me draft:true",
     attention: true,
+    limit: DEFAULT_SECTION_LIMIT,
   },
 ];
 
@@ -39,10 +46,11 @@ export type Section = SectionProps & {
 /**
  * Default properties for a new section.
  */
-export const defaultSectionProps: SectionProps = {
+export const emptySection: SectionProps = {
   label: "",
   search: "",
   attention: true,
+  limit: DEFAULT_SECTION_LIMIT,
 };
 
 /**
