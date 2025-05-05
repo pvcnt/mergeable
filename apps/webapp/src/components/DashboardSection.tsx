@@ -32,6 +32,7 @@ export default function DashboardSection({
   return (
     <>
       <SectionCard
+        id={section.id}
         label={section.label}
         pulls={pulls}
         isLoading={isLoading}

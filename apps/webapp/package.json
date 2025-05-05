@@ -30,6 +30,7 @@
     "react-router-dom": "^6.27.0",
     "react-time-ago": "^7.3.3",
     "remeda": "^2.0.5",
+    "usehooks-ts": "^3.1.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
