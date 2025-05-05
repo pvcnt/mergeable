@@ -1,10 +1,12 @@
 export type User = {
+  id: string;
   name: string;
   avatarUrl: string;
   bot: boolean;
 };
 
 export type Team = {
+  id: string;
   name: string;
 };
 
@@ -13,66 +15,68 @@ export type Profile = {
   teams: Team[];
 };
 
-export type PullResult = {
-  id: string;
-  repo: string;
-  number: number;
-  updatedAt: Date;
-};
-
-export enum PullState {
-  Draft,
-  Pending,
-  Approved,
-  Merged,
-  Closed,
-}
-
-export enum CheckState {
-  None,
-  Pending,
-  Error,
-  Failure,
-  Success,
-}
-
 export type Review = {
-  author: User;
-  createdAt: Date;
-  lgtm: boolean;
-};
-
-export type Comment = {
-  id: string;
-  author: User;
-  body: string;
-  createdAt: Date;
+  author: User | null;
+  collaborator: boolean;
+  approved: boolean;
 };
 
 export type Discussion = {
   resolved: boolean;
-  comments: Comment[];
-  file?: {
-    path: string;
-  };
+  numComments: number;
+  participants: Participant[];
+  file?: { path: string; line?: number };
 };
+
+export type Participant = {
+  user: User;
+  numComments: number;
+  lastActiveAt: string;
+};
+
+export type CheckState = "pending" | "error" | "failure" | "success";
+
+export type Check = {
+  name: string;
+  state: CheckState;
+  description: string | null;
+  url: string | null;
+};
+
+export type PullState =
+  | "draft"
+  | "pending"
+  | "approved"
+  | "enqueued"
+  | "merged"
+  | "closed";
+
+export type QueueState = "pending" | "mergeable" | "unmergeable";
 
 export type PullProps = {
   id: string;
   repo: string;
   number: number;
   title: string;
+  body: string;
   state: PullState;
-  ciState: CheckState;
-  createdAt: Date;
-  updatedAt: Date;
+  checkState: CheckState;
+  queueState?: QueueState;
+  createdAt: string;
+  updatedAt: string;
+  enqueuedAt?: string;
+  mergedAt?: string;
+  closedAt?: string;
+  locked: boolean;
   url: string;
+  labels: string[];
   additions: number;
   deletions: number;
-  author: User;
+  author: User | null;
   requestedReviewers: User[];
   requestedTeams: Team[];
   reviews: Review[];
+  checks: Check[];
   discussions: Discussion[];
 };
 

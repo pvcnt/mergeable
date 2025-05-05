@@ -8,7 +8,6 @@ export type Props = {
   label: string;
   isLoading: boolean;
   pulls: Pull[];
-  onStar?: (v: Pull) => void;
   actions?: ReactNode;
 };
 
@@ -16,7 +15,6 @@ export default function SectionCard({
   label,
   isLoading,
   pulls,
-  onStar,
   actions,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
@@ -42,7 +40,7 @@ export default function SectionCard({
         <Spinner />
       ) : (
         <Collapse isOpen={!collapsed}>
-          <PullTable pulls={pulls} onStar={onStar} />
+          <PullTable pulls={pulls} />
         </Collapse>
       )}
     </Card>

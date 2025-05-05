@@ -133,31 +133,35 @@ test("split a search string into queries", () => {
 });
 
 test("should search for non-archived pulls only", () => {
-  expect(prepareQuery("is:open", [])).toEqual("is:open type:pr archived:false");
+  expect(prepareQuery("is:open", [])).toEqual(
+    "is:open type:pr archived:false sort:updated",
+  );
 
   expect(prepareQuery("is:open type:pr", [])).toEqual(
-    "is:open type:pr archived:false",
+    "is:open type:pr archived:false sort:updated",
   );
 
   expect(prepareQuery("is:open is:pr", [])).toEqual(
-    "is:open type:pr archived:false",
+    "is:open type:pr archived:false sort:updated",
   );
 
-  expect(prepareQuery("archived:true", [])).toEqual("archived:true type:pr");
+  expect(prepareQuery("archived:true", [])).toEqual(
+    "archived:true type:pr sort:updated",
+  );
 });
 
 test("should filter by orgs", () => {
   const orgs = ["apache", "kubernetes"];
 
   expect(prepareQuery("is:open", orgs)).toEqual(
-    "is:open type:pr archived:false org:apache org:kubernetes",
+    "is:open type:pr archived:false org:apache org:kubernetes sort:updated",
   );
 
   expect(prepareQuery("is:open org:pvcnt", orgs)).toEqual(
-    "is:open type:pr archived:false org:apache org:kubernetes",
+    "is:open type:pr archived:false org:apache org:kubernetes sort:updated",
   );
 
   expect(prepareQuery("is:open repo:apache/solr", orgs)).toEqual(
-    "is:open repo:apache/solr type:pr archived:false",
+    "is:open repo:apache/solr type:pr archived:false sort:updated",
   );
 });

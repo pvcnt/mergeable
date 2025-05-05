@@ -6,8 +6,8 @@ import { mockConnection, mockSection, mockPull } from "../testing";
 test("should save a connection", async () => {
   const connection = mockConnection({
     viewer: {
-      user: { name: "pvcnt", avatarUrl: "", bot: false },
-      teams: [{ name: "test" }],
+      user: { id: "u1", name: "pvcnt", avatarUrl: "", bot: false },
+      teams: [{ id: "t1", name: "test" }],
     },
     orgs: ["apache", "kubernetes"],
   });

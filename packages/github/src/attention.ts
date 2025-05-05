@@ -1,96 +1,115 @@
+import { firstBy, prop } from "remeda";
 import type { Attention, PullProps, Profile } from "./types";
-import { PullState, CheckState } from "./types";
 
-export function isInAttentionSet(
-  viewer: Profile | null,
-  pull: PullProps,
-): Attention {
+// A pull request is in the attention set if:
+// - The user is the author, and the pull request is approved
+// - The user is the author, and there is a failing CI check
+// - The user is the author, and there is an unread comment in an unresolved discussion
+// - The user is the author, the pull request is not approved with unresolved discussions
+// - The user is the author, the pull request is enqueued but cannot be merged
+// - The user is a reviewer, and there is an unread comment in an unresolved discussion that he participated in
+// - The user is a reviewer, and the pull request is not approved with no unresolved discussions
+// - The user is a requested reviewer, and the pull request is not approved
+export function isInAttentionSet(viewer: Profile, pull: PullProps): Attention {
   if (
-    pull.state === PullState.Draft ||
-    pull.state === PullState.Merged ||
-    pull.state === PullState.Closed
+    pull.state === "draft" ||
+    pull.state === "merged" ||
+    pull.state === "closed"
   ) {
-    // Draft, merged and closed pull requests have no attention set.
+    // Draft, merged or closed pull requests are never in the attention set.
     return { set: false };
   }
-
-  const viewerName = viewer?.user.name;
-  const viewerTeams = new Set(viewer?.teams.map((r) => r.name));
-
-  const isAuthor = pull.author.name === viewerName;
-  const isApproved = pull.state === PullState.Approved;
-  const isReviewer = pull.reviews.some((r) => r.author.name === viewerName);
+  const isAuthor = pull.author?.id === viewer.user.id;
+  const viewerTeams = new Set(viewer.teams.map((t) => t.id));
+  const isReviewer = pull.reviews.some(
+    (r) => r.collaborator && r.author?.id === viewer.user.id,
+  );
   const isRequestedReviewer =
-    pull.requestedReviewers.some((r) => r.name === viewerName) ||
-    pull.requestedTeams.some((r) => viewerTeams.has(r.name));
+    pull.requestedReviewers.some((r) => r.id === viewer.user.id) ||
+    pull.requestedTeams.some((t) => viewerTeams.has(t.id));
 
   if (!isAuthor && !isReviewer && !isRequestedReviewer) {
     // Only authors and reviewers can be in the attention set.
     return { set: false };
   }
 
-  const reviewerNames = new Set(pull.reviews.map((r) => r.author.name));
-  const commenterNames = new Set<string>();
+  if (pull.state === "enqueued") {
+    // Enqueued pull requests are in the attention set only if they cannot be merged.
+    if (isAuthor && pull.queueState === "unmergeable") {
+      return { set: true, reason: "Pull request is unmergeable" };
+    } else {
+      return { set: false };
+    }
+  }
+
+  let unreadDiscussions = 0;
+  let unresolvedDiscussions = 0;
   for (const discussion of pull.discussions) {
     if (discussion.resolved) {
       // Resolved discussions are ignored.
       continue;
     }
-    const lastViewerCommentPos = discussion.comments.findLastIndex(
-      (c) => c.author.name === viewerName,
-    );
-    let commentsAfterLastViewerComment =
-      lastViewerCommentPos === -1
-        ? discussion.comments
-        : discussion.comments.slice(lastViewerCommentPos + 1);
-    if (discussion.file === undefined) {
-      // Ignore bot comments in top-level discussions, since this particular one tends
-      // to be catch-all, and not really a threaded discussion.
-      commentsAfterLastViewerComment = commentsAfterLastViewerComment.filter(
-        (c) => !c.author.bot,
-      );
+    if (discussion.file) {
+      // Top-level discussion cannot be resolved.
+      unresolvedDiscussions++;
     }
+
+    // Ignore bot comments in top-level discussions, since this particular one tends
+    // to be catch-all, and not really a threaded discussion.
+    const participants = discussion.file
+      ? discussion.participants
+      : discussion.participants.filter((p) => !p.user.bot);
     if (
-      lastViewerCommentPos > -1 &&
-      commentsAfterLastViewerComment.length > 0
+      participants.length === 1 &&
+      participants[0].user.id === viewer.user.id
     ) {
-      // The author and reviewers are always notified when somebody replied to them.
-      commentsAfterLastViewerComment
-        .filter((c) => c.author.name !== viewerName)
-        .forEach((c) => commenterNames.add(c.author.name ?? "Anonymous"));
-    } else if (isAuthor) {
-      // The author (and only them) is notified when a reviewer left a comment in any thread,
-      // even if the author did not participate in this thread.
-      commentsAfterLastViewerComment
-        .filter((c) => reviewerNames.has(c.author.name))
-        .forEach((c) => commenterNames.add(c.author.name ?? "Anonymous"));
+      // Discussions with only comments from the author are ignored.
+      continue;
+    }
+
+    const lastCommenter = firstBy(participants, [prop("lastActiveAt"), "desc"]);
+    const hasNewComments =
+      lastCommenter && lastCommenter.user.id !== viewer.user.id;
+    if (isAuthor && hasNewComments) {
+      // The author is in the attention set if there is any new comment.
+      unreadDiscussions++;
+    } else if (
+      isReviewer &&
+      hasNewComments &&
+      participants.some((p) => p.user.id === viewer.user.id)
+    ) {
+      // A reviewer is in the attention set if there is any new comment
+      // in a discussion they participated in.
+      unreadDiscussions++;
     }
   }
-  if (commenterNames.size > 0) {
+  if (unreadDiscussions > 0) {
     // There have been some relevant new comments that bring the user inside the attention set.
     // Give priority to this reason for being in the attention set over all others, to encourage
     // users to have a look at comments and reply to them.
-    const sortedCommenterNames = Array.from(commenterNames).sort();
-    if (sortedCommenterNames.length === 1) {
-      return { set: true, reason: `${sortedCommenterNames[0]} left a comment` };
-    } else {
-      return {
-        set: true,
-        reason: `${sortedCommenterNames[0]} and ${sortedCommenterNames.length - 1} other${sortedCommenterNames.length > 2 ? "s" : ""} left a comment`,
-      };
-    }
+    return {
+      set: true,
+      reason: `${unreadDiscussions} unread discussion${unreadDiscussions > 1 ? "s" : ""}`,
+    };
+  } else if ((isAuthor || isReviewer) && unresolvedDiscussions > 0) {
+    return {
+      set: true,
+      reason: `${unresolvedDiscussions} unresolved discussion${unresolvedDiscussions > 1 ? "s" : ""}`,
+    };
   } else if (
     isAuthor &&
-    (pull.ciState == CheckState.Error || pull.ciState == CheckState.Failure)
+    (pull.checkState === "error" || pull.checkState == "failure")
   ) {
-    // The author (and only them) is in the attention set if a CI check is failing.
     return { set: true, reason: "CI is failing" };
-  } else if (isAuthor && isApproved) {
-    // The author (and only them) is in the attention set of an approved pull request, because it
-    // now has to merge it.
+  } else if (isAuthor && pull.state === "approved") {
     return { set: true, reason: "Pull request is approved" };
-  } else if (isRequestedReviewer && !isApproved) {
-    // A requested reviewer is part of the attention set if the pull request is not already approved.
+  } else if (
+    isReviewer &&
+    pull.state !== "approved" &&
+    unresolvedDiscussions === 0
+  ) {
+    return { set: true, reason: "Pull request is not approved" };
+  } else if (isRequestedReviewer && pull.state !== "approved") {
     return { set: true, reason: "Review is requested" };
   } else {
     return { set: false };

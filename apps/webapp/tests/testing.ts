@@ -1,4 +1,4 @@
-import { CheckState, type Pull, PullState } from "@repo/github";
+import { type Pull } from "@repo/github";
 import { type Section, type Connection } from "../src/lib/types";
 
 export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
@@ -12,18 +12,22 @@ export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
     repo,
     number,
     title: "Pull request",
-    state: PullState.Pending,
-    ciState: CheckState.None,
-    createdAt: new Date("2024-08-05T15:57:00Z"),
-    updatedAt: new Date("2024-08-05T15:57:00Z"),
+    body: "",
+    state: "pending",
+    checkState: "pending",
+    createdAt: "2024-08-05T15:57:00Z",
+    updatedAt: "2024-08-05T15:57:00Z",
     url: `https://${host}/${repo}/${number}`,
+    locked: false,
     additions: 0,
     deletions: 0,
-    author: { name: "pvcnt", avatarUrl: "", bot: false },
+    author: { id: "u1", name: "pvcnt", avatarUrl: "", bot: false },
     requestedReviewers: [],
     requestedTeams: [],
     reviews: [],
     discussions: [],
+    checks: [],
+    labels: [],
     uid: `${connection}:${id}`,
     host,
     starred: 0,

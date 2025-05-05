@@ -14,7 +14,6 @@ import {
   moveSectionDown,
   moveSectionUp,
   saveSection,
-  toggleStar,
 } from "../lib/mutations";
 import Navbar from "../components/Navbar";
 import { getWorker } from "../worker/client";
@@ -92,7 +91,6 @@ export default function Dashboard() {
           label="Needs attention"
           isLoading={pulls.isLoading}
           pulls={pullsWithAttention}
-          onStar={toggleStar}
         />
       )}
 
@@ -110,7 +108,6 @@ export default function Dashboard() {
               onDelete={() => handleDelete(section)}
               onMoveUp={() => moveSectionUp(section)}
               onMoveDown={() => moveSectionDown(section)}
-              onStar={toggleStar}
             />
           );
         })}

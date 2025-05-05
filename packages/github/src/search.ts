@@ -57,6 +57,9 @@ export function prepareQuery(search: string, orgs: string[]): string {
     q.delete("org");
   }
 
+  // Always sort by updated date, the most recent ones coming first.
+  q.set("sort", "updated");
+
   return q.toString();
 }
 
