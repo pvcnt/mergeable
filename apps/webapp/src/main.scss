@@ -19,9 +19,6 @@
     }
     & a, & a:hover {
         color: $pt-dark-link-color;
-      }
-    & .bp5-tag:not([class*="bp5-intent-primary"])>span {
-        color: $pt-text-color;
     }
     & .bp5-icon>svg {
         color: $light-gray5;
