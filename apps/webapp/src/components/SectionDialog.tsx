@@ -7,18 +7,22 @@ import {
   FormGroup,
   InputGroup,
   Intent,
+  NumericInput,
   TextArea,
 } from "@blueprintjs/core";
 import { useState } from "react";
 import { AppToaster } from "../lib/toaster";
 import ConfirmDialog from "./ConfirmDialog";
-import { type SectionProps, defaultSectionProps } from "../lib/types";
+import {
+  MAX_SECTION_LIMIT,
+  type SectionProps,
+  emptySection,
+} from "../lib/types";
 
 type Props = {
   title: string;
   isOpen: boolean;
   section?: SectionProps;
-  newSection?: SectionProps;
   onClose: () => void;
   onSubmit: (v: SectionProps) => void;
   onDelete?: () => void;
@@ -27,43 +31,25 @@ type Props = {
 export default function SectionDialog({
   title,
   section,
-  newSection,
   isOpen,
   onClose,
   onSubmit,
   onDelete,
 }: Props) {
-  const [label, setLabel] = useState("");
-  const [search, setSearch] = useState("");
-  const [attention, setAttention] = useState(true);
+  const [data, setData] = useState<SectionProps>(emptySection);
   const [isDeleting, setDeleting] = useState(false);
 
   const handleOpening = () => {
-    setLabel(
-      section
-        ? section.label
-        : newSection
-          ? newSection.label
-          : defaultSectionProps.label,
-    );
-    setSearch(
-      section
-        ? section.search
-        : newSection
-          ? newSection.search
-          : defaultSectionProps.search,
-    );
-    setAttention(
-      section
-        ? section.attention
-        : newSection
-          ? newSection.attention
-          : defaultSectionProps.attention,
-    );
+    if (section) {
+      setData(section);
+    } else {
+      // Reset dialog after a section has been created.
+      setData(emptySection);
+    }
   };
   const handleSubmit = () => {
     if (isValid()) {
-      onSubmit({ label, search, attention });
+      onSubmit(data);
       onClose();
     }
   };
@@ -74,8 +60,9 @@ export default function SectionDialog({
   const handleShare = async () => {
     const params = new URLSearchParams();
     params.set("action", "share");
-    params.set("label", label);
-    params.set("search", search);
+    params.set("label", data.label);
+    params.set("search", data.search);
+    params.set("limit", `${data.limit}`);
     await navigator.clipboard.writeText(
       `${window.location.origin}/inbox?${params.toString()}`,
     );
@@ -85,7 +72,8 @@ export default function SectionDialog({
     });
   };
 
-  const isValid = () => label.trim().length > 0 && search.trim().length > 0;
+  const isValid = () =>
+    data.label.trim().length > 0 && data.search.trim().length > 0;
 
   return (
     <>
@@ -98,8 +86,8 @@ export default function SectionDialog({
         <DialogBody>
           <FormGroup label="Section label" labelInfo="(required)">
             <InputGroup
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
+              value={data.label}
+              onValueChange={(v) => setData((prev) => ({ ...prev, label: v }))}
             />
           </FormGroup>
           <FormGroup
@@ -115,15 +103,33 @@ export default function SectionDialog({
             }
           >
             <TextArea
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={data.search}
+              onChange={(e) =>
+                setData((prev) => ({ ...prev, search: e.target.value }))
+              }
               fill
             />
           </FormGroup>
+          <FormGroup
+            label="Maximum number of pull requests"
+            labelInfo="(required)"
+          >
+            <NumericInput
+              value={data.limit}
+              min={1}
+              max={MAX_SECTION_LIMIT}
+              onValueChange={(v) => setData((prev) => ({ ...prev, limit: v }))}
+            />
+          </FormGroup>
           <Checkbox
-            checked={attention}
+            checked={data.attention}
             label="Pull requests in this section can be in the attention set"
-            onChange={(e) => setAttention(e.currentTarget.checked)}
+            onChange={(e) =>
+              setData((prev) => ({
+                ...prev,
+                attention: e.currentTarget.checked,
+              }))
+            }
           />
         </DialogBody>
         <DialogFooter

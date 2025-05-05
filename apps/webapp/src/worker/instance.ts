@@ -6,6 +6,7 @@ import { db } from "../lib/db";
 import { splitQueries } from "@repo/github";
 import { GitHubClient, isInAttentionSet, type Pull } from "@repo/github";
 import { gitHubClient } from "../github";
+import { DEFAULT_SECTION_LIMIT, MAX_SECTION_LIMIT } from "../lib/types";
 
 const syncPullsIntervalMillis = 5 * 60_000; // 5 minutes
 const syncViewersIntervalMillis = 60 * 60_000; // 1 hour
@@ -105,6 +106,10 @@ export async function syncPullsOnce(
                   connection,
                   query,
                   connection.orgs,
+                  Math.min(
+                    MAX_SECTION_LIMIT,
+                    section.limit ?? DEFAULT_SECTION_LIMIT,
+                  ),
                 );
                 return pulls.map((res) => ({
                   ...res,
