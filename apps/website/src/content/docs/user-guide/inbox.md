@@ -76,6 +76,8 @@ Hovering over it displays the time at which pull requests were last synchronized
 
 ![Refresh button with tooltip](../../../assets/screenshots/refresh-button.png)
 
+You may use use the "R" keyboard shortcut to forcefully refresh pull requests.
+
 :::note
 Every synchronization has a cost in terms of API usage.
 Indeed, GitHub API has limits in terms of how many requests may be performed per hour ([REST limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api), [GraphQL limits](https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api)).
