@@ -1,4 +1,4 @@
-import { TestGitHubClient } from "@repo/github";
+import { TestGitHubClient } from "../testing";
 import {
   afterEach,
   beforeEach,

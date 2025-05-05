@@ -32,6 +32,25 @@ test("should contain only the author when CI is failing", () => {
   expect(attention).toEqual({ set: false });
 });
 
+test("should contain the author when unmergeable", () => {
+  const pull = mockPull({
+    author: me,
+    state: "enqueued",
+    queueState: "unmergeable",
+  });
+  const attention = isInAttentionSet(viewer, pull);
+  expect(attention).toEqual({
+    set: true,
+    reason: "Pull request is unmergeable",
+  });
+});
+
+test("should contain only the author when unmergeable", () => {
+  const pull = mockPull({ state: "enqueued", queueState: "unmergeable" });
+  const attention = isInAttentionSet(viewer, pull);
+  expect(attention).toEqual({ set: false });
+});
+
 test("should contain a requested reviewer when pull is not approved", () => {
   const pull = mockPull({ state: "pending", requestedReviewers: [me] });
   const attention = isInAttentionSet(viewer, pull);
