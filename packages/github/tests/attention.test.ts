@@ -5,7 +5,6 @@ import { type Pull } from "../src/types";
 const me = { id: "99", name: "test", avatarUrl: "", bot: false };
 const user1 = { id: "1", name: "test1", avatarUrl: "", bot: false };
 const user2 = { id: "2", name: "test2", avatarUrl: "", bot: false };
-const bot = { id: "4", name: "test4", avatarUrl: "", bot: true };
 const viewer = { user: me, teams: [] };
 
 test("should contain the author when pull is approved", () => {
@@ -75,7 +74,7 @@ test("should be empty when pull is closed", () => {
   expect(attention).toEqual({ set: false });
 });
 
-test("should contain the author when somebody replied", () => {
+test("should contain the author when a user replied", () => {
   const pull = mockPull({
     state: "pending",
     author: me,
@@ -87,6 +86,7 @@ test("should contain the author when somebody replied", () => {
           { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
           { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
@@ -94,7 +94,7 @@ test("should contain the author when somebody replied", () => {
   expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
 });
 
-test("should contain the author when somebody left a comment", () => {
+test("should contain the author when a user left a comment", () => {
   const pull = mockPull({
     state: "pending",
     author: me,
@@ -103,8 +103,9 @@ test("should contain the author when somebody left a comment", () => {
         resolved: false,
         numComments: 2,
         participants: [
-          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
@@ -112,7 +113,7 @@ test("should contain the author when somebody left a comment", () => {
   expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
 });
 
-test("should contain the author when somebody left a comment and somebody replied in different discussions", () => {
+test("should contain the author when a user left a comment and another user replied in different discussions", () => {
   const pull = mockPull({
     state: "pending",
     author: me,
@@ -123,6 +124,7 @@ test("should contain the author when somebody left a comment and somebody replie
         participants: [
           { user: user2, numComments: 1, lastActiveAt: "2025-05-05T10:50:00Z" },
         ],
+        file: { path: "README.md" },
       },
       {
         resolved: false,
@@ -131,6 +133,7 @@ test("should contain the author when somebody left a comment and somebody replie
           { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
           { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
@@ -150,6 +153,7 @@ test("should not contain the author when a user replied in a resolved discussion
           { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
           { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
@@ -157,37 +161,16 @@ test("should not contain the author when a user replied in a resolved discussion
   expect(attention).toEqual({ set: false });
 });
 
-test("should contain the author when only bots replied", () => {
+test("should not contain the author when a user posted in the top-level discussion", () => {
   const pull = mockPull({
     state: "pending",
     author: me,
     discussions: [
       {
         resolved: false,
-        numComments: 2,
-        file: { path: "README.md" },
+        numComments: 1,
         participants: [
-          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
-          { user: bot, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
-        ],
-      },
-    ],
-  });
-  const attention = isInAttentionSet(viewer, pull);
-  expect(attention).toEqual({ set: true, reason: "1 unread discussion" });
-});
-
-test("should not contain the author when only bots replied to the top-level discussion", () => {
-  const pull = mockPull({
-    state: "pending",
-    author: me,
-    discussions: [
-      {
-        resolved: false,
-        numComments: 2,
-        participants: [
-          { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
-          { user: bot, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
+          { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
         ],
       },
     ],
@@ -207,6 +190,7 @@ test("should not contain the author when only the author posted", () => {
         participants: [
           { user: me, numComments: 2, lastActiveAt: "2025-05-05T10:30:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
@@ -214,7 +198,7 @@ test("should not contain the author when only the author posted", () => {
   expect(attention).toEqual({ set: false });
 });
 
-test("should contain a reviewer when somebody replied", () => {
+test("should contain a reviewer when a user replied", () => {
   const pull = mockPull({
     state: "pending",
     author: user1,
@@ -227,6 +211,7 @@ test("should contain a reviewer when somebody replied", () => {
           { user: me, numComments: 1, lastActiveAt: "2025-05-05T10:30:00Z" },
           { user: user1, numComments: 1, lastActiveAt: "2025-05-05T10:40:00Z" },
         ],
+        file: { path: "README.md" },
       },
     ],
   });
