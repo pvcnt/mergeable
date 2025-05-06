@@ -1,10 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { BlueprintProvider } from "@blueprintjs/core";
 import App from "./App.tsx";
 import ErrorPage from "./error-page.tsx";
@@ -38,19 +34,12 @@ const routes = [
     ],
   },
 ];
-const router = createBrowserRouter(routes, {
-  future: {
-    v7_relativeSplatPath: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-  },
-});
+const router = createBrowserRouter(routes);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BlueprintProvider>
-      <RouterProvider router={router} future={{ v7_startTransition: true }} />
+      <RouterProvider router={router} />
     </BlueprintProvider>
   </React.StrictMode>,
 );

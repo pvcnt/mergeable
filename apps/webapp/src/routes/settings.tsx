@@ -13,7 +13,7 @@ import {
 import type { Connection, ConnectionProps } from "../lib/types";
 import styles from "./settings.module.scss";
 import { AppToaster } from "../lib/toaster";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function Settings() {
   const [isEditing, setEditing] = useState(false);

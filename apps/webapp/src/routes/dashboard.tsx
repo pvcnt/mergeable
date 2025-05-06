@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";

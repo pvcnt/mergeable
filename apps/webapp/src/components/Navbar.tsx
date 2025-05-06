@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Alignment, Button, Navbar as BPNavbar } from "@blueprintjs/core";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 
 import styles from "./Navbar.module.scss";
 
