@@ -43,7 +43,7 @@ export default function Settings() {
       message: "Configuration has been reset to factory settings",
       intent: "success",
     });
-    navigate("/inbox");
+    await navigate("/inbox");
   };
 
   return (
