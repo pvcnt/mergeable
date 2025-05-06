@@ -1,18 +1,12 @@
 import {
   AnchorButton,
   Button,
-  HotkeyConfig,
   Icon,
-  Intent,
   Tooltip,
-  useHotkeys,
 } from "@blueprintjs/core";
 import { NavLink } from "react-router";
 import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
 import styles from "./Sidebar.module.scss";
-import TimeAgo from "./TimeAgo";
-import { useActivity } from "../lib/queries";
-import { useCallback, useMemo } from "react";
 
 function SidebarLink({
   title,

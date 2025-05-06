@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router";
 import clsx from "clsx";
-
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import { useConnections, usePulls } from "./lib/queries";
-
 import styles from "./App.module.scss";
 import { Card } from "@blueprintjs/core";
-import { getWorker } from "./worker/client";
 
 export default function App() {
   const [isDark, setDark] = useState<boolean>(() => {
@@ -16,8 +13,6 @@ export default function App() {
     return JSON.parse(localStorage.getItem("isDark") || "false") as boolean;
   });
   const connections = useConnections();
-
-  const worker = getWorker();
 
   useEffect(() => {
     // Write the isDark value to local storage whenever it changes
