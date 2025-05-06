@@ -9,7 +9,6 @@ import { useConnections, usePulls } from "./lib/queries";
 import styles from "./App.module.scss";
 import { Card } from "@blueprintjs/core";
 import { getWorker } from "./worker/client";
-import CommandBar from "./components/CommandBar";
 
 export default function App() {
   const [isDark, setDark] = useState<boolean>(() => {
@@ -40,7 +39,6 @@ export default function App() {
 
   return (
     <div className={clsx(styles.app, isDark && "bp5-dark")}>
-      <CommandBar />
       <Sidebar
         isDark={isDark}
         onDarkChange={() => setDark((v) => !v)}

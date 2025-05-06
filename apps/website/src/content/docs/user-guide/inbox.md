@@ -49,15 +49,11 @@ Openining it in the browser will direct them to their own dashboard, with a new 
 
 ## Search for pull requests
 
-You may search for pull requests using the command bar, that is invoked by <code>cmd+k</code>:
+You can search for pull requests using the search box, which can be focused by hitting the "S" key:
 
-![Command bar](../../../assets/screenshots/search-pulls.png)
+![Command bar](../../../assets/screenshots/search-box.png)
 
-This performs a fuzzy search on the title, and highlights the matching characters.
-Clicking on a pull requests (or using keyboard arrows and hitting enter) will open the selected pull request in a new tab.
-
-You may search for any pull request that is synchronized in Mergeable, i.e., any pull request that appears on the dashboard.
-This does not allow to search for random pull requests on GitHub.
+This performs a fuzzy search on the title, and filters the pull requests displayed below to include those that match.
 
 ## Star pull requests
 

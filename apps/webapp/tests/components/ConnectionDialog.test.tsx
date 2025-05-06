@@ -6,7 +6,7 @@ import { AppToaster } from "../../src/lib/toaster";
 import type { ConnectionProps } from "../../src/lib/types";
 import { mockConnection } from "../testing";
 
-describe("connection dialog", () => {
+describe("ConnectionDialog", () => {
   let user: UserEvent | undefined;
 
   beforeEach(() => {
