@@ -14,18 +14,26 @@ import { useState } from "react";
 import { AppToaster } from "../lib/toaster";
 import ConfirmDialog from "./ConfirmDialog";
 import {
+  DEFAULT_SECTION_LIMIT,
   MAX_SECTION_LIMIT,
   type SectionProps,
-  emptySection,
 } from "../lib/types";
 
-type Props = {
+export interface SectionDialogProps {
   title: string;
   isOpen: boolean;
   section?: SectionProps;
   onClose: () => void;
   onSubmit: (v: SectionProps) => void;
   onDelete?: () => void;
+};
+
+// Default properties for a new section.
+const emptySection: SectionProps = {
+  label: "",
+  search: "",
+  attention: true,
+  limit: DEFAULT_SECTION_LIMIT,
 };
 
 export default function SectionDialog({
@@ -35,7 +43,7 @@ export default function SectionDialog({
   onClose,
   onSubmit,
   onDelete,
-}: Props) {
+}: SectionDialogProps) {
   const [data, setData] = useState<SectionProps>(emptySection);
   const [isDeleting, setDeleting] = useState(false);
 

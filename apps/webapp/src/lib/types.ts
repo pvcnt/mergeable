@@ -44,16 +44,6 @@ export type Section = SectionProps & {
 };
 
 /**
- * Default properties for a new section.
- */
-export const emptySection: SectionProps = {
-  label: "",
-  search: "",
-  attention: true,
-  limit: DEFAULT_SECTION_LIMIT,
-};
-
-/**
  * Properties for a connection, as provided by a user in a form or API.
  */
 export type ConnectionProps = {

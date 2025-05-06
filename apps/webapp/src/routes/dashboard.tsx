@@ -7,7 +7,6 @@ import {
   DEFAULT_SECTION_LIMIT,
   type Section,
   type SectionProps,
-  emptySection,
 } from "../lib/types";
 import { useSections, usePulls } from "../lib/queries";
 import {
@@ -26,7 +25,7 @@ export default function Dashboard() {
 
   const [isEditing, setEditing] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [newSection, setNewSection] = useState(emptySection);
+  const [newSection, setNewSection] = useState<SectionProps>();
 
   const useAttentionSet = sections.data.some((section) => section.attention);
 
@@ -45,7 +44,7 @@ export default function Dashboard() {
         label: searchParams.get("label") || "",
         search: searchParams.get("search") || "",
         limit: limit ? parseInt(limit) : DEFAULT_SECTION_LIMIT,
-        attention: emptySection.attention,
+        attention: true,
       });
       setEditing(true);
     }
@@ -59,6 +58,7 @@ export default function Dashboard() {
     // has been created from those parameters.
     if (searchParams.get("action") === "share") {
       setSearchParams({});
+      setNewSection(undefined);
     }
     worker.refreshPulls().catch(console.error);
   };
