@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router";
 import clsx from "clsx";
 
 import Sidebar from "./components/Sidebar";

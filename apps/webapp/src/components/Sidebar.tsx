@@ -7,7 +7,7 @@ import {
   Tooltip,
   useHotkeys,
 } from "@blueprintjs/core";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
 import styles from "./Sidebar.module.scss";
 import TimeAgo from "./TimeAgo";
