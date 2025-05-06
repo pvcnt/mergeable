@@ -7,6 +7,9 @@ import ErrorPage from "./error-page.tsx";
 import Dashboard from "./routes/dashboard.tsx";
 import Settings from "./routes/settings.tsx";
 import Stars from "./routes/stars.tsx";
+import "normalize.css/normalize.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "./main.scss";
 
 const routes = [

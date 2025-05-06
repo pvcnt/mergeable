@@ -1,4 +1,4 @@
-@import "@blueprintjs/core/lib/scss/variables";
+@use "@blueprintjs/core/lib/scss/variables" as bp;
 
 .row {
     td {
@@ -40,14 +40,14 @@
 }
 
 .title {
-    margin-bottom: 0.25 * $pt-grid-size;
+    margin-bottom: 0.25 * bp.$pt-grid-size;
     span {
         font-weight: 600;
     }
 }
 
 .source {
-    font-size: $pt-font-size-small;
+    font-size: bp.$pt-font-size-small;
 }
 
 .author img {
@@ -61,15 +61,15 @@
 }
 
 .additions {
-    color: $green4 !important;
+    color: bp.$green4 !important;
 }
 
 .deletions {
-    color: $red4 !important;
+    color: bp.$red4 !important;
 }
 
 .copy {
-    color: $gray1;
-    padding-left: $pt-grid-size;
-    padding-right: $pt-grid-size;
+    color: bp.$gray1;
+    padding-left: bp.$pt-grid-size;
+    padding-right: bp.$pt-grid-size;
 }
