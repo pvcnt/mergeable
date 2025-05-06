@@ -77,7 +77,7 @@ export default function Dashboard() {
         <Button
           text="New section"
           icon="plus"
-          minimal
+          variant="minimal"
           onClick={() => setEditing(true)}
         />
       </Navbar>

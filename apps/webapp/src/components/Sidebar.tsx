@@ -27,7 +27,7 @@ function SidebarLink({
     <NavLink to={link}>
       {({ isActive }) => (
         <Tooltip content={title}>
-          <Button minimal active={isActive}>
+          <Button variant="minimal" active={isActive}>
             <Icon icon={icon} />
           </Button>
         </Tooltip>
@@ -99,14 +99,14 @@ export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
       <div className={styles.bottom}>
         <Tooltip content="Help">
           <AnchorButton
-            minimal
+            variant="minimal"
             href="https://pvcnt.github.io/mergeable/user-guide/"
           >
             <Icon icon="help" />
           </AnchorButton>
         </Tooltip>
         <Tooltip content={"Switch to " + (isDark ? "light" : "dark") + " mode"}>
-          <Button onClick={onDarkChange} minimal>
+          <Button onClick={onDarkChange} variant="minimal">
             <Icon icon={isDark ? "flash" : "moon"} />
           </Button>
         </Tooltip>
