@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConfirmDialog from "../../src/components/ConfirmDialog";
 
-describe("confirm dialog", () => {
+describe("ConfirmDialog", () => {
   let user: UserEvent | undefined;
 
   beforeEach(() => {

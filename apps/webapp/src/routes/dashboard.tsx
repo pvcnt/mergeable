@@ -18,11 +18,13 @@ import {
 import Navbar from "../components/Navbar";
 import { getWorker } from "../worker/client";
 import SectionCard from "../components/SectionCard";
+import { pullMatches } from "../lib/search";
 
 export default function Dashboard() {
   const sections = useSections();
   const pulls = usePulls();
 
+  const [search, setSearch] = useState<string>("");
   const [isEditing, setEditing] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [newSection, setNewSection] = useState<SectionProps>();
@@ -30,10 +32,15 @@ export default function Dashboard() {
   const useAttentionSet = sections.data.some((section) => section.attention);
 
   const pullsBySection = sections.data.map((section) =>
-    pulls.data.filter((pull) => pull.sections.indexOf(section.id) > -1),
+    pulls.data.filter(
+      (pull) =>
+        pullMatches(search, pull) && pull.sections.indexOf(section.id) > -1,
+    ),
   );
   const pullsWithAttention = useAttentionSet
-    ? pulls.data.filter((pull) => pull.attention?.set)
+    ? pulls.data.filter(
+        (pull) => pullMatches(search, pull) && pull.attention?.set,
+      )
     : [];
 
   // Open a "New section" dialog if URL is a share link.
@@ -73,7 +80,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar>
+      <Navbar search={search} onSearchChange={setSearch}>
         <Button
           text="New section"
           icon="plus"
