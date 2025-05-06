@@ -1,18 +1,18 @@
-@import "@blueprintjs/core/lib/scss/variables";
+@use "@blueprintjs/core/lib/scss/variables" as bp;
 
 .table {
     width: 100%;
     th {
-        color: $pt-text-color-muted !important;
+        color: bp.$pt-text-color-muted !important;
         font-weight: normal !important;
-        font-size: $pt-font-size-small;
+        font-size: bp.$pt-font-size-small;
         svg {
-            fill: $pt-text-color-muted;
+            fill: bp.$pt-text-color-muted;
         }
     }
 }
 
 .empty {
-    color: $dark-gray5;
+    color: bp.$dark-gray5;
     margin: 0;
 }

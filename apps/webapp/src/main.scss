@@ -1,7 +1,4 @@
-@import "normalize.css/normalize.css";
-@import "@blueprintjs/core/lib/css/blueprint.css";
-@import "@blueprintjs/select/lib/css/blueprint-select.css";
-@import "@blueprintjs/core/lib/scss/variables";
+@use "@blueprintjs/core/lib/scss/variables" as bp;
 
 *:focus {
     outline: 0;
@@ -15,12 +12,12 @@
     background-color: #2f343c;
 
     & table.bp5-html-table td, & table.bp5-html-table th, & span, & div, & p, & time {
-        color: $light-gray5;
+        color: bp.$light-gray5;
     }
     & a, & a:hover {
-        color: $pt-dark-link-color;
+        color: bp.$pt-dark-link-color;
     }
     & .bp5-icon>svg {
-        color: $light-gray5;
+        color: bp.$light-gray5;
     }
 }

@@ -1,8 +1,8 @@
-@import "@blueprintjs/core/lib/scss/variables";
+@use "@blueprintjs/core/lib/scss/variables" as bp;
 
 .footer {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    font-size: $pt-font-size-small;
-    color: $dark-gray5;
+    font-size: bp.$pt-font-size-small;
+    color: bp.$dark-gray5;
 }

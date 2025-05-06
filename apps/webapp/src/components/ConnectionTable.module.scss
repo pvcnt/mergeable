@@ -1,10 +1,10 @@
-@import "@blueprintjs/core/lib/scss/variables";
+@use "@blueprintjs/core/lib/scss/variables" as bp;
 
 .table {
     width: 100%;
     thead th {
-        color: $pt-text-color-disabled;
-        font-size: $pt-font-size-small;
+        color: bp.$pt-text-color-disabled;
+        font-size: bp.$pt-font-size-small;
     }
     tbody td {
         overflow: hidden;
