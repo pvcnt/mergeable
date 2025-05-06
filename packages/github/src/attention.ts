@@ -49,25 +49,24 @@ export function isInAttentionSet(viewer: Profile, pull: PullProps): Attention {
       // Resolved discussions are ignored.
       continue;
     }
-    if (discussion.file) {
-      // Top-level discussion cannot be resolved.
-      unresolvedDiscussions++;
+    if (!discussion.file) {
+      // Top-level discussion is ignored, since it tends to be a giant catch-all thread.
+      continue;
     }
-
-    // Ignore bot comments in top-level discussions, since this particular one tends
-    // to be catch-all, and not really a threaded discussion.
-    const participants = discussion.file
-      ? discussion.participants
-      : discussion.participants.filter((p) => !p.user.bot);
     if (
-      participants.length === 1 &&
-      participants[0].user.id === viewer.user.id
+      discussion.participants.length === 1 &&
+      discussion.participants[0].user.id === viewer.user.id
     ) {
       // Discussions with only comments from the author are ignored.
       continue;
     }
 
-    const lastCommenter = firstBy(participants, [prop("lastActiveAt"), "desc"]);
+    unresolvedDiscussions++;
+
+    const lastCommenter = firstBy(discussion.participants, [
+      prop("lastActiveAt"),
+      "desc",
+    ]);
     const hasNewComments =
       lastCommenter && lastCommenter.user.id !== viewer.user.id;
     if (isAuthor && hasNewComments) {
@@ -76,7 +75,7 @@ export function isInAttentionSet(viewer: Profile, pull: PullProps): Attention {
     } else if (
       isReviewer &&
       hasNewComments &&
-      participants.some((p) => p.user.id === viewer.user.id)
+      discussion.participants.some((p) => p.user.id === viewer.user.id)
     ) {
       // A reviewer is in the attention set if there is any new comment
       // in a discussion they participated in.

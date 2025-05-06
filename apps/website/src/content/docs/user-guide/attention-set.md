@@ -56,11 +56,10 @@ Whether a user is in the attention set of a pull request is determined by a set 
 - An author is in the attention set when the pull request is approved but not merged.
 - An author is in the attention set when the pull request is enqueued but unmergeable.
 
-Moreover, the following are ignored for the purpose of computing the attention set:
+Moreover, the following discussions are ignored for the purpose of computing the attention set:
 
-- Comments from bot in the top-level discussion.
-  The latter tends to be a catch-all thread where bot post random comments (such as coverage reports or preview deployments) that usually do not require any action.
-- Threads that only have comments from the pull request author.
+- The top-level (a.k.a., issue-level) discussion, since it tends to be a giant catch-all thread.
+- Discussions that only have comments from the pull request author.
   Those are usually indications to the reviewers that do not require any action.
 
 :::note
