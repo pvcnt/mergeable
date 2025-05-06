@@ -40,17 +40,21 @@ export default function DashboardSection({
           <>
             <Button
               icon="symbol-triangle-up"
-              minimal
+              variant="minimal"
               disabled={isFirst}
               onClick={onMoveUp}
             />
             <Button
               icon="symbol-triangle-down"
-              minimal
+              variant="minimal"
               disabled={isLast}
               onClick={onMoveDown}
             />
-            <Button icon="edit" minimal onClick={() => setEditing(true)} />
+            <Button
+              icon="edit"
+              variant="minimal"
+              onClick={() => setEditing(true)}
+            />
           </>
         }
       />

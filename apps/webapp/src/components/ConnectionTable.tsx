@@ -43,7 +43,7 @@ export default function ConnectionTable({
               <td>
                 <Button
                   text="Edit"
-                  minimal
+                  variant="minimal"
                   onClick={() => setConnection(connection)}
                 ></Button>
               </td>

@@ -26,7 +26,7 @@ export interface SectionDialogProps {
   onClose: () => void;
   onSubmit: (v: SectionProps) => void;
   onDelete?: () => void;
-};
+}
 
 // Default properties for a new section.
 const emptySection: SectionProps = {
@@ -157,11 +157,13 @@ export default function SectionDialog({
             <Button
               intent={Intent.DANGER}
               text="Delete"
-              minimal
+              variant="minimal"
               onClick={() => setDeleting(true)}
             />
           )}
-          {section && <Button text="Share" onClick={handleShare} minimal />}
+          {section && (
+            <Button text="Share" onClick={handleShare} variant="minimal" />
+          )}
         </DialogFooter>
       </Dialog>
 

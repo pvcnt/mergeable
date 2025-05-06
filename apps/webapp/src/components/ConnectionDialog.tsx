@@ -156,7 +156,7 @@ export default function ConnectionDialog({
               intent={Intent.DANGER}
               text="Delete"
               aria-label="Delete"
-              minimal
+              variant="minimal"
               onClick={() => setDeleting(true)}
             />
           )}
