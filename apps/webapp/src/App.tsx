@@ -39,11 +39,7 @@ export default function App() {
 
   return (
     <div className={clsx(styles.app, isDark && "bp5-dark")}>
-      <Sidebar
-        isDark={isDark}
-        onDarkChange={() => setDark((v) => !v)}
-        onRefresh={worker.refreshPulls}
-      />
+      <Sidebar isDark={isDark} onDarkChange={() => setDark((v) => !v)} />
       <main className={styles.main}>
         <div className={styles.content}>
           {connections.isLoaded && connections.data.length === 0 && (

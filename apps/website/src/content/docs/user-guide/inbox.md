@@ -64,18 +64,18 @@ You may (un)star a pull request by clicking on the star icon in the dashboard.
 Once a pull request is starred, the star will appeared filled in the dashboard.
 Starred pull requests appear in the "Starred pulls" tab of the inbox.
 
-## Synchronize pull requests
+## Refresh pull requests
 
-Pull requests are automatically synchronized in the background every 5 minutes.
-You may forcefully synchronize them by clicking on the refresh button in the sidebar.
-Hovering over it displays the time at which pull requests were last synchronized:
+Pull requests are automatically refreshed in the background every 5 minutes.
+You may forcefully refresh them by clicking on the refresh button in the navbar.
+Hovering over it displays the time at which pull requests were last refreshed:
 
 ![Refresh button with tooltip](../../../assets/screenshots/refresh-button.png)
 
-You may use use the "R" keyboard shortcut to forcefully refresh pull requests.
+You may also use the "R" keyboard shortcut to forcefully refresh pull requests.
 
 :::note
-Every synchronization has a cost in terms of API usage.
+Every refresh has a cost in terms of API usage.
 Indeed, GitHub API has limits in terms of how many requests may be performed per hour ([REST limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api), [GraphQL limits](https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api)).
 Please remember that other tools using a personal access token (or OAuth login) associated with a same account will also consume the same quota.
 :::

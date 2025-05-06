@@ -80,11 +80,14 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar search={search} onSearchChange={setSearch}>
+      <Navbar
+        search={search}
+        onSearchChange={setSearch}
+        onRefresh={worker.refreshPulls}
+      >
         <Button
           text="New section"
           icon="plus"
-          variant="minimal"
           onClick={() => setEditing(true)}
         />
       </Navbar>

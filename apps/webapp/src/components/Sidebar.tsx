@@ -39,62 +39,14 @@ function SidebarLink({
 type Props = {
   isDark: boolean;
   onDarkChange: () => void;
-  onRefresh: () => Promise<void>;
 };
 
-export default function Sidebar({ isDark, onDarkChange, onRefresh }: Props) {
-  const refreshActivity = useActivity("syncPulls");
-  const handleRefresh = useCallback(
-    () => onRefresh().catch(console.error),
-    [onRefresh],
-  );
-
-  const hotkeys: HotkeyConfig[] = useMemo(
-    () => [
-      {
-        combo: "r",
-        global: true,
-        label: "Refresh pull requests",
-        preventDefault: true,
-        onKeyDown: handleRefresh,
-      },
-    ],
-    [handleRefresh],
-  );
-  useHotkeys(hotkeys);
-
+export default function Sidebar({ isDark, onDarkChange }: Props) {
   return (
     <div className={styles.sidebar}>
       <img src="/logo.svg" height="30" className={styles.logo} />
       <SidebarLink link="/inbox" title="Inbox" icon="inbox" />
       <SidebarLink link="/settings" title="Settings" icon="cog" />
-
-      <div className={styles.separator} />
-
-      <Tooltip
-        content={
-          refreshActivity && (
-            <span>
-              Refreshed{" "}
-              <TimeAgo
-                date={refreshActivity.refreshTime}
-                tooltip={false}
-                timeStyle="round"
-              />
-            </span>
-          )
-        }
-      >
-        <Button
-          onClick={handleRefresh}
-          loading={refreshActivity?.running}
-          disabled={refreshActivity?.running}
-          intent={Intent.PRIMARY}
-          outlined
-        >
-          <Icon icon="refresh" />
-        </Button>
-      </Tooltip>
 
       <div className={styles.bottom}>
         <Tooltip content="Help">
