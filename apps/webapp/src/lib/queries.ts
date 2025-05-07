@@ -1,6 +1,16 @@
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { defaultSections } from "../lib/types";
+import {
+  Connection,
+  DEFAULT_SECTION_LIMIT,
+  defaultSections,
+  MAX_SECTION_LIMIT,
+  Section,
+} from "../lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { isInAttentionSet, Pull, splitQueries } from "@repo/github";
+import { groupBy, indexBy, prop, sortBy, unique } from "remeda";
+import { gitHubClient } from "../github";
 
 // Defaults to populate after adding new fields.
 const connectionDefaults = { orgs: [] };
@@ -12,10 +22,6 @@ export const useConnections = () => {
     isLoaded: data !== undefined,
     data: data?.map((v) => ({ ...connectionDefaults, ...v })) || [],
   };
-};
-
-export const useActivity = (name: string) => {
-  return useLiveQuery(() => db.activities.get(name));
 };
 
 export const useSections = () => {
@@ -43,22 +49,86 @@ export const useSections = () => {
   };
 };
 
-type PullQuery = {
-  starred?: number;
-};
-
-export const usePulls = (q?: PullQuery) => {
-  const where =
-    q !== undefined
-      ? Object.fromEntries(
-          Object.entries(q).filter((kv) => kv[1] !== undefined),
+export const usePulls = ({
+  connections,
+  sections,
+}: {
+  connections: Connection[];
+  sections: Section[];
+}) => {
+  const key = unique(sections.map((s) => s.search)).toSorted();
+  return useQuery({
+    enabled: connections.length > 0 && sections.length > 0,
+    queryKey: ["pulls", ...key],
+    queryFn: async () => {
+      // Search for pull requests for every section and every connection.
+      // Every request returns node IDs for matching pull requests, and
+      // the date at which each pull request was last updated.
+      const rawResults = (
+        await Promise.all(
+          sections.flatMap((section) => {
+            return connections.flatMap((connection) => {
+              const queries = splitQueries(section.search);
+              return queries.flatMap(async (query) => {
+                const pulls = await gitHubClient.searchPulls(
+                  connection,
+                  query,
+                  connection.orgs,
+                  Math.min(
+                    MAX_SECTION_LIMIT,
+                    section.limit ?? DEFAULT_SECTION_LIMIT,
+                  ),
+                );
+                return pulls.map((res) => ({
+                  ...res,
+                  uid: `${connection.id}:${res.id}`,
+                  sections: [section.id],
+                  connection: connection.id,
+                }));
+              });
+            });
+          }),
         )
-      : undefined;
-  const data = useLiveQuery(() => {
-    const coll =
-      where !== undefined ? db.pulls.where(where) : db.pulls.toCollection();
-    return coll.reverse().sortBy("updatedAt");
+      ).flat();
+
+      // Deduplicate pull requests present in multiple sections.
+      const results = Object.values(
+        groupBy(rawResults, (pull) => pull.uid),
+      ).map((vs) => ({
+        ...vs[0],
+        sections: vs.flatMap((v) => unique(v.sections)),
+      }));
+
+      // For every unique pull request, fetch information about it.
+      const stars = new Set((await db.stars.toArray()).map((star) => star.uid));
+      const connectionsById = indexBy(connections, prop("id"));
+      const sectionsInAttentionSet = new Set(
+        sections.filter((v) => v.attention).map((v) => v.id),
+      );
+      const pulls: Pull[] = await Promise.all(
+        results.map((res) => {
+          const connection = connectionsById[res.connection];
+          const mayBeInAttentionSet = res.sections.some((v) =>
+            sectionsInAttentionSet.has(v),
+          );
+          return {
+            ...res,
+            host: connection.host,
+            schemaVersion: "",
+            starred: stars.has(res.uid),
+            attention:
+              mayBeInAttentionSet && connection.viewer
+                ? isInAttentionSet(connection.viewer, res)
+                : undefined,
+          };
+        }),
+      );
+      return sortBy(pulls, [prop("updatedAt"), "desc"]);
+    },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
-  const isLoading = data === undefined;
-  return { isLoading, data: data || [] };
 };

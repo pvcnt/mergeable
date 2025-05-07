@@ -1,14 +1,10 @@
 import * as Comlink from "comlink";
-import { groupBy, indexBy, prop, unique } from "remeda";
 import { v4 as uuidv4 } from "uuid";
 import localforage from "localforage";
 import { db } from "../lib/db";
-import { splitQueries } from "@repo/github";
-import { GitHubClient, isInAttentionSet, type Pull } from "@repo/github";
+import { GitHubClient } from "@repo/github";
 import { gitHubClient } from "../github";
-import { DEFAULT_SECTION_LIMIT, MAX_SECTION_LIMIT } from "../lib/types";
 
-const syncPullsIntervalMillis = 5 * 60_000; // 5 minutes
 const syncViewersIntervalMillis = 60 * 60_000; // 1 hour
 const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
@@ -81,105 +77,6 @@ export async function syncViewersOnce(
   );
 }
 
-export async function syncPullsOnce(
-  client: GitHubClient,
-  force: boolean = false,
-): Promise<void> {
-  await executeActivity(
-    "syncPulls",
-    syncPullsIntervalMillis,
-    force,
-    async () => {
-      const connections = await db.connections.toArray();
-      const sections = await db.sections.toArray();
-
-      // Search for pull requests for every section and every connection.
-      // Every request returns node IDs for matching pull requests, and
-      // the date at which each pull request was last updated.
-      const rawResults = (
-        await Promise.all(
-          sections.flatMap((section) => {
-            return connections.flatMap((connection) => {
-              const queries = splitQueries(section.search);
-              return queries.flatMap(async (query) => {
-                const pulls = await client.searchPulls(
-                  connection,
-                  query,
-                  connection.orgs,
-                  Math.min(
-                    MAX_SECTION_LIMIT,
-                    section.limit ?? DEFAULT_SECTION_LIMIT,
-                  ),
-                );
-                return pulls.map((res) => ({
-                  ...res,
-                  uid: `${connection.id}:${res.id}`,
-                  sections: [section.id],
-                  connection: connection.id,
-                }));
-              });
-            });
-          }),
-        )
-      ).flat();
-
-      // Deduplicate pull requests present in multiple sections.
-      const results = Object.values(
-        groupBy(rawResults, (pull) => pull.uid),
-      ).map((vs) => ({
-        ...vs[0],
-        sections: vs.flatMap((v) => unique(v.sections)),
-      }));
-
-      // For every unique pull request, fetch information about it.
-      const stars = new Set((await db.stars.toArray()).map((star) => star.uid));
-      const connectionsById = indexBy(connections, prop("id"));
-      const sectionsInAttentionSet = new Set(
-        sections.filter((v) => v.attention).map((v) => v.id),
-      );
-      const previousKeys = new Set(await db.pulls.toCollection().primaryKeys());
-
-      const stats = { new: 0, updated: 0 };
-
-      const pulls: Pull[] = await Promise.all(
-        results.map((res) => {
-          if (previousKeys.has(res.uid)) {
-            stats.updated += 1;
-          } else {
-            stats.new += 1;
-          }
-          const connection = connectionsById[res.connection];
-          const mayBeInAttentionSet = res.sections.some((v) =>
-            sectionsInAttentionSet.has(v),
-          );
-          return {
-            ...res,
-            host: connection.host,
-            schemaVersion: LATEST_SCHEMA_VERSION,
-            starred: stars.has(res.uid) ? 1 : 0,
-            attention:
-              mayBeInAttentionSet && connection.viewer
-                ? isInAttentionSet(connection.viewer, res)
-                : undefined,
-          };
-        }),
-      );
-
-      // Upsert current pull requests...
-      await db.pulls.bulkPut(pulls);
-
-      // ... and remove previous pull requests that are not anymore included in any sections.
-      const staleKeys = new Set(previousKeys);
-      pulls.forEach((pull) => staleKeys.delete(pull.uid));
-      await db.pulls.bulkDelete(Array.from(staleKeys));
-
-      console.log(
-        `Synced ${pulls.length} pull requests: ${stats.new} new, ${stats.updated} updated, ${staleKeys.size} deleted`,
-      );
-    },
-  );
-}
-
 async function sha256(s: string) {
   const bytes = new TextEncoder().encode(s);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -214,7 +111,7 @@ export async function sendTelemetry() {
         version: import.meta.env.VITE_COMMIT_SHA || "devel",
         numSections: await db.sections.count(),
         numConnections: await db.connections.count(),
-        numPulls: await db.pulls.count(),
+        numPulls: -1,
         numStars: await db.stars.count(),
       };
       const response = await fetch(
@@ -237,21 +134,18 @@ export async function sendTelemetry() {
 }
 
 export type Api = {
-  refreshPulls: () => Promise<void>;
   refreshViewers: () => Promise<void>;
 };
 
 self.addEventListener("connect", (event: MessageEvent) => {
   // Start background sync with GitHub.
   schedule(() => syncViewersOnce(gitHubClient), syncViewersIntervalMillis);
-  schedule(() => syncPullsOnce(gitHubClient), syncPullsIntervalMillis);
 
   // Send telemetry in background.
   schedule(sendTelemetry, sendTelemetryIntervalMillis);
 
   // Expose an API to our clients.
   const api: Api = {
-    refreshPulls: () => syncPullsOnce(gitHubClient, true),
     refreshViewers: () => syncViewersOnce(gitHubClient, true),
   };
   Comlink.expose(api, event.ports[0]);

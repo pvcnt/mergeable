@@ -1,28 +1,37 @@
 import { Card, Spinner } from "@blueprintjs/core";
-import { usePulls } from "../lib/queries";
+import { useConnections, usePulls, useSections } from "../lib/queries";
 import Navbar from "../components/Navbar";
 import PullTable from "../components/PullTable";
 import { useState } from "react";
 import { pullMatches } from "../lib/search";
-import { getWorker } from "../worker/client";
+import { useTitle } from "../lib/useTitle";
 
 export default function Stars() {
   const [search, setSearch] = useState<string>("");
-  const pulls = usePulls({ starred: 1 });
-  const worker = getWorker();
+  const connections = useConnections();
+  const sections = useSections();
+  const pulls = usePulls({
+    connections: connections.data,
+    sections: sections.data,
+  });
+  useTitle(pulls.data ?? []);
   return (
     <>
       <Navbar
         search={search}
         onSearchChange={setSearch}
-        onRefresh={worker.refreshPulls}
+        onRefresh={pulls.refetch}
+        isFetching={pulls.isFetching}
+        refreshedAt={pulls.dataUpdatedAt}
       />
       <Card>
-        {pulls.isLoading ? (
+        {pulls.data === undefined ? (
           <Spinner />
         ) : (
           <PullTable
-            pulls={pulls.data.filter((pull) => pullMatches(search, pull))}
+            pulls={pulls.data.filter(
+              (pull) => pull.starred && pullMatches(search, pull),
+            )}
           />
         )}
       </Card>

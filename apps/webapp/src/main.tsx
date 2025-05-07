@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { BlueprintProvider } from "@blueprintjs/core";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createIDBPersister, createQueryClient } from "./lib/react-query.ts";
 import App from "./App.tsx";
 import ErrorPage from "./error-page.tsx";
 import Dashboard from "./routes/dashboard.tsx";
@@ -39,10 +42,19 @@ const routes = [
 ];
 const router = createBrowserRouter(routes);
 
+const queryClient = createQueryClient();
+const persister = createIDBPersister();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BlueprintProvider>
-      <RouterProvider router={router} />
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+      >
+        <RouterProvider router={router} />
+        <ReactQueryDevtools />
+      </PersistQueryClientProvider>
     </BlueprintProvider>
   </React.StrictMode>,
 );

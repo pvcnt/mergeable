@@ -88,7 +88,7 @@ export type Attention = {
 export type Pull = PullProps & {
   uid: string;
   host: string;
-  starred: number; // boolean is not indexable.
+  starred: boolean;
   sections: string[];
   attention?: Attention;
   connection: string;

@@ -243,7 +243,7 @@ function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
     labels: [],
     uid: `1:1`,
     host: "github.com",
-    starred: 0,
+    starred: false,
     sections: [],
     connection: "1",
     ...props,
