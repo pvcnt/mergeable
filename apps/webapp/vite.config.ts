@@ -1,13 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { comlink } from "vite-plugin-comlink";
 import { codecovVitePlugin } from "@codecov/vite-plugin";
 import processEnv from "@repo/vite-plugin-process-env";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    comlink(),
     react(),
     processEnv(),
     codecovVitePlugin({
@@ -17,7 +15,16 @@ export default defineConfig({
     }),
   ],
   worker: {
-    plugins: () => [comlink(), processEnv()],
+    plugins: () => [processEnv()],
   },
   envPrefix: ["VITE_", "MERGEABLE_"],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+        }
+      }
+    }
+  }
 });

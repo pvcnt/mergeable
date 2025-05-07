@@ -215,9 +215,6 @@ importers:
       vite:
         specifier: ^5.4.1
         version: 5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0)
-      vite-plugin-comlink:
-        specifier: ^5.0.1
-        version: 5.0.1(comlink@4.4.1)(vite@5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0))
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.5.0)(jsdom@24.1.1)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0)
@@ -5052,9 +5049,6 @@ packages:
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
 
-  magic-string@0.30.10:
-    resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
-
   magic-string@0.30.11:
     resolution: {integrity: sha512-+Wri9p0QHMy+545hKww7YAu5NyzF8iomPL/RQazugQ9+Ez4Ic3mERMd8ZTX5rfK944j+560ZJi8iAwgak1Ac7A==}
 
@@ -6905,12 +6899,6 @@ packages:
     resolution: {integrity: sha512-LdsW4pxj0Ot69FAoXZ1yTnA9bjGohr2yNBU7QKRxpz8ITSkhuDl6h3zS/tvgz4qrNjeRnvrWeXQ8ZF7Um4W00Q==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
-
-  vite-plugin-comlink@5.0.1:
-    resolution: {integrity: sha512-4TGw5+bTg5ROd8N2m9O/y0CoS81g8nyce9EI/eV51i54EJ938lFadXEButhaptJs89l5NY9+TkdjI5jXX4cWOw==}
-    peerDependencies:
-      comlink: ^4.3.1
-      vite: '>=2.9.6'
 
   vite@5.4.1:
     resolution: {integrity: sha512-1oE6yuNXssjrZdblI9AfBbHCC41nnyoVoEZxQnID6yvQZAFBzxxkqoFLtHUMkYunL8hwOLEjgTuxpkRxvba3kA==}
@@ -12821,10 +12809,6 @@ snapshots:
     dependencies:
       sourcemap-codec: 1.4.8
 
-  magic-string@0.30.10:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.0
-
   magic-string@0.30.11:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -15136,14 +15120,6 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-
-  vite-plugin-comlink@5.0.1(comlink@4.4.1)(vite@5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0)):
-    dependencies:
-      comlink: 4.4.1
-      json5: 2.2.3
-      magic-string: 0.30.10
-      source-map: 0.7.4
-      vite: 5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0)
 
   vite@5.4.1(@types/node@22.5.0)(less@4.2.0)(sass@1.87.0)(stylus@0.62.0):
     dependencies:
