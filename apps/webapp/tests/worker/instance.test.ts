@@ -1,20 +1,8 @@
 import { TestGitHubClient } from "../testing";
-import {
-  afterEach,
-  beforeEach,
-  it,
-  describe,
-  expect,
-  assert,
-  vi,
-} from "vitest";
-import {
-  syncPullsOnce,
-  syncViewersOnce,
-  sendTelemetry,
-} from "../../src/worker/instance";
+import { afterEach, beforeEach, it, describe, expect, vi } from "vitest";
+import { syncViewersOnce, sendTelemetry } from "../../src/worker/instance";
 import { db } from "../../src/lib/db";
-import { mockPull, mockConnection, mockSection } from "../testing";
+import { mockConnection } from "../testing";
 import nock from "nock";
 
 describe("sync viewers", () => {
@@ -71,110 +59,6 @@ describe("sync viewers", () => {
 
     const connection = await db.connections.get("1");
     expect(connection?.viewer).toBeUndefined();
-  });
-});
-
-describe("sync pulls", () => {
-  beforeEach(async () => {
-    await db.connections.add(mockConnection({ id: "1", auth: "ghp_xxx" }));
-    await db.connections.add(mockConnection({ id: "2", auth: "ghp_yyy" }));
-    await db.sections.add(
-      mockSection({
-        id: "1",
-        search: "author:@me draft:true;author:@me draft:false",
-      }),
-    );
-    await db.sections.add(
-      mockSection({ id: "2", search: "author:@me review:approved" }),
-    );
-  });
-
-  afterEach(async () => {
-    await db.activities.clear();
-    await db.connections.clear();
-    await db.sections.clear();
-    await db.pulls.clear();
-  });
-
-  it("should update pulls", async () => {
-    let activity = await db.activities.get("syncPulls");
-    expect(activity).toBeUndefined();
-
-    // GIVEN some pull requests are returned from GitHub.
-    let connection = await db.connections.get("1");
-    assert(connection !== undefined);
-
-    const client = new TestGitHubClient();
-    client.setPullsBySearch(connection, "author:@me draft:true", [
-      mockPull({ id: "PR_1", connection: connection.id }),
-      mockPull({ id: "PR_2", connection: connection.id }),
-    ]);
-    client.setPullsBySearch(connection, "author:@me draft:false", [
-      mockPull({ id: "PR_4", connection: connection.id }),
-    ]);
-    client.setPullsBySearch(connection, "author:@me review:approved", [
-      mockPull({ id: "PR_1", connection: connection.id }),
-      mockPull({ id: "PR_3", connection: connection.id }),
-    ]);
-
-    connection = await db.connections.get("2");
-    assert(connection !== undefined);
-    client.setPullsBySearch(connection, "author:@me draft:true", [
-      mockPull({ id: "PR_1", connection: connection.id }),
-    ]);
-    client.setPullsBySearch(connection, "author:@me review:approved", [
-      mockPull({ id: "PR_2", connection: connection.id }),
-    ]);
-
-    // WHEN syncing pull requests.
-    await syncPullsOnce(client);
-
-    // THEN every pull request must be present in the database.
-    const pks = await db.pulls.toCollection().primaryKeys();
-    expect(pks.sort()).toEqual([
-      "1:PR_1",
-      "1:PR_2",
-      "1:PR_3",
-      "1:PR_4",
-      "2:PR_1",
-      "2:PR_2",
-    ]);
-
-    // THEN every pull request must be in the correct section(s).
-    let pull = await db.pulls.get("1:PR_1");
-    expect(pull).toBeDefined();
-    expect(pull?.sections).toEqual(["1", "2"]);
-
-    pull = await db.pulls.get("1:PR_2");
-    expect(pull).toBeDefined();
-    expect(pull?.sections).toEqual(["1"]);
-
-    pull = await db.pulls.get("1:PR_3");
-    expect(pull).toBeDefined();
-    expect(pull?.sections).toEqual(["2"]);
-
-    pull = await db.pulls.get("1:PR_4");
-    expect(pull).toBeDefined();
-    expect(pull?.sections).toEqual(["1"]);
-
-    // THEN the activity should have been updated.
-    activity = await db.activities.get("syncPulls");
-    expect(activity?.running).toBeFalsy();
-    expect(activity?.refreshTime.getTime()).toBeGreaterThan(0);
-    expect(activity?.refreshTime.getTime()).toBeLessThanOrEqual(Date.now());
-  });
-
-  it("should not update pulls if recently completed", async () => {
-    await db.activities.add({
-      name: "syncPulls",
-      running: false,
-      refreshTime: new Date(),
-    });
-
-    const client = new TestGitHubClient();
-    await syncPullsOnce(client);
-
-    expect(await db.pulls.count()).toBe(0);
   });
 });
 

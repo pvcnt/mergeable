@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router";
 import clsx from "clsx";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
-import { useConnections, usePulls } from "./lib/queries";
+import { useConnections } from "./lib/queries";
 import styles from "./App.module.scss";
 import { Card } from "@blueprintjs/core";
 
@@ -18,19 +18,6 @@ export default function App() {
     // Write the isDark value to local storage whenever it changes
     localStorage.setItem("isDark", JSON.stringify(isDark));
   }, [isDark]);
-
-  // Change window's title to include number of pull requests in the attention set.
-  const pulls = usePulls();
-  const count = pulls.data.filter(
-    (pull) => pull.attention !== undefined && pull.attention.set,
-  ).length;
-  useEffect(() => {
-    if (count > 0) {
-      document.title = `(${count}) Mergeable`;
-    } else {
-      document.title = "Mergeable";
-    }
-  }, [count]);
 
   return (
     <div className={clsx(styles.app, isDark && "bp5-dark")}>

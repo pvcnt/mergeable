@@ -3,12 +3,8 @@ import { useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
-import {
-  DEFAULT_SECTION_LIMIT,
-  type Section,
-  type SectionProps,
-} from "../lib/types";
-import { useSections, usePulls } from "../lib/queries";
+import { DEFAULT_SECTION_LIMIT, type SectionProps } from "../lib/types";
+import { useSections, usePulls, useConnections } from "../lib/queries";
 import {
   deleteSection,
   moveSectionDown,
@@ -16,13 +12,18 @@ import {
   saveSection,
 } from "../lib/mutations";
 import Navbar from "../components/Navbar";
-import { getWorker } from "../worker/client";
 import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
+import { useTitle } from "../lib/useTitle";
 
 export default function Dashboard() {
+  const connections = useConnections();
   const sections = useSections();
-  const pulls = usePulls();
+  const pulls = usePulls({
+    connections: connections.data,
+    sections: sections.data,
+  });
+  useTitle(pulls.data ?? []);
 
   const [search, setSearch] = useState<string>("");
   const [isEditing, setEditing] = useState(false);
@@ -31,17 +32,19 @@ export default function Dashboard() {
 
   const useAttentionSet = sections.data.some((section) => section.attention);
 
-  const pullsBySection = sections.data.map((section) =>
-    pulls.data.filter(
-      (pull) =>
-        pullMatches(search, pull) && pull.sections.indexOf(section.id) > -1,
-    ),
+  const pullsBySection = sections.data.map(
+    (section) =>
+      pulls.data?.filter(
+        (pull) =>
+          pullMatches(search, pull) && pull.sections.indexOf(section.id) > -1,
+      ) ?? [],
   );
-  const pullsWithAttention = useAttentionSet
-    ? pulls.data.filter(
-        (pull) => pullMatches(search, pull) && pull.attention?.set,
-      )
-    : [];
+  const pullsWithAttention =
+    useAttentionSet && pulls.data
+      ? pulls.data.filter(
+          (pull) => pullMatches(search, pull) && pull.attention?.set,
+        )
+      : [];
 
   // Open a "New section" dialog if URL is a share link.
   useEffect(() => {
@@ -57,8 +60,6 @@ export default function Dashboard() {
     }
   }, [searchParams]);
 
-  const worker = getWorker();
-
   const handleSubmit = async (value: SectionProps) => {
     await saveSection({ ...value, id: "", position: sections.data.length });
     // Remove sharing parameters from URL if they were defined once the new section
@@ -67,15 +68,6 @@ export default function Dashboard() {
       setSearchParams({});
       setNewSection(undefined);
     }
-    worker.refreshPulls().catch(console.error);
-  };
-  const handleChange = async (value: Section) => {
-    await saveSection(value);
-    worker.refreshPulls().catch(console.error);
-  };
-  const handleDelete = async (value: Section) => {
-    await deleteSection(value);
-    worker.refreshPulls().catch(console.error);
   };
 
   return (
@@ -83,7 +75,9 @@ export default function Dashboard() {
       <Navbar
         search={search}
         onSearchChange={setSearch}
-        onRefresh={worker.refreshPulls}
+        onRefresh={pulls.refetch}
+        isFetching={pulls.isFetching}
+        refreshedAt={pulls.dataUpdatedAt}
       >
         <Button
           text="New section"
@@ -118,8 +112,8 @@ export default function Dashboard() {
               pulls={pullsBySection[idx]}
               isFirst={idx === 0}
               isLast={idx === sections.data.length - 1}
-              onChange={handleChange}
-              onDelete={() => handleDelete(section)}
+              onChange={saveSection}
+              onDelete={() => deleteSection(section)}
               onMoveUp={() => moveSectionUp(section)}
               onMoveDown={() => moveSectionDown(section)}
             />

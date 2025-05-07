@@ -10,13 +10,14 @@ import {
 import { useNavigate, useLocation } from "react-router";
 import styles from "./Navbar.module.scss";
 import { SearchBox } from "./SearchBox";
-import { useActivity } from "../lib/queries";
 import TimeAgo from "./TimeAgo";
 
 export interface NavbarProps {
   search: string;
   onSearchChange: (v: string) => void;
-  onRefresh: () => Promise<void>;
+  onRefresh: () => void;
+  isFetching: boolean;
+  refreshedAt: number;
   children?: ReactNode;
 }
 
@@ -24,14 +25,11 @@ export default function Navbar({
   search,
   onSearchChange,
   onRefresh,
+  isFetching,
+  refreshedAt,
   children,
 }: NavbarProps) {
-  const refreshActivity = useActivity("syncPulls");
-  const handleRefresh = useCallback(
-    () => onRefresh().catch(console.error),
-    [onRefresh],
-  );
-
+  const handleRefresh = useCallback(onRefresh, [onRefresh]);
   const hotkeys: HotkeyConfig[] = useMemo(
     () => [
       {
@@ -70,22 +68,16 @@ export default function Navbar({
         <SearchBox value={search} onChange={onSearchChange} />
         <Tooltip
           content={
-            refreshActivity && (
-              <span>
-                Refreshed{" "}
-                <TimeAgo
-                  date={refreshActivity.refreshTime}
-                  tooltip={false}
-                  timeStyle="round"
-                />
-              </span>
-            )
+            <span>
+              Refreshed{" "}
+              <TimeAgo date={refreshedAt} tooltip={false} timeStyle="round" />
+            </span>
           }
         >
           <Button
             onClick={handleRefresh}
-            loading={refreshActivity?.running}
-            disabled={refreshActivity?.running}
+            loading={isFetching}
+            disabled={isFetching}
             variant="minimal"
           >
             <Icon icon="refresh" />

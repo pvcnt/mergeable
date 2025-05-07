@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import { Activity, db } from "../../src/lib/db";
 import type { Star } from "../../src/lib/types";
-import { mockConnection, mockSection, mockPull } from "../testing";
+import { mockConnection, mockSection } from "../testing";
 
 test("should save a connection", async () => {
   const connection = mockConnection({
@@ -25,12 +25,6 @@ test("should save a star", async () => {
   const star: Star = { uid: "github.com,pvcnt/mergeable,1" };
   const id = await db.stars.add(star);
   await expect(db.stars.get(id)).resolves.toEqual(star);
-});
-
-test("should save a pull", async () => {
-  const pull = mockPull({ sections: ["1", "2"] });
-  const id = await db.pulls.add(pull);
-  await expect(db.pulls.get(id)).resolves.toEqual(pull);
 });
 
 test("should save an activity", async () => {
