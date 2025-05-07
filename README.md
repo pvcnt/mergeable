@@ -33,5 +33,5 @@ This project is built using [PnPM](https://pnpm.io), [Turborepo](https://turbo.b
 It can be started locally with the following command:
 
 ```bash
-pnpm dev
+pnpm run dev
 ```

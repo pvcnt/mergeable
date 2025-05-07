@@ -4,8 +4,6 @@ sidebar:
   order: 4
 ---
 
-import { Aside } from '@astrojs/starlight/components';
-
 Mergeable being an SPA (Single Page Application), it can be deployed behind any Web server supporting static files (e.g., Nginx, Caddy, Static Web Server).
 It can also be deployed to any hosted platform supporting static websites (e.g., Cloudflare Pages, Netlify).
 
@@ -14,7 +12,7 @@ It can also be deployed to any hosted platform supporting static websites (e.g.,
 The project is built with the following command:
 
 ```bash
-pnpm build
+pnpm run build
 ```
 
 This will create a static website under the `apps/webapp/dist` directory.
