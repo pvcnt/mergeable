@@ -1,5 +1,10 @@
 import { Card, Spinner } from "@blueprintjs/core";
-import { useConnections, usePulls, useSections } from "../lib/queries";
+import {
+  useConnections,
+  usePulls,
+  useSections,
+  useStars,
+} from "../lib/queries";
 import Navbar from "../components/Navbar";
 import PullTable from "../components/PullTable";
 import { useState } from "react";
@@ -14,6 +19,7 @@ export default function Stars() {
     connections: connections.data,
     sections: sections.data,
   });
+  const stars = useStars();
   useTitle(pulls.data ?? []);
   return (
     <>
@@ -30,7 +36,7 @@ export default function Stars() {
         ) : (
           <PullTable
             pulls={pulls.data.filter(
-              (pull) => pull.starred && pullMatches(search, pull),
+              (pull) => stars.has(pull.uid) && pullMatches(search, pull),
             )}
           />
         )}

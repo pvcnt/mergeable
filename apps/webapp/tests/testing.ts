@@ -36,7 +36,6 @@ export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
     labels: [],
     uid: `${connection}:${id}`,
     host,
-    starred: false,
     sections: [],
     connection,
     ...props,
