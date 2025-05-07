@@ -45,6 +45,17 @@ const router = createBrowserRouter(routes);
 const queryClient = createQueryClient();
 const persister = createIDBPersister();
 
+// This ugly switch is needed to support the worker in dev mode.
+if (import.meta.env.DEV) {
+  new Worker(new URL("./worker.ts", import.meta.url), {
+    type: "module",
+  });
+} else {
+  new Worker(new URL("./worker.ts", import.meta.url), {
+    type: "classic",
+  });
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BlueprintProvider>

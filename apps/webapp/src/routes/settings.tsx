@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import ConnectionDialog from "../components/ConnectionDialog";
 import ConnectionTable from "../components/ConnectionTable";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { getWorker } from "../worker/client";
 import { useConnections } from "../lib/queries";
 import {
   deleteConnection,
@@ -15,6 +14,7 @@ import type { Connection, ConnectionProps } from "../lib/types";
 import styles from "./settings.module.scss";
 import { AppToaster } from "../lib/toaster";
 import { useNavigate } from "react-router";
+import { gitHubClient } from "../github";
 
 export default function Settings() {
   const [isEditing, setEditing] = useState(false);
@@ -27,16 +27,18 @@ export default function Settings() {
     ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
     : undefined;
 
-  const worker = getWorker();
-
   const handleNew = async (props: ConnectionProps) => {
-    await saveConnection({ id: "", ...props });
-    await worker.refreshViewers();
+    const viewer = await gitHubClient.getViewer(props);
+    await saveConnection({ id: "", ...props, viewer });
     await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleEdit = async (previous: Connection, props: ConnectionProps) => {
-    await saveConnection({ ...previous, ...props });
-    await worker.refreshViewers();
+    const viewer = await gitHubClient.getViewer(props);
+    await saveConnection({ ...previous, ...props, viewer });
+    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
+  };
+  const handleDelete = async (connection: Connection) => {
+    await deleteConnection(connection);
     await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleReset = async () => {
@@ -73,7 +75,7 @@ export default function Settings() {
           <ConnectionTable
             connections={connections.data}
             onSubmit={handleEdit}
-            onDelete={deleteConnection}
+            onDelete={handleDelete}
           />
         </Card>
 

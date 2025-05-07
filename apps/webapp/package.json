@@ -22,7 +22,6 @@
     "@tanstack/react-query-persist-client": "^5.75.4",
     "@types/uuid": "^10.0.0",
     "clsx": "^2.1.1",
-    "comlink": "^4.4.1",
     "dexie": "^4.0.9",
     "dexie-react-hooks": "^1.1.7",
     "idb-keyval": "^6.2.1",
