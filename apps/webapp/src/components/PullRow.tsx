@@ -7,6 +7,7 @@ import styles from "./PullRow.module.scss";
 import { useState } from "react";
 import CopyToClipboardIcon from "./CopyToClipboardIcon";
 import { toggleStar } from "../lib/mutations";
+import { useStars } from "../lib/queries";
 
 export type Props = {
   pull: Pull;
@@ -24,6 +25,7 @@ const formatDate = (d: string) => {
 
 export default function PullRow({ pull }: Props) {
   const [active, setActive] = useState(false);
+  const stars = useStars();
   const handleClick = (e: React.MouseEvent) => {
     // Manually reproduce the behaviour of CTRL+click or middle mouse button.
     if (e.metaKey || e.ctrlKey || e.button == 1) {
@@ -44,7 +46,7 @@ export default function PullRow({ pull }: Props) {
       className={styles.row}
     >
       <td onClick={(e) => handleStar(e)}>
-        {pull.starred ? (
+        {stars.has(pull.uid) ? (
           <IconWithTooltip
             icon="star"
             color="#FBD065"

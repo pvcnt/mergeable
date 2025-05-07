@@ -49,6 +49,11 @@ export const useSections = () => {
   };
 };
 
+export const useStars = () => {
+  const data = useLiveQuery(() => db.stars.toArray());
+  return new Set(data?.map((v) => v.uid) || []);
+};
+
 export const usePulls = ({
   connections,
   sections,

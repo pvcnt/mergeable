@@ -74,9 +74,12 @@ export async function resetSections(): Promise<void> {
 }
 
 export const toggleStar = async (pull: Pull) => {
-  if (pull.starred) {
-    await db.stars.delete(pull.uid).catch(console.error);
-  } else {
-    await db.stars.add({ uid: pull.uid });
-  }
+  await db.transaction("rw", db.stars, async () => {
+    const star = await db.stars.get(pull.uid);
+    if (star) {
+      await db.stars.delete(pull.uid);
+    } else {
+      await db.stars.add({ uid: pull.uid });
+    }
+  });
 };

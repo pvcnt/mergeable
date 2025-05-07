@@ -88,7 +88,6 @@ export type Attention = {
 export type Pull = PullProps & {
   uid: string;
   host: string;
-  starred: boolean;
   sections: string[];
   attention?: Attention;
   connection: string;
