@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Activity, db } from "../../src/lib/db";
+import { db } from "../../src/lib/db";
 import type { Star } from "../../src/lib/types";
 import { mockConnection, mockSection } from "../testing";
 
@@ -25,14 +25,4 @@ test("should save a star", async () => {
   const star: Star = { uid: "github.com,pvcnt/mergeable,1" };
   const id = await db.stars.add(star);
   await expect(db.stars.get(id)).resolves.toEqual(star);
-});
-
-test("should save an activity", async () => {
-  const activity: Activity = {
-    name: "syncViewers",
-    running: false,
-    refreshTime: new Date(),
-  };
-  const id = await db.activities.add(activity);
-  await expect(db.activities.get(id)).resolves.toEqual(activity);
 });
