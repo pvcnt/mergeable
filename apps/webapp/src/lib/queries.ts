@@ -56,10 +56,9 @@ export const usePulls = ({
   connections: Connection[];
   sections: Section[];
 }) => {
-  const key = unique(sections.map((s) => s.search)).toSorted();
   return useQuery({
     enabled: connections.length > 0 && sections.length > 0,
-    queryKey: ["pulls", ...key],
+    queryKey: ["pulls"],
     queryFn: async () => {
       // Search for pull requests for every section and every connection.
       // Every request returns node IDs for matching pull requests, and
