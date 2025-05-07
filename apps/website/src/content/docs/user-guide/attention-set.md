@@ -5,7 +5,7 @@ sidebar:
 ---
 
 The attention set tracks pull requests that require your attention.
-This feature is designed after similar features in [Gerrit](https://gerrit-review.googlesource.com/Documentation/user-attention-set.html), [Critique](https://abseil.io/resources/swe-book/html/ch19.html#quotation_marksemicolonwhose_turnquotat) and [Aviator](https://docs.aviator.co/attentionset).
+This feature is designed after similar features found in [Gerrit](https://gerrit-review.googlesource.com/Documentation/user-attention-set.html), [Critique](https://abseil.io/resources/swe-book/html/ch19.html#quotation_marksemicolonwhose_turnquotat) and [Aviator](https://docs.aviator.co/attentionset).
 
 ## Whose turn?
 

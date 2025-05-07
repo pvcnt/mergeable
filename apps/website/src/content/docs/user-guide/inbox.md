@@ -49,9 +49,9 @@ Openining it in the browser will direct them to their own dashboard, with a new 
 
 ## Search for pull requests
 
-You can search for pull requests using the search box, which can be focused by hitting the "S" key:
+You can search for pull requests using the search box, which can be focused by hitting the "S" keyboard shortcut:
 
-![Command bar](../../../assets/screenshots/search-box.png)
+![Search box](../../../assets/screenshots/search-box.png)
 
 This performs a fuzzy search on the title, and filters the pull requests displayed below to include those that match.
 
