@@ -3,7 +3,11 @@ import { useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
-import { DEFAULT_SECTION_LIMIT, type SectionProps, type Section } from "../lib/types";
+import {
+  DEFAULT_SECTION_LIMIT,
+  type SectionProps,
+  type Section,
+} from "../lib/types";
 import { useSections, usePulls, useConnections } from "../lib/queries";
 import {
   deleteSection,
