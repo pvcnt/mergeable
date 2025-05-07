@@ -3,7 +3,11 @@ import { useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
-import { DEFAULT_SECTION_LIMIT, type SectionProps } from "../lib/types";
+import {
+  DEFAULT_SECTION_LIMIT,
+  type SectionProps,
+  type Section,
+} from "../lib/types";
 import { useSections, usePulls, useConnections } from "../lib/queries";
 import {
   deleteSection,
@@ -15,6 +19,7 @@ import Navbar from "../components/Navbar";
 import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
 import { useTitle } from "../lib/useTitle";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
   const connections = useConnections();
@@ -23,6 +28,7 @@ export default function Dashboard() {
     connections: connections.data,
     sections: sections.data,
   });
+  const queryClient = useQueryClient();
   useTitle(pulls.data ?? []);
 
   const [search, setSearch] = useState<string>("");
@@ -68,6 +74,15 @@ export default function Dashboard() {
       setSearchParams({});
       setNewSection(undefined);
     }
+    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
+  };
+  const handleSave = async (section: Section) => {
+    await saveSection(section);
+    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
+  };
+  const handleDelete = async (section: Section) => {
+    await deleteSection(section);
+    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
 
   return (
@@ -112,8 +127,8 @@ export default function Dashboard() {
               pulls={pullsBySection[idx]}
               isFirst={idx === 0}
               isLast={idx === sections.data.length - 1}
-              onChange={saveSection}
-              onDelete={() => deleteSection(section)}
+              onChange={handleSave}
+              onDelete={() => handleDelete(section)}
               onMoveUp={() => moveSectionUp(section)}
               onMoveDown={() => moveSectionDown(section)}
             />
