@@ -10,6 +10,14 @@ app.get(
   "/auth/github",
   (c, next) => {
     const vars = env<Env>(c);
+    // Those environment variables are not required for the app to run, but still required
+    // for the GitHub auth middleware.
+    if (
+      !vars.MERGEABLE_GITHUB_CLIENT_ID ||
+      !vars.MERGEABLE_GITHUB_CLIENT_SECRET
+    ) {
+      return c.json({ error: "GitHub client ID and secret are not set" }, 500);
+    }
     const middleware = githubAuth({
       scope: ["user", "repo", "read:org"],
       oauthApp: true,
