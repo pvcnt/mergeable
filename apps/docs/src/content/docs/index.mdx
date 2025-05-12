@@ -3,23 +3,26 @@ title: Mergeable - A better inbox for GitHub pull requests
 description: Mergeable is a better inbox for GitHub pull requests.
 template: splash
 hero:
-  title: Mergeable
-  tagline: A better inbox for GitHub pull requests.
+  title: Never miss a pull request again.
+  tagline: Mergeable is a better inbox for GitHub pull requests.
   actions:
-    - text: Read The Docs
+    - text: Learn More
       link: ./overview/
-      icon: right-arrow
-    - text: Try Now
+      variant: secondary
+    - text: Get Started Now
       link: https://app.usemergeable.dev
-      variant: minimal
-      icon: external
+      icon: right-caret
 editUrl: false
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import screenshot from '../../assets/screenshots/dashboard.png';
+
+<Image src={screenshot} alt="Mergeable dashboard" class="screenshot" />
 
 <CardGrid>
-  <Card title="Fully customizable" icon="setting">
+  <Card title="Fully Customizable" icon="setting">
     Organize pull requests into sections, defined by flexible search queries.
   </Card>
   <Card title="Self-Hostable" icon="laptop">
