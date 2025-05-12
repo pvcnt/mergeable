@@ -3,3 +3,7 @@ compatibility_date = "2025-03-25"
 
 [assets]
 directory = "./dist"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
