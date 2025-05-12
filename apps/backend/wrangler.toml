@@ -5,3 +5,6 @@ main = "./src/index.ts"
 [observability.logs]
 enabled = true
 invocation_logs = true
+
+[vars]
+MERGEABLE_HOST_URL = "https://mergeable.pages.dev"

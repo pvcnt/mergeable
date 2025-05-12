@@ -1,10 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["src", "generated/**/*"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
     "lib": [
       "ESNext"
     ],
