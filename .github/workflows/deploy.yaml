@@ -64,6 +64,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           workingDirectory: apps/docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 4.14.4
   telemetry:
     runs-on: ubuntu-latest
     steps:
@@ -75,6 +76,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           workingDirectory: apps/telemetry
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 4.14.4
   backend:
     runs-on: ubuntu-latest
     steps:
@@ -86,3 +88,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           workingDirectory: apps/backend
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 4.14.4
