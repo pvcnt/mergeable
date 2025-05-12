@@ -4,15 +4,27 @@
     "dev": "wrangler dev",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "codegen": "pnpm run prisma:generate",
+    "prisma:generate": "dotenv -e .env.local -e .dev.vars -- prisma generate --no-hints",
+    "prisma:validate": "dotenv -e .env.local -e .dev.vars -- prisma validate",
+    "prisma:push": "dotenv -e .env.local -e .dev.vars -- prisma db push"
   },
   "dependencies": {
     "@hono/oauth-providers": "^0.7.1",
-    "hono": "^4.7.8"
+    "@neondatabase/serverless": "^0.9.4",
+    "@prisma/adapter-neon": "^6.7.0",
+    "@prisma/adapter-pg": "^6.7.0",
+    "@prisma/client": "^6.7.0",
+    "hono": "^4.7.8",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250428.0",
+    "@types/ws": "^8.18.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^8.57.0",
+    "prisma": "^6.7.0",
     "typescript": "^5.5.4",
     "wrangler": "^4.14.1"
   }
