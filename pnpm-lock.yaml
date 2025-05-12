@@ -257,6 +257,10 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
+    devDependencies:
+      wrangler:
+        specifier: ^4.14.4
+        version: 4.14.4(@cloudflare/workers-types@4.20250510.0)
 
   packages/eslint-config:
     dependencies:

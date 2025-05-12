@@ -4,8 +4,7 @@ import starlightLinksValidator from "starlight-links-validator";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://pvcnt.github.io",
-  base: "mergeable",
+  site: "https://www.usemergeable.dev",
   trailingSlash: "always",
   integrations: [
     starlight({
@@ -35,8 +34,8 @@ export default defineConfig({
         },
       ],
       customCss: [
-        './src/styles/home.css',
-        './src/styles/theme.css',
+        "./src/styles/home.css",
+        "./src/styles/theme.css",
       ],
       plugins: [
         starlightLinksValidator({

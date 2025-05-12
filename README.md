@@ -19,11 +19,11 @@ Mergeable provides the following features:
 
 ## Public instance
 
-You can use the public instance hosted at https://mergeable.pages.dev/.
+You can use the public instance hosted at https://app.usemergeable.dev
 
 ## Documentation
 
-Documentation is available at https://pvcnt.github.io/mergeable/.
+Documentation is available at https://www.usemergeable.dev
 
 It includes a user guide and instructions to self-host your own instance.
 
