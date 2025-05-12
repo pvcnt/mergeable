@@ -12,13 +12,14 @@
   },
   "dependencies": {
     "@hono/oauth-providers": "^0.7.1",
-    "@neondatabase/serverless": "^0.9.4",
+    "@prisma/adapter-neon": "^6.7.0",
     "@prisma/adapter-pg": "^6.7.0",
     "@prisma/client": "^6.7.0",
     "hono": "^4.7.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250507.0",
+    "@types/node": "^22.5.0",
     "@types/ws": "^8.18.1",
     "dotenv-cli": "^8.0.0",
     "eslint": "^8.57.0",
