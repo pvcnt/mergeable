@@ -43,7 +43,7 @@ jobs:
           workingDirectory: apps/webapp
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-  website:
+  docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,14 +55,14 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install --filter website...
-      - name: Build website
-        run: pnpm run build --filter website...
+        run: pnpm install --filter docs...
+      - name: Build
+        run: pnpm run build --filter docs...
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          workingDirectory: apps/website
+          workingDirectory: apps/docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
   telemetry:
     runs-on: ubuntu-latest
