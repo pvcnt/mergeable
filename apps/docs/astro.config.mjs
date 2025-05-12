@@ -14,7 +14,7 @@ export default defineConfig({
       },
       favicon: "/favicon.png",
       editLink: {
-        baseUrl: "https://github.com/pvcnt/mergeable/edit/main/apps/website/",
+        baseUrl: "https://github.com/pvcnt/mergeable/edit/main/apps/docs/",
       },
       social: {
         github: "https://github.com/pvcnt/mergeable",
