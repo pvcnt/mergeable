@@ -26,9 +26,12 @@ importers:
       '@hono/oauth-providers':
         specifier: ^0.7.1
         version: 0.7.1(hono@4.7.8)
+      '@neondatabase/serverless':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@prisma/adapter-neon':
         specifier: ^6.7.0
-        version: 6.7.0(@neondatabase/serverless@0.9.5)
+        version: 6.7.0(@neondatabase/serverless@1.0.0)
       '@prisma/adapter-pg':
         specifier: ^6.7.0
         version: 6.7.0(pg@8.15.6)
@@ -2314,8 +2317,9 @@ packages:
   '@neondatabase/serverless@0.9.4':
     resolution: {integrity: sha512-D0AXgJh6xkf+XTlsO7iwE2Q1w8981E1cLCPAALMU2YKtkF/1SF6BiAzYARZFYo175ON+b1RNIy9TdSFHm5nteg==}
 
-  '@neondatabase/serverless@0.9.5':
-    resolution: {integrity: sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==}
+  '@neondatabase/serverless@1.0.0':
+    resolution: {integrity: sha512-XWmEeWpBXIoksZSDN74kftfTnXFEGZ3iX8jbANWBc+ag6dsiQuvuR4LgB0WdCOKMb5AQgjqgufc0TgAsZubUYw==}
+    engines: {node: '>=19.0.0'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -9915,8 +9919,9 @@ snapshots:
     dependencies:
       '@types/pg': 8.11.6
 
-  '@neondatabase/serverless@0.9.5':
+  '@neondatabase/serverless@1.0.0':
     dependencies:
+      '@types/node': 22.15.17
       '@types/pg': 8.11.6
 
   '@nodelib/fs.scandir@2.1.5':
@@ -10278,9 +10283,9 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@prisma/adapter-neon@6.7.0(@neondatabase/serverless@0.9.5)':
+  '@prisma/adapter-neon@6.7.0(@neondatabase/serverless@1.0.0)':
     dependencies:
-      '@neondatabase/serverless': 0.9.5
+      '@neondatabase/serverless': 1.0.0
       '@prisma/driver-adapter-utils': 6.7.0
       postgres-array: 3.0.4
 
@@ -10729,11 +10734,11 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.15.17
 
   '@types/set-cookie-parser@2.4.10':
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.15.17
 
   '@types/stack-utils@2.0.3':
     optional: true
