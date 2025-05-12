@@ -8,4 +8,4 @@ enabled = true
 invocation_logs = true
 
 [vars]
-MERGEABLE_HOST_URL = "https://mergeable.pages.dev"
+MERGEABLE_HOST_URL = "https://app.usemergeable.dev"
