@@ -2,3 +2,16 @@
   text-align: center;
   margin-top: 4rem !important;
 }
+
+.screenshot {
+  width: 75%;
+  margin: 0 auto;
+  margin-bottom: 5rem;
+}
+
+@media (min-width: 50rem) {
+  .hero {
+    /* Decrease padding. */
+    padding-block: 2rem;
+  }
+}

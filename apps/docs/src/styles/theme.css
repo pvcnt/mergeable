@@ -27,3 +27,17 @@
 	--sl-color-gray-7: #f9f5f5;
 	--sl-color-black: #ffffff;
 }
+/* Decrease font size. */
+:root {
+	--sl-text-2xs: 0.75rem; /* 12px */
+	--sl-text-xs: 0.8125rem; /* 13px */
+	--sl-text-sm: 0.875rem; /* 14px */
+	--sl-text-base: 1rem; /* 16px */
+	--sl-text-lg: 1.125rem; /* 18px */
+	--sl-text-xl: 1.25rem; /* 20px */
+	--sl-text-2xl: 1.5rem; /* 24px */
+	--sl-text-3xl: 1.75rem; /* 28px */
+	--sl-text-4xl: 2rem; /* 32px */
+	--sl-text-5xl: 2.25rem; /* 36px */
+	--sl-text-6xl: 2.57rem; /* 44px */
+}
