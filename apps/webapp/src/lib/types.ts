@@ -47,7 +47,6 @@ export type Section = SectionProps & {
  * Properties for a connection, as provided by a user in a form or API.
  */
 export type ConnectionProps = {
-  label: string;
   baseUrl: string;
   host: string;
   auth: string;

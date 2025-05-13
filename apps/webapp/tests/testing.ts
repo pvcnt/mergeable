@@ -56,7 +56,6 @@ export function mockSection(props?: Partial<Section>): Section {
 export function mockConnection(props?: Partial<Connection>): Connection {
   return {
     id: "",
-    label: "",
     baseUrl: "https://api.github.com",
     host: "github.com",
     auth: "ghp_xxx",

@@ -1,46 +1,17 @@
 import { Button, Card, H3 } from "@blueprintjs/core";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import ConnectionDialog from "../components/ConnectionDialog";
-import ConnectionTable from "../components/ConnectionTable";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { useConnections } from "../lib/queries";
-import {
-  deleteConnection,
-  resetSections,
-  saveConnection,
-} from "../lib/mutations";
-import type { Connection, ConnectionProps } from "../lib/types";
+import { resetSections } from "../lib/mutations";
 import styles from "./settings.module.scss";
 import { AppToaster } from "../lib/toaster";
 import { useNavigate } from "react-router";
-import { gitHubClient } from "../github";
 
 export default function Settings() {
-  const [isEditing, setEditing] = useState(false);
   const [isResetting, setResetting] = useState(false);
-  const connections = useConnections();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const allowedUrls = import.meta.env.MERGEABLE_GITHUB_URLS
-    ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
-    : undefined;
-
-  const handleNew = async (props: ConnectionProps) => {
-    const viewer = await gitHubClient.getViewer(props);
-    await saveConnection({ id: "", ...props, viewer });
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
-  };
-  const handleEdit = async (previous: Connection, props: ConnectionProps) => {
-    const viewer = await gitHubClient.getViewer(props);
-    await saveConnection({ ...previous, ...props, viewer });
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
-  };
-  const handleDelete = async (connection: Connection) => {
-    await deleteConnection(connection);
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
-  };
   const handleReset = async () => {
     await resetSections();
     (await AppToaster).show({
@@ -55,34 +26,8 @@ export default function Settings() {
     <>
       <div className={styles.container}>
         <div className={styles.header}>
-          <H3 className={styles.title}>Connections</H3>
-          <Button
-            text="New connection"
-            icon="plus"
-            onClick={() => setEditing(true)}
-          />
-        </div>
-
-        <ConnectionDialog
-          title="New connection"
-          allowedUrls={allowedUrls}
-          isOpen={isEditing}
-          onClose={() => setEditing(false)}
-          onSubmit={handleNew}
-        />
-
-        <Card>
-          <ConnectionTable
-            connections={connections.data}
-            onSubmit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </Card>
-
-        <div className={styles.header}>
           <H3 className={styles.title}>Danger zone</H3>
         </div>
-
         <Card>
           <p>
             Resetting to factory settings will erase the current configuration

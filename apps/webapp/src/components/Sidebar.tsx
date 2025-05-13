@@ -28,9 +28,10 @@ function SidebarLink({
 type Props = {
   isDark: boolean;
   onDarkChange: () => void;
+  onLogout: () => void;
 };
 
-export default function Sidebar({ isDark, onDarkChange }: Props) {
+export default function Sidebar({ isDark, onDarkChange, onLogout }: Props) {
   return (
     <div className={styles.sidebar}>
       <img src="/logo.svg" height="30" className={styles.logo} />
@@ -49,6 +50,11 @@ export default function Sidebar({ isDark, onDarkChange }: Props) {
         <Tooltip content={"Switch to " + (isDark ? "light" : "dark") + " mode"}>
           <Button onClick={onDarkChange} variant="minimal">
             <Icon icon={isDark ? "flash" : "moon"} />
+          </Button>
+        </Tooltip>
+        <Tooltip content="Logout">
+          <Button onClick={onLogout} variant="minimal">
+            <Icon icon="log-out" />
           </Button>
         </Tooltip>
       </div>

@@ -147,7 +147,7 @@ export default function PullRow({ pull }: Props) {
           )}
         </div>
         <div className={styles.source}>
-          {pull.host}/{pull.repo} #{pull.number}
+          {pull.repo} #{pull.number}
         </div>
       </td>
     </tr>

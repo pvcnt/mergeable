@@ -1,0 +1,29 @@
+@use "@blueprintjs/core/lib/scss/variables" as bp;
+
+.container {
+    width: 800px;
+    margin: auto;
+    padding-top: 2 * bp.$pt-grid-size;
+    gap: 2 * bp.$pt-grid-size;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: bp.$pt-grid-size;
+    img {
+        max-height: 1em;
+    }
+    margin: 0;
+}
+
+.button > span {
+    display: flex;
+    align-items: center;
+    gap: bp.$pt-grid-size;
+    img {
+        height: 1em;
+    }
+}

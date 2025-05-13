@@ -3,22 +3,12 @@ import { type Pull } from "@repo/github";
 import { defaultSections, type Connection, type Section } from "../lib/types";
 import { omit } from "remeda";
 
-export async function saveConnection(value: Connection): Promise<void> {
-  if (value.id.length === 0) {
-    return db.connections
-      .add(omit(value, ["id"]))
-      .then(() => {})
-      .catch(console.error);
-  } else {
-    return db.connections
-      .put(value)
-      .then(() => {})
-      .catch(console.error);
-  }
+export async function createConnection(value: Omit<Connection, "id">): Promise<void> {
+  await db.connections.add(value);
 }
 
-export async function deleteConnection(value: Connection): Promise<void> {
-  await db.connections.delete(value.id).catch(console.error);
+export async function deleteConnections(): Promise<void> {
+  await db.connections.clear();
 }
 
 export async function saveSection(value: Section): Promise<string> {
