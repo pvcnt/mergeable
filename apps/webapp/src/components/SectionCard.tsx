@@ -10,6 +10,7 @@ export type Props = {
   label: string;
   isLoading: boolean;
   pulls: Pull[];
+  sizes: number[];
   actions?: ReactNode;
 };
 
@@ -18,6 +19,7 @@ export default function SectionCard({
   label,
   isLoading,
   pulls,
+  sizes,
   actions,
 }: Props) {
   // Collapsed state is persisted in local storage to survive page reloads.
@@ -49,7 +51,7 @@ export default function SectionCard({
         <Spinner />
       ) : (
         <Collapse isOpen={!collapsed}>
-          <PullTable pulls={pulls} />
+          <PullTable pulls={pulls} sizes={sizes} />
         </Collapse>
       )}
     </Card>

@@ -1,11 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@repo/typescript-config/vite.json",
-  "include": ["src", "tests"],
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "**/.server/**/*",
+    "**/.client/**/*",
+    ".react-router/types/**/*",
+  ],
   "compilerOptions": {
     "composite": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "types": ["@testing-library/jest-dom"],
-    "outDir": "dist",
+    "types": ["@testing-library/jest-dom", "vite/client"],
+    "rootDirs": [".", "./.react-router/types"],
   },
 }

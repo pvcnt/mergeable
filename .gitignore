@@ -6,10 +6,12 @@ pnpm-debug.log*
 # Typescript
 *.tsbuildinfo
 node_modules/
-build/
 coverage/
 dist/
 generated/
+
+# React Router
+.react-router/
 
 # Wrangler
 .wrangler/

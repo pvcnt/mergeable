@@ -6,9 +6,10 @@ import styles from "./PullTable.module.scss";
 
 export type Props = {
   pulls: Pull[];
+  sizes: number[];
 };
 
-export default function PullTable({ pulls }: Props) {
+export default function PullTable({ pulls, sizes }: Props) {
   if (pulls.length === 0) {
     return <p className={styles.empty}>No results</p>;
   }
@@ -32,7 +33,7 @@ export default function PullTable({ pulls }: Props) {
       </thead>
       <tbody>
         {pulls.map((pull, idx) => (
-          <PullRow key={idx} pull={pull} />
+          <PullRow key={idx} pull={pull} sizes={sizes} />
         ))}
       </tbody>
     </HTMLTable>
