@@ -1,31 +1,46 @@
 # syntax=docker/dockerfile:1.8.1
 
-FROM joseluisq/static-web-server:2.32.0-alpine
+FROM node:24-alpine AS base
 
-RUN apk add --no-cache envsubst
-COPY --chmod=0755 docker/entrypoint.sh /
+RUN apk add --no-cache libc6-compat
+RUN apk update
+RUN corepack enable pnpm
 
-COPY <<EOF /config.toml
-  [general]
+ENV PNPM_HOME=/app/.pnpm
+ENV PATH=$PNPM_HOME:$PATH
+ENV CI=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
-  host = "::"
-  port = 80
-  root = "/mergeable"
-  log-level = "info"
+WORKDIR /src
 
-  page-fallback = "/mergeable/index.html"
-  cache-control-headers = true
-  compression = true
-  security-headers = true
-  directory-listing = false
-  redirect-trailing-slash = true
-  compression-static = true
-  ignore-hidden-files = true
-EOF
+FROM base AS builder
 
-COPY ./dist/client /mergeable
+RUN pnpm install --global turbo@^2
 
-ENV SERVER_CONFIG_FILE=config.toml
+COPY . . 
+RUN turbo prune webapp --docker
 
-ENTRYPOINT ["/entrypoint.sh"]
-EXPOSE 80
+FROM base AS installer
+
+COPY --from=builder /src/out/json/ .
+RUN pnpm install --frozen-lockfile
+ 
+COPY --from=builder /src/out/full/ .
+RUN pnpm run build
+
+FROM base AS runtime
+
+RUN apk add --no-cache tini
+
+COPY --from=builder /src/out/json/ .
+RUN pnpm install --frozen-lockfile --prod
+
+COPY --from=installer /src/apps/webapp/dist /src/apps/webapp/dist
+
+WORKDIR /src/apps/webapp
+
+EXPOSE 3000
+
+ENTRYPOINT ["tini", "-g", "--"]
+
+CMD ["pnpm", "run", "start"]

@@ -82,6 +82,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
             connections={connections.data}
             onSubmit={handleEdit}
             onDelete={handleDelete}
+            allowedUrls={loaderData.githubUrls}
           />
         </Card>
 

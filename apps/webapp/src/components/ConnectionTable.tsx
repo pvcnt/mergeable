@@ -9,12 +9,14 @@ export type Props = {
   connections: Connection[];
   onSubmit: (prev: Connection, v: ConnectionProps) => Promise<void>;
   onDelete: (v: Connection) => Promise<void>;
+  allowedUrls: string[];
 };
 
 export default function ConnectionTable({
   connections,
   onSubmit,
   onDelete,
+  allowedUrls,
 }: Props) {
   const [connection, setConnection] = useState<Connection | undefined>(
     undefined,
@@ -58,6 +60,7 @@ export default function ConnectionTable({
         onClose={() => setConnection(undefined)}
         onSubmit={connection && ((v) => onSubmit(connection, v))}
         onDelete={connection && (() => onDelete(connection))}
+        allowedUrls={allowedUrls}
       />
     </>
   );
