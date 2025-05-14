@@ -57,7 +57,13 @@ describe("ConnectionDialog", () => {
 
   test("submit button is disabled before base URL input and token are filled", async () => {
     // GIVEN an empty dialog.
-    render(<ConnectionDialog title="New connection" isOpen={true} allowedUrls={[]} />);
+    render(
+      <ConnectionDialog
+        title="New connection"
+        isOpen={true}
+        allowedUrls={[]}
+      />,
+    );
 
     // THEN the submit button must be disabled.
     const submitButton = screen.getByRole("button", { name: "Submit" });

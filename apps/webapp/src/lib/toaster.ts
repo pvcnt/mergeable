@@ -16,7 +16,9 @@ export function useToaster() {
           domRenderer: (toaster, containerElement) =>
             createRoot(containerElement).render(toaster),
         },
-      ).then((v) => toaster = v).catch(console.error);
+      )
+        .then((v) => (toaster = v))
+        .catch(console.error);
     }
   }, [isClient]);
 

@@ -19,7 +19,9 @@ import { env } from "../lib/env.server";
 import type { Route } from "./+types/settings";
 
 export function loader() {
-  const githubUrls = env.MERGEABLE_GITHUB_URLS ? env.MERGEABLE_GITHUB_URLS.split(",") : [];
+  const githubUrls = env.MERGEABLE_GITHUB_URLS
+    ? env.MERGEABLE_GITHUB_URLS.split(",")
+    : [];
   return data({ githubUrls });
 }
 

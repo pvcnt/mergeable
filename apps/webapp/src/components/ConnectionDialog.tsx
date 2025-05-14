@@ -56,7 +56,11 @@ export default function ConnectionDialog({
     setDisabled(false);
     setLabel(connection ? connection.label : "");
     setBaseUrl(
-      connection ? connection.baseUrl : allowedUrls.length > 0 ? allowedUrls[0] : "",
+      connection
+        ? connection.baseUrl
+        : allowedUrls.length > 0
+          ? allowedUrls[0]
+          : "",
     );
     setAuth(connection ? connection.auth : "");
     setOrgs(connection ? connection.orgs : []);
@@ -97,7 +101,7 @@ export default function ConnectionDialog({
             />
           </FormGroup>
           <FormGroup label="Base URL" labelInfo="(required)">
-            {(allowedUrls.length > 0) ? (
+            {allowedUrls.length > 0 ? (
               <HTMLSelect
                 options={allowedUrls}
                 value={baseUrl}

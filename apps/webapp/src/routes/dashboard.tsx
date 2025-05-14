@@ -60,9 +60,14 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
         )
       : [];
 
-  useDocumentTitle(pullsWithAttention ? `(${pullsWithAttention.length}) Mergeable` : "Mergeable", {
-    preserveTitleOnUnmount: false,
-  });
+  useDocumentTitle(
+    pullsWithAttention
+      ? `(${pullsWithAttention.length}) Mergeable`
+      : "Mergeable",
+    {
+      preserveTitleOnUnmount: false,
+    },
+  );
 
   // Open a "New section" dialog if URL is a share link.
   useEffect(() => {
