@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { data, useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
@@ -20,8 +20,16 @@ import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
 import { useTitle } from "../lib/useTitle";
 import { useQueryClient } from "@tanstack/react-query";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/dashboard";
+import { useDocumentTitle } from "usehooks-ts";
 
-export default function Dashboard() {
+export function loader() {
+  const sizes = env.MERGEABLE_PR_SIZES.split(",").map((v) => parseInt(v));
+  return data({ sizes });
+}
+
+export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const connections = useConnections();
   const sections = useSections();
   const pulls = usePulls({
@@ -51,6 +59,10 @@ export default function Dashboard() {
           (pull) => pullMatches(search, pull) && pull.attention?.set,
         )
       : [];
+
+  useDocumentTitle(pullsWithAttention ? `(${pullsWithAttention.length}) Mergeable` : "Mergeable", {
+    preserveTitleOnUnmount: false,
+  });
 
   // Open a "New section" dialog if URL is a share link.
   useEffect(() => {
@@ -114,6 +126,7 @@ export default function Dashboard() {
           label="Needs attention"
           isLoading={pulls.isLoading}
           pulls={pullsWithAttention}
+          sizes={loaderData.sizes}
         />
       )}
 
@@ -125,6 +138,7 @@ export default function Dashboard() {
               section={section}
               isLoading={pulls.isLoading}
               pulls={pullsBySection[idx]}
+              sizes={loaderData.sizes}
               isFirst={idx === 0}
               isLast={idx === sections.data.length - 1}
               onChange={handleSave}

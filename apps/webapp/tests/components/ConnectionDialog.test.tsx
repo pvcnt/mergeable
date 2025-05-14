@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, renderHook, waitFor } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "../../src/components/ConnectionDialog";
-import { AppToaster } from "../../src/lib/toaster";
+import { useToaster } from "../../src/lib/toaster";
 import type { ConnectionProps } from "../../src/lib/types";
 import { mockConnection } from "../testing";
 
@@ -35,6 +35,7 @@ describe("ConnectionDialog", () => {
         title="New connection"
         isOpen={true}
         onSubmit={handleSubmit}
+        allowedUrls={[]}
       />,
     );
 
@@ -56,7 +57,7 @@ describe("ConnectionDialog", () => {
 
   test("submit button is disabled before base URL input and token are filled", async () => {
     // GIVEN an empty dialog.
-    render(<ConnectionDialog title="New connection" isOpen={true} />);
+    render(<ConnectionDialog title="New connection" isOpen={true} allowedUrls={[]} />);
 
     // THEN the submit button must be disabled.
     const submitButton = screen.getByRole("button", { name: "Submit" });
@@ -112,6 +113,7 @@ describe("ConnectionDialog", () => {
         isOpen={true}
         connection={connection}
         onClose={handleClose}
+        allowedUrls={[]}
       />,
     );
 
@@ -135,6 +137,7 @@ describe("ConnectionDialog", () => {
         connection={connection}
         onSubmit={handleSubmit}
         onClose={handleClose}
+        allowedUrls={[]}
       />,
     );
 
@@ -142,7 +145,9 @@ describe("ConnectionDialog", () => {
     await clickButton("Submit");
 
     // THEN it should display a toast.
-    expect((await AppToaster).getToasts()).toHaveLength(1);
+    const { result } = renderHook(useToaster);
+    await waitFor(() => expect(result.current).toBeDefined());
+    expect(result.current?.getToasts()).toHaveLength(1);
 
     // THEN it should not close the dialog.
     expect(state.closed).toBe(false);

@@ -10,8 +10,16 @@ import PullTable from "../components/PullTable";
 import { useState } from "react";
 import { pullMatches } from "../lib/search";
 import { useTitle } from "../lib/useTitle";
+import { data } from "react-router";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/stars";
 
-export default function Stars() {
+export function loader() {
+  const sizes = env.MERGEABLE_PR_SIZES.split(",").map((v) => parseInt(v));
+  return data({ sizes });
+}
+
+export default function Stars({ loaderData }: Route.ComponentProps) {
   const [search, setSearch] = useState<string>("");
   const connections = useConnections();
   const sections = useSections();
@@ -38,6 +46,7 @@ export default function Stars() {
             pulls={pulls.data.filter(
               (pull) => stars.has(pull.uid) && pullMatches(search, pull),
             )}
+            sizes={loaderData.sizes}
           />
         )}
       </Card>

@@ -15,6 +15,7 @@ export type Props = {
   onMoveDown: () => void;
   onChange: (v: Section) => void;
   onDelete: () => void;
+  sizes: number[];
 };
 
 export default function DashboardSection({
@@ -23,6 +24,7 @@ export default function DashboardSection({
   isFirst,
   isLast,
   pulls,
+  sizes,
   onChange,
   onMoveUp,
   onMoveDown,
@@ -35,6 +37,7 @@ export default function DashboardSection({
         id={section.id}
         label={section.label}
         pulls={pulls}
+        sizes={sizes}
         isLoading={isLoading}
         actions={
           <>

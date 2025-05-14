@@ -12,7 +12,7 @@ import { useState } from "react";
 import { isTruthy } from "remeda";
 import ConfirmDialog from "./ConfirmDialog";
 import type { ConnectionProps } from "../lib/types";
-import { AppToaster } from "../lib/toaster";
+import { useToaster } from "../lib/toaster";
 import OrgSelector from "./OrgSelector";
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
   onClose?: () => void;
   onSubmit?: (v: ConnectionProps) => Promise<void>;
   onDelete?: () => void;
-  allowedUrls?: string[];
+  allowedUrls: string[];
 };
 
 function getHost(baseUrl: string) {
@@ -50,12 +50,13 @@ export default function ConnectionDialog({
   const [orgs, setOrgs] = useState<string[]>([]);
   const [isDeleting, setDeleting] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
+  const toaster = useToaster();
 
   const handleOpening = () => {
     setDisabled(false);
     setLabel(connection ? connection.label : "");
     setBaseUrl(
-      connection ? connection.baseUrl : allowedUrls ? allowedUrls[0] : "",
+      connection ? connection.baseUrl : allowedUrls.length > 0 ? allowedUrls[0] : "",
     );
     setAuth(connection ? connection.auth : "");
     setOrgs(connection ? connection.orgs : []);
@@ -69,7 +70,7 @@ export default function ConnectionDialog({
         onClose && onClose();
       } catch (e) {
         const message = `Something went wrong: ${(e as Error).message}`;
-        (await AppToaster).show({ message, intent: Intent.DANGER });
+        toaster?.show({ message, intent: Intent.DANGER });
       }
     }
   };
@@ -96,7 +97,7 @@ export default function ConnectionDialog({
             />
           </FormGroup>
           <FormGroup label="Base URL" labelInfo="(required)">
-            {allowedUrls ? (
+            {(allowedUrls.length > 0) ? (
               <HTMLSelect
                 options={allowedUrls}
                 value={baseUrl}

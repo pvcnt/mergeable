@@ -1,23 +1,21 @@
-import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router";
 import clsx from "clsx";
-import Sidebar from "./components/Sidebar";
-import Footer from "./components/Footer";
-import { useConnections } from "./lib/queries";
-import styles from "./App.module.scss";
+import Sidebar from "./Sidebar";
+import Footer from "./Footer";
+import { useConnections } from "../lib/queries";
+import styles from "./AppLayout.module.scss";
 import { Card } from "@blueprintjs/core";
+import { useLocalStorage } from "usehooks-ts";
+
+export function meta() {
+  return [{ title: "Mergeable" }];
+}
 
 export default function App() {
-  const [isDark, setDark] = useState<boolean>(() => {
-    // Read the isDark value from local storage (or false if it's not set)
-    return JSON.parse(localStorage.getItem("isDark") || "false") as boolean;
+  const [isDark, setDark] = useLocalStorage("isDark", false, {
+    initializeWithValue: false, // For SSR support.
   });
   const connections = useConnections();
-
-  useEffect(() => {
-    // Write the isDark value to local storage whenever it changes
-    localStorage.setItem("isDark", JSON.stringify(isDark));
-  }, [isDark]);
 
   return (
     <div className={clsx(styles.app, isDark && "bp5-dark")}>

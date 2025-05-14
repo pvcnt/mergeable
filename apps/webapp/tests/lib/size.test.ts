@@ -4,9 +4,10 @@ import { computeSize } from "../../src/lib/size";
 
 describe("computeSize", () => {
   it("should return the size of a pull request", () => {
-    expect(computeSize(mockPull({ additions: 1 }))).toBe("XS");
-    expect(computeSize(mockPull({ deletions: 30 }))).toBe("M");
-    expect(computeSize(mockPull({ additions: 500, deletions: 500 }))).toBe(
+    const sizes = [10, 30, 100, 500, 1000];
+    expect(computeSize(mockPull({ additions: 1 }), sizes)).toBe("XS");
+    expect(computeSize(mockPull({ deletions: 30 }), sizes)).toBe("M");
+    expect(computeSize(mockPull({ additions: 500, deletions: 500 }), sizes)).toBe(
       "XXL",
     );
   });

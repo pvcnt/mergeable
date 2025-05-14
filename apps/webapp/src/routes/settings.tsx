@@ -12,20 +12,24 @@ import {
 } from "../lib/mutations";
 import type { Connection, ConnectionProps } from "../lib/types";
 import styles from "./settings.module.scss";
-import { AppToaster } from "../lib/toaster";
-import { useNavigate } from "react-router";
+import { useToaster } from "../lib/toaster";
+import { data, useNavigate } from "react-router";
 import { gitHubClient } from "../github";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/settings";
 
-export default function Settings() {
+export function loader() {
+  const githubUrls = env.MERGEABLE_GITHUB_URLS ? env.MERGEABLE_GITHUB_URLS.split(",") : [];
+  return data({ githubUrls });
+}
+
+export default function Settings({ loaderData }: Route.ComponentProps) {
   const [isEditing, setEditing] = useState(false);
   const [isResetting, setResetting] = useState(false);
   const connections = useConnections();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  const allowedUrls = import.meta.env.MERGEABLE_GITHUB_URLS
-    ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
-    : undefined;
+  const toaster = useToaster();
 
   const handleNew = async (props: ConnectionProps) => {
     const viewer = await gitHubClient.getViewer(props);
@@ -43,7 +47,7 @@ export default function Settings() {
   };
   const handleReset = async () => {
     await resetSections();
-    (await AppToaster).show({
+    toaster?.show({
       message: "Configuration has been reset to factory settings",
       intent: "success",
     });
@@ -65,7 +69,7 @@ export default function Settings() {
 
         <ConnectionDialog
           title="New connection"
-          allowedUrls={allowedUrls}
+          allowedUrls={loaderData.githubUrls}
           isOpen={isEditing}
           onClose={() => setEditing(false)}
           onSubmit={handleNew}

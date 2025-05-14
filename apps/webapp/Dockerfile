@@ -23,7 +23,7 @@ COPY <<EOF /config.toml
   ignore-hidden-files = true
 EOF
 
-COPY ./dist /mergeable
+COPY ./dist/client /mergeable
 
 ENV SERVER_CONFIG_FILE=config.toml
 

@@ -11,6 +11,9 @@ coverage/
 dist/
 generated/
 
+# React Router
+.react-router/
+
 # Wrangler
 .wrangler/
 

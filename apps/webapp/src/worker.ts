@@ -5,7 +5,11 @@ import { db } from "./lib/db";
 const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
 // Domains that we do not need to hash.
-const domainsWhitelist = new Set(["localhost", "mergeable.pages.dev", "app.usemergeable.dev"]);
+const domainsWhitelist = new Set([
+  "localhost",
+  "mergeable.pages.dev",
+  "app.usemergeable.dev",
+]);
 
 // Schema version is used to force bursting the local cache of pull requests
 // when there is a change that requires it (e.g., adding a new field that must
