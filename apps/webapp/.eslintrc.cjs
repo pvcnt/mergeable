@@ -8,6 +8,10 @@ module.exports = {
   ignorePatterns: ["public/**"],
   plugins: ["react-refresh"],
   parserOptions: {
-    project: true,
+    tsconfigRootDir: __dirname,
+    project: [
+      "./tsconfig.node.json",
+      "./tsconfig.vite.json",
+    ],
   },
 };
