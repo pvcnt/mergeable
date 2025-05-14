@@ -1,11 +1,7 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@repo/typescript-config/vite.json",
-  "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "types": ["@testing-library/jest-dom"],
-    "outDir": "dist",
-  },
-  "include": ["src", "tests"],
-  "exclude": ["node_modules"],
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.vite.json" },
+  ],
 }

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": [".eslintrc.cjs", "vite.config.ts", "vitest.config.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "types": ["node"],
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "checkJs": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+  }
+}
