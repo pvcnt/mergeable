@@ -2,7 +2,7 @@ import { githubAuth } from "@hono/oauth-providers/github";
 import { Hono } from "hono";
 import { env } from "hono/adapter";
 import { getPrismaClient } from "./db";
-import { type Env } from "./env";
+import type { Env } from "./env";
 
 const app = new Hono();
 

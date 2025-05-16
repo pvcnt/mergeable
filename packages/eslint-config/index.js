@@ -27,5 +27,6 @@ module.exports = {
       // https://github.com/typescript-eslint/typescript-eslint/issues/4619
       { checksVoidReturn: false }
     ],
+    "@typescript-eslint/no-import-type-side-effects": "error",
   },
 };

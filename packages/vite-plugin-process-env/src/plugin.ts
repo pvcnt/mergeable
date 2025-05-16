@@ -1,4 +1,4 @@
-import { type Plugin, loadEnv } from "vite";
+import { type PluginOption, loadEnv } from "vite";
 import path from "node:path";
 import MagicString from "magic-string";
 import assert from "assert";
@@ -23,7 +23,7 @@ const workerIds: Set<string> = new Set();
  *
  * @param {Options} options
  */
-export function processEnv({ extraEnv }: Options = {}): Plugin {
+export function processEnv({ extraEnv }: Options = {}): PluginOption {
   // Local state, that is reset between consecutive invocations of Vite.
   let shouldGenerateSourcemap = false;
   let env: EnvVars = {};

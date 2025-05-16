@@ -7,7 +7,7 @@
     "dev": "vite --clearScreen false",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "codegen": "wrangler types",
     "test": "vitest run",
