@@ -12,7 +12,7 @@ import {
 } from "../lib/mutations";
 import type { Connection, ConnectionProps } from "../lib/types";
 import styles from "./settings.module.scss";
-import { AppToaster } from "../lib/toaster";
+import { useToaster } from "../lib/toaster";
 import { useNavigate } from "react-router";
 import { gitHubClient } from "../github";
 
@@ -22,6 +22,7 @@ export default function Settings() {
   const connections = useConnections();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const toaster = useToaster();
 
   const allowedUrls = import.meta.env.MERGEABLE_GITHUB_URLS
     ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
@@ -43,7 +44,7 @@ export default function Settings() {
   };
   const handleReset = async () => {
     await resetSections();
-    (await AppToaster).show({
+    toaster?.show({
       message: "Configuration has been reset to factory settings",
       intent: "success",
     });

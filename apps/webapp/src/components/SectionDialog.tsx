@@ -11,7 +11,7 @@ import {
   TextArea,
 } from "@blueprintjs/core";
 import { useState } from "react";
-import { AppToaster } from "../lib/toaster";
+import { useToaster } from "../lib/toaster";
 import ConfirmDialog from "./ConfirmDialog";
 import {
   DEFAULT_SECTION_LIMIT,
@@ -46,6 +46,7 @@ export default function SectionDialog({
 }: SectionDialogProps) {
   const [data, setData] = useState<SectionProps>(emptySection);
   const [isDeleting, setDeleting] = useState(false);
+  const toaster = useToaster();
 
   const handleOpening = () => {
     if (section) {
@@ -74,7 +75,7 @@ export default function SectionDialog({
     await navigator.clipboard.writeText(
       `${window.location.origin}/inbox?${params.toString()}`,
     );
-    (await AppToaster).show({
+    toaster?.show({
       message: "Share URL has been copied to clipboard.",
       intent: Intent.SUCCESS,
     });
