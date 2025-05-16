@@ -5,10 +5,4 @@
     { "path": "./tsconfig.build.json" },
     { "path": "./tsconfig.node.json" },
   ],
-  "compilerOptions": {
-    "checkJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-  }
 }

@@ -1,6 +1,6 @@
 import { Icon, Tooltip } from "@blueprintjs/core";
-import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
-import React from "react";
+import type { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
+import type React from "react";
 
 type Props = {
   icon: BlueprintIcons_16Id;

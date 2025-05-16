@@ -1,4 +1,4 @@
-import { Pull } from "@repo/github";
+import type { Pull } from "@repo/github";
 import { useEffect } from "react";
 
 /**

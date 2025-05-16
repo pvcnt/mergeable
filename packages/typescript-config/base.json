@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Default",
   "compilerOptions": {
+    "lib": ["es2023"],
     "target": "es2015",
-    "lib": ["es2023", "es2023.Array"],
     "composite": false,
     "declaration": true,
     "declarationMap": true,
@@ -18,5 +18,6 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
+    "verbatimModuleSyntax": true,
   },
 }

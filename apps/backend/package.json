@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250507.0",
+    "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.5.0",
     "@types/ws": "^8.18.1",
     "dotenv-cli": "^8.0.0",

@@ -5,20 +5,21 @@ import {
   DialogFooter,
   Intent,
 } from "@blueprintjs/core";
-import { PropsWithChildren } from "react";
+import type { ReactNode } from "react";
 
-export type Props = {
+export interface ConfirmDialogProps {
   isOpen: boolean;
   onClose?: () => void;
   onSubmit?: () => void;
-};
+  children?: ReactNode;
+}
 
 export default function ConfirmDialog({
   isOpen,
   onClose,
   onSubmit,
   children,
-}: PropsWithChildren<Props>) {
+}: ConfirmDialogProps) {
   const handleConfirm = () => {
     onSubmit && onSubmit();
     onClose && onClose();
