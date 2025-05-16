@@ -1,12 +1,12 @@
 import { Octokit } from "octokit";
 import { throttling } from "@octokit/plugin-throttling";
-import {
-  type Participant,
-  type PullProps,
-  type Team,
-  type User,
-  type Profile,
-  type Discussion,
+import type {
+  Participant,
+  PullProps,
+  Team,
+  User,
+  Profile,
+  Discussion,
   CheckState,
   Check,
 } from "./types";

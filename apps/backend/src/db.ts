@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma";
-import { type Env } from "./env";
+import type { Env } from "./env";
 import { PrismaNeon } from "@prisma/adapter-neon";
 
 export function getPrismaClient(env: Env): PrismaClient {
