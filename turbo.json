@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "codegen": {
-      "outputs": ["generated/**"]
+      "outputs": ["generated/**", ".react-router/**", "worker-configuration-d.ts"]
     },
     "build": {
       "dependsOn": ["^build", "codegen"],
