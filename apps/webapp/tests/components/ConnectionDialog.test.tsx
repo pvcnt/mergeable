@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, renderHook, waitFor } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import ConnectionDialog from "../../src/components/ConnectionDialog";
-import { AppToaster } from "../../src/lib/toaster";
+import { useToaster } from "../../src/lib/toaster";
 import type { ConnectionProps } from "../../src/lib/types";
 import { mockConnection } from "../testing";
 
@@ -142,7 +142,9 @@ describe("ConnectionDialog", () => {
     await clickButton("Submit");
 
     // THEN it should display a toast.
-    expect((await AppToaster).getToasts()).toHaveLength(1);
+    const { result } = renderHook(useToaster);
+    await waitFor(() => expect(result.current).toBeDefined());
+    expect(result.current?.getToasts()).toHaveLength(1);
 
     // THEN it should not close the dialog.
     expect(state.closed).toBe(false);
