@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
+import { useDocumentTitle } from "usehooks-ts";
 import SectionDialog from "../components/SectionDialog";
 import DashboardSection from "../components/DashboardSection";
 import {
@@ -18,7 +19,6 @@ import {
 import Navbar from "../components/Navbar";
 import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
-import { useTitle } from "../lib/useTitle";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
@@ -29,7 +29,6 @@ export default function Dashboard() {
     sections: sections.data,
   });
   const queryClient = useQueryClient();
-  useTitle(pulls.data ?? []);
 
   const [search, setSearch] = useState<string>("");
   const [isEditing, setEditing] = useState(false);
@@ -51,6 +50,19 @@ export default function Dashboard() {
           (pull) => pullMatches(search, pull) && pull.attention?.set,
         )
       : [];
+  // Prepend the number of pull requests in the attention set to the title.
+  useDocumentTitle(
+    pullsWithAttention.length > 0
+      ? `(${pullsWithAttention.length}) Mergeable`
+      : "Mergeable",
+    {
+      preserveTitleOnUnmount: false,
+    },
+  );
+
+  const sizes = import.meta.env.MERGEABLE_PR_SIZES?.split(",").map((v) =>
+    parseInt(v),
+  );
 
   // Open a "New section" dialog if URL is a share link.
   useEffect(() => {
@@ -114,6 +126,7 @@ export default function Dashboard() {
           label="Needs attention"
           isLoading={pulls.isLoading}
           pulls={pullsWithAttention}
+          sizes={sizes}
         />
       )}
 
@@ -125,6 +138,7 @@ export default function Dashboard() {
               section={section}
               isLoading={pulls.isLoading}
               pulls={pullsBySection[idx]}
+              sizes={sizes}
               isFirst={idx === 0}
               isLast={idx === sections.data.length - 1}
               onChange={handleSave}

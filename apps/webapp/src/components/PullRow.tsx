@@ -9,9 +9,10 @@ import CopyToClipboardIcon from "./CopyToClipboardIcon";
 import { toggleStar } from "../lib/mutations";
 import { useStars } from "../lib/queries";
 
-export type Props = {
+export interface PullRowProps {
   pull: Pull;
-};
+  sizes?: number[];
+}
 
 const formatDate = (d: string) => {
   return new Date(d).toLocaleDateString("en", {
@@ -23,7 +24,7 @@ const formatDate = (d: string) => {
   });
 };
 
-export default function PullRow({ pull }: Props) {
+export default function PullRow({ pull, sizes }: PullRowProps) {
   const [active, setActive] = useState(false);
   const stars = useStars();
   const handleClick = (e: React.MouseEvent) => {
@@ -132,7 +133,7 @@ export default function PullRow({ pull }: Props) {
           openOnTargetFocus={false}
           usePortal={false}
         >
-          <Tag>{computeSize(pull)}</Tag>
+          <Tag>{computeSize(pull, sizes)}</Tag>
         </Tooltip>
       </td>
       <td>
