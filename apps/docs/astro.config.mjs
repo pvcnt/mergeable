@@ -12,7 +12,7 @@ export default defineConfig({
       logo: {
         src: "./src/assets/logo.svg",
       },
-      favicon: "/favicon.png",
+      favicon: "/favicon.ico",
       editLink: {
         baseUrl: "https://github.com/pvcnt/mergeable/edit/main/apps/docs/",
       },
