@@ -43,6 +43,31 @@ jobs:
           workingDirectory: apps/webapp
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.5.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install --filter webapp...
+      - name: Build webapp
+        run: pnpm run build --filter webapp...
+        env:
+          VITE_COMMIT_SHA: ${{ github.sha }}
+          MERGEABLE_GITHUB_URLS: https://api.github.com
+      - name: Publish to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
+          workingDirectory: apps/webapp
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 4.14.4
   docs:
     runs-on: ubuntu-latest
     steps:

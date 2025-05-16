@@ -12,6 +12,7 @@ module.exports = {
     project: [
       "./tsconfig.node.json",
       "./tsconfig.vite.json",
+      "./tsconfig.cloudflare.json",
     ],
   },
 };

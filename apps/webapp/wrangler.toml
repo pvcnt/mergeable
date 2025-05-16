@@ -1,0 +1,13 @@
+name = "mergeable-web"
+compatibility_date = "2025-05-15"
+compatibility_flags = ["nodejs_compat"]
+main = "./cloudflare/worker.ts"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
