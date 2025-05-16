@@ -5,7 +5,7 @@ import { BlueprintProvider } from "@blueprintjs/core";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createIDBPersister, createQueryClient } from "./lib/react-query.ts";
-import App from "./App.tsx";
+import AppLayout from "./components/AppLayout.tsx";
 import ErrorPage from "./error-page.tsx";
 import Dashboard from "./routes/dashboard.tsx";
 import Settings from "./routes/settings.tsx";
@@ -18,7 +18,7 @@ import "./main.scss";
 const routes = [
   {
     path: "/",
-    element: <App />,
+    element: <AppLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
