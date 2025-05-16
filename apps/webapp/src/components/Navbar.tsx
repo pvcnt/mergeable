@@ -1,10 +1,10 @@
-import { ReactNode, useCallback, useMemo } from "react";
+import { type ReactNode, useCallback, useMemo } from "react";
 import {
   Button,
   Navbar as BPNavbar,
   Tooltip,
   Icon,
-  HotkeyConfig,
+  type HotkeyConfig,
   useHotkeys,
 } from "@blueprintjs/core";
 import { useNavigate, useLocation } from "react-router";

@@ -1,13 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
 import { get, set, del } from "idb-keyval";
-import {
-  type PersistedClient,
+import type {
+  PersistedClient,
   Persister,
-  removeOldestQuery,
 } from "@tanstack/react-query-persist-client";
-
-const rl = removeOldestQuery;
-console.log(rl)
 
 export function createQueryClient() {
   return new QueryClient({

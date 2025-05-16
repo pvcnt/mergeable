@@ -1,14 +1,14 @@
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
-  Connection,
+  type Connection,
   DEFAULT_SECTION_LIMIT,
   defaultSections,
   MAX_SECTION_LIMIT,
-  Section,
+  type Section,
 } from "../lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { isInAttentionSet, Pull, splitQueries } from "@repo/github";
+import { isInAttentionSet, type Pull, splitQueries } from "@repo/github";
 import { groupBy, indexBy, prop, sortBy, unique } from "remeda";
 import { gitHubClient } from "../github";
 

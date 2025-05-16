@@ -1,13 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.json",
+  "extends": "@repo/typescript-config/base.json",
   "include": ["src", "tests", "generated/**/*"],
   "compilerOptions": {
     "composite": true,
-    "lib": ["ES2023"],
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",
     "rootDirs": ["./src", "./generated"],
+    "noEmit": true,
   },
 }

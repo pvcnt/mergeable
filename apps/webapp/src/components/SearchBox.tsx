@@ -1,5 +1,10 @@
 import { useMemo, useRef, useState } from "react";
-import { InputGroup, HotkeyConfig, useHotkeys, Tag } from "@blueprintjs/core";
+import {
+  InputGroup,
+  type HotkeyConfig,
+  useHotkeys,
+  Tag,
+} from "@blueprintjs/core";
 
 export interface SearchBoxProps {
   value: string;

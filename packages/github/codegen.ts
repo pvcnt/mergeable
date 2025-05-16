@@ -9,6 +9,7 @@ const config: CodegenConfig = {
       preset: "client",
       config: {
         documentMode: "string",
+        useTypeImports: true,
       },
     },
   },

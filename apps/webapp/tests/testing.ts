@@ -1,11 +1,11 @@
-import {
+import type {
   Endpoint,
   GitHubClient,
   Profile,
   PullProps,
-  type Pull,
+  Pull,
 } from "@repo/github";
-import { type Section, type Connection } from "../src/lib/types";
+import type { Section, Connection } from "../src/lib/types";
 
 export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {
   const id = props?.id ?? "PR_1";

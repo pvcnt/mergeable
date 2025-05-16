@@ -1,17 +1,17 @@
 import { Card, Collapse, H5, Icon, Spinner, Tag } from "@blueprintjs/core";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { Pull } from "@repo/github";
 import PullTable from "./PullTable";
 import styles from "./SectionCard.module.scss";
 import { useLocalStorage } from "usehooks-ts";
 
-export type Props = {
+export interface SectionCardProps {
   id: string;
   label: string;
   isLoading: boolean;
   pulls: Pull[];
   actions?: ReactNode;
-};
+}
 
 export default function SectionCard({
   id,
@@ -19,7 +19,7 @@ export default function SectionCard({
   isLoading,
   pulls,
   actions,
-}: Props) {
+}: SectionCardProps) {
   // Collapsed state is persisted in local storage to survive page reloads.
   const [collapsed, saveCollapsed] = useLocalStorage(
     `section:${id}:collapsed`,
