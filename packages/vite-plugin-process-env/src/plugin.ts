@@ -1,4 +1,4 @@
-import { Plugin, loadEnv } from "vite";
+import { type Plugin, loadEnv } from "vite";
 import path from "node:path";
 import MagicString from "magic-string";
 import assert from "assert";

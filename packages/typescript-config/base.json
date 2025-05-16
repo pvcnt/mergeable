@@ -18,5 +18,6 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
+    "verbatimModuleSyntax": true,
   },
 }

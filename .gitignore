@@ -13,6 +13,7 @@ generated/
 
 # Wrangler
 .wrangler/
+worker-configuration.d.ts
 
 # Editor directories and files
 .vscode/*
