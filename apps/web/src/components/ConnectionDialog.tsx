@@ -19,10 +19,10 @@ type Props = {
   title: string;
   isOpen: boolean;
   connection?: ConnectionProps;
+  allowedUrls?: string[];
   onClose?: () => void;
   onSubmit?: (v: ConnectionProps) => Promise<void>;
   onDelete?: () => void;
-  allowedUrls?: string[];
 };
 
 function getHost(baseUrl: string) {

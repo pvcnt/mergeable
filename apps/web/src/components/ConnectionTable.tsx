@@ -7,12 +7,14 @@ import styles from "./ConnectionTable.module.scss";
 
 export type Props = {
   connections: Connection[];
+  allowedUrls?: string[];
   onSubmit: (prev: Connection, v: ConnectionProps) => Promise<void>;
   onDelete: (v: Connection) => Promise<void>;
 };
 
 export default function ConnectionTable({
   connections,
+  allowedUrls,
   onSubmit,
   onDelete,
 }: Props) {
@@ -55,6 +57,7 @@ export default function ConnectionTable({
         connection={connection}
         title="Edit connection"
         isOpen={connection !== undefined}
+        allowedUrls={allowedUrls}
         onClose={() => setConnection(undefined)}
         onSubmit={connection && ((v) => onSubmit(connection, v))}
         onDelete={connection && (() => onDelete(connection))}

@@ -1,5 +1,5 @@
-import { Navigate } from "react-router";
+import { redirect } from "react-router";
 
-export default function Home() {
-  return <Navigate to="/inbox" />;
+export function loader() {
+  return redirect("/inbox");
 }
