@@ -15,6 +15,9 @@ generated/
 .wrangler/
 worker-configuration.d.ts
 
+# React Router
+.react-router/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

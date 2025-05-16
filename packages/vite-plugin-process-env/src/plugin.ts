@@ -65,6 +65,11 @@ export function processEnv({ extraEnv }: Options = {}): PluginOption {
         fileName: "env.template.js",
         source,
       });
+      this.emitFile({
+        type: "asset",
+        fileName: "env.js",
+        source: `globalThis.env = ${JSON.stringify(env)};`,
+      });
     },
     transform(code, id) {
       const extension = path.extname(id);

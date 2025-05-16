@@ -46,6 +46,9 @@ describe("vite-plugin-process-env", () => {
     expect(readDistFile("env.template.js")).toContain(
       `const rtenv = {"VITE_APP_VERSION":"$VITE_APP_VERSION"};globalThis.env = { ...globalThis.env, ...Object.fromEntries(Object.entries(rtenv).filter(([k, v]) => v.length > 0)) };`,
     );
+    expect(readDistFile("env.js")).toContain(
+      `globalThis.env = {"VITE_APP_VERSION":"v1"};`,
+    );
 
     expect(readDistFile("index.html")).toContain(
       `<script>globalThis.env = {"VITE_APP_VERSION":"v1"};</script>`,

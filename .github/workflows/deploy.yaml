@@ -41,7 +41,7 @@ jobs:
           accountId: 1f74b8302712fd67d5eddea8c96eb776
           projectName: mergeable
           workingDirectory: apps/web
-          directory: dist
+          directory: dist/client
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
   web:
     runs-on: ubuntu-latest
