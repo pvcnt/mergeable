@@ -15,7 +15,7 @@ The project is built with the following command:
 pnpm run build
 ```
 
-This will create a static website under the `apps/webapp/dist` directory.
+This will create a static website under the `apps/web/dist` directory.
 The content of this directory can then be dropped into your Web server of hosting platform.
 
 :::caution

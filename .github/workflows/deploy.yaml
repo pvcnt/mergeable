@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  webapp:
+  web-legacy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,9 +28,9 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install --filter webapp...
-      - name: Build webapp
-        run: pnpm run build --filter webapp...
+        run: pnpm install --filter web...
+      - name: Build app
+        run: pnpm run build --filter web...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
           MERGEABLE_GITHUB_URLS: https://api.github.com
@@ -40,7 +40,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           accountId: 1f74b8302712fd67d5eddea8c96eb776
           projectName: mergeable
-          workingDirectory: apps/webapp
+          workingDirectory: apps/web
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
   web:
@@ -55,9 +55,9 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install --filter webapp...
-      - name: Build webapp
-        run: pnpm run build --filter webapp...
+        run: pnpm install --filter web...
+      - name: Build app
+        run: pnpm run build --filter web...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
           MERGEABLE_GITHUB_URLS: https://api.github.com
@@ -65,7 +65,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          workingDirectory: apps/webapp
+          workingDirectory: apps/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 4.14.4
   docs:
