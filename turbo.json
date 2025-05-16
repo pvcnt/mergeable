@@ -10,17 +10,17 @@
       "env": ["VITE_*", "MERGEABLE_*", "CODECOV_TOKEN"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck", "codegen"]
+      "dependsOn": ["^build", "codegen"]
     },
     "lint": {
-      "dependsOn": ["^lint", "codegen"]
+      "dependsOn": ["^build", "codegen"]
     },
     "test": {
-      "dependsOn": ["^test", "codegen"],
+      "dependsOn": ["^build", "codegen"],
       "env": ["POLLY_MODE"]
     },
     "coverage": {
-      "dependsOn": ["^coverage", "codegen"],
+      "dependsOn": ["^build", "codegen"],
       "outputs": ["coverage/**"],
       "env": ["POLLY_MODE"]
     },
