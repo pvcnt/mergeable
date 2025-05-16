@@ -11,12 +11,12 @@ import { createQueryClient, createIDBPersister } from "./lib/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BlueprintProvider } from "@blueprintjs/core";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { useTelemetry } from "./lib/telemetry";
 import type { Route } from "./+types/root";
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "./styles.scss";
-
 export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
 ];
@@ -40,23 +40,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-if (!import.meta.env.SSR) {
-  // This ugly switch is needed to support the worker in dev mode.
-  if (import.meta.env.DEV) {
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    });
-  } else {
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "classic",
-    });
-  }
-}
-
 export default function App() {
   // Ensure that each request has its own cache.
   const [queryClient] = useState(createQueryClient);
   const persister = createIDBPersister();
+  useTelemetry();
   return (
     <BlueprintProvider>
       <PersistQueryClientProvider

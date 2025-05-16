@@ -7,6 +7,7 @@
     "dev": "react-router dev",
     "build": "react-router build",
     "preview": "vite preview",
+    "start": "react-router-serve ./dist/server/index.js",
     "typecheck": "tsc -b",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "codegen": "react-router typegen && wrangler types && graphql-codegen --config ./codegen.ts",
@@ -20,6 +21,7 @@
     "@graphql-typed-document-node/core": "^3.2.0",
     "@octokit/plugin-throttling": "^11.0.1",
     "@react-router/node": "^7.6.0",
+    "@react-router/serve": "^7.6.0",
     "@tanstack/react-query": "^5.75.4",
     "@tanstack/react-query-devtools": "^5.75.4",
     "@tanstack/react-query-persist-client": "^5.75.4",
@@ -39,10 +41,13 @@
     "react-router": "^7.6.0",
     "react-time-ago": "^7.3.3",
     "remeda": "^2.0.5",
+    "std-env": "^3.9.0",
     "usehooks-ts": "^3.1.1",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.2.2",
     "@codecov/vite-plugin": "^1.9.0",
     "@graphql-codegen/cli": "^5.0.5",
     "@pollyjs/adapter-fetch": "^6.0.6",
@@ -72,6 +77,7 @@
     "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",
     "vite": "^6.3.5",
+    "vite-plugin-iso-import": "^1.2.0",
     "vitest": "^2.0.5",
     "wrangler": "^4.14.4"
   }

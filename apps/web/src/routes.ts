@@ -7,10 +7,14 @@ import {
 
 // https://reactrouter.com/start/framework/routing
 export default [
-  index("routes/home.tsx"),
+  // UI routes.
+  index("routes/home.ts"),
   layout("components/AppLayout.tsx", [
     route("inbox", "routes/dashboard.tsx"),
     route("inbox/stars", "routes/stars.tsx"),
     route("settings", "routes/settings.tsx"),
   ]),
+  // API routes.
+  route("health", "routes/health.ts"),
+  route("api/telemetry", "routes/api.telemetry.ts"),
 ] satisfies RouteConfig;

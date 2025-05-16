@@ -13,20 +13,27 @@ import {
 import type { Connection, ConnectionProps } from "../lib/types";
 import styles from "./settings.module.scss";
 import { useToaster } from "../lib/toaster";
-import { useNavigate } from "react-router";
+import { data, useNavigate } from "react-router";
 import { gitHubClient } from "../github";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/settings";
 import { isTruthy } from "remeda";
-export default function Settings() {
+
+export function loader() {
+  const githubUrls = isTruthy(env.MERGEABLE_GITHUB_URLS)
+    ? env.MERGEABLE_GITHUB_URLS.split(",")
+    : undefined;
+  return data({ githubUrls });
+}
+
+export default function Settings({ loaderData }: Route.ComponentProps) {
+  const { githubUrls } = loaderData;
   const [isEditing, setEditing] = useState(false);
   const [isResetting, setResetting] = useState(false);
   const connections = useConnections();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const toaster = useToaster();
-
-  const allowedUrls = isTruthy(import.meta.env.MERGEABLE_GITHUB_URLS)
-    ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
-    : undefined;
 
   const handleNew = async (props: ConnectionProps) => {
     const viewer = await gitHubClient.getViewer(props);
@@ -66,7 +73,7 @@ export default function Settings() {
 
         <ConnectionDialog
           title="New connection"
-          allowedUrls={allowedUrls}
+          allowedUrls={githubUrls}
           isOpen={isEditing}
           onClose={() => setEditing(false)}
           onSubmit={handleNew}
@@ -75,6 +82,7 @@ export default function Settings() {
         <Card>
           <ConnectionTable
             connections={connections.data}
+            allowedUrls={githubUrls}
             onSubmit={handleEdit}
             onDelete={handleDelete}
           />

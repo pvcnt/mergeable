@@ -7,7 +7,6 @@ import processEnv from "@repo/vite-plugin-process-env";
 export default defineConfig({
   plugins: [
     reactRouter(),
-    processEnv(),
     codecovVitePlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
       bundleName: "webapp",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { data, useSearchParams } from "react-router";
 import { Button } from "@blueprintjs/core";
 import { useDocumentTitle } from "usehooks-ts";
 import SectionDialog from "../components/SectionDialog";
@@ -20,8 +20,19 @@ import Navbar from "../components/Navbar";
 import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
 import { useQueryClient } from "@tanstack/react-query";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/dashboard";
+import { isTruthy } from "remeda";
 
-export default function Dashboard() {
+export function loader() {
+  const sizes = isTruthy(env.MERGEABLE_PR_SIZES)
+    ? env.MERGEABLE_PR_SIZES.split(",").map((v) => parseInt(v))
+    : undefined;
+  return data({ sizes });
+}
+
+export default function Dashboard({ loaderData }: Route.ComponentProps) {
+  const { sizes } = loaderData;
   const connections = useConnections();
   const sections = useSections();
   const pulls = usePulls({
@@ -58,10 +69,6 @@ export default function Dashboard() {
     {
       preserveTitleOnUnmount: false,
     },
-  );
-
-  const sizes = import.meta.env.MERGEABLE_PR_SIZES?.split(",").map((v) =>
-    parseInt(v),
   );
 
   // Open a "New section" dialog if URL is a share link.

@@ -1,0 +1,15 @@
+
+.git
+**/.turbo
+**/.react-router
+**/.wrangler/
+**/.env.local
+**/.env.*.local
+**/.env.production
+**/.dev.vars
+**/*.tsbuildinfo
+**/*.env
+**/node_modules
+**/dist
+**/generated
+**/coverage
