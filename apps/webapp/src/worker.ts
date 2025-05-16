@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import localforage from "localforage";
 import { db } from "./lib/db";
+import { isTruthy } from "remeda";
 
 const sendTelemetryIntervalMillis = 24 * 60 * 60_000; // 1 day
 
@@ -32,7 +33,7 @@ async function sha256(s: string) {
 }
 
 export async function sendTelemetry() {
-  if (import.meta.env.MERGEABLE_NO_TELEMETRY.length > 0) {
+  if (isTruthy(import.meta.env.MERGEABLE_NO_TELEMETRY)) {
     return;
   }
   // Send a browser "fingerprint", which is really just a unique identifier stored locally.

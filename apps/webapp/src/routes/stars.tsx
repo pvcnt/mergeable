@@ -9,7 +9,6 @@ import Navbar from "../components/Navbar";
 import PullTable from "../components/PullTable";
 import { useState } from "react";
 import { pullMatches } from "../lib/search";
-import { useTitle } from "../lib/useTitle";
 
 export default function Stars() {
   const [search, setSearch] = useState<string>("");
@@ -20,7 +19,9 @@ export default function Stars() {
     sections: sections.data,
   });
   const stars = useStars();
-  useTitle(pulls.data ?? []);
+  const sizes = import.meta.env.MERGEABLE_PR_SIZES?.split(",").map((v) =>
+    parseInt(v),
+  );
   return (
     <>
       <Navbar
@@ -38,6 +39,7 @@ export default function Stars() {
             pulls={pulls.data.filter(
               (pull) => stars.has(pull.uid) && pullMatches(search, pull),
             )}
+            sizes={sizes}
           />
         )}
       </Card>

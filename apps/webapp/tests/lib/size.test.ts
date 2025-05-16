@@ -10,4 +10,13 @@ describe("computeSize", () => {
       "XXL",
     );
   });
+
+  it("should return the size of a pull request with custom sizes", () => {
+    const sizes = [10, 20, 30, 40, 50];
+    expect(computeSize(mockPull({ additions: 1 }), sizes)).toBe("XS");
+    expect(computeSize(mockPull({ additions: 10 }), sizes)).toBe("S");
+    expect(computeSize(mockPull({ additions: 11 }), sizes)).toBe("S");
+    expect(computeSize(mockPull({ additions: 20 }), sizes)).toBe("M");
+    expect(computeSize(mockPull({ additions: 100 }), sizes)).toBe("XXL");
+  });
 });

@@ -11,6 +11,7 @@ export type Props = {
   isLast: boolean;
   isLoading: boolean;
   pulls: Pull[];
+  sizes?: number[];
   onMoveUp: () => void;
   onMoveDown: () => void;
   onChange: (v: Section) => void;
@@ -23,6 +24,7 @@ export default function DashboardSection({
   isFirst,
   isLast,
   pulls,
+  sizes,
   onChange,
   onMoveUp,
   onMoveDown,
@@ -35,6 +37,7 @@ export default function DashboardSection({
         id={section.id}
         label={section.label}
         pulls={pulls}
+        sizes={sizes}
         isLoading={isLoading}
         actions={
           <>

@@ -15,7 +15,7 @@ import styles from "./settings.module.scss";
 import { useToaster } from "../lib/toaster";
 import { useNavigate } from "react-router";
 import { gitHubClient } from "../github";
-
+import { isTruthy } from "remeda";
 export default function Settings() {
   const [isEditing, setEditing] = useState(false);
   const [isResetting, setResetting] = useState(false);
@@ -24,7 +24,7 @@ export default function Settings() {
   const queryClient = useQueryClient();
   const toaster = useToaster();
 
-  const allowedUrls = import.meta.env.MERGEABLE_GITHUB_URLS
+  const allowedUrls = isTruthy(import.meta.env.MERGEABLE_GITHUB_URLS)
     ? import.meta.env.MERGEABLE_GITHUB_URLS.split(",")
     : undefined;
 
