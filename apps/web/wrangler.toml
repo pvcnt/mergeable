@@ -4,7 +4,7 @@ compatibility_flags = ["nodejs_compat"]
 main = "./cloudflare/worker.ts"
 
 [assets]
-directory = "./dist"
+directory = "./dist/client"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 
