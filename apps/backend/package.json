@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "backend",
   "scripts": {
     "dev": "wrangler dev",
     "typecheck": "tsc --noEmit",
