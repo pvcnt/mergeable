@@ -4,6 +4,7 @@
     td {
         overflow: hidden;
         vertical-align: middle !important;
+        cursor: default !important;
     }
     td:nth-child(1) { /* Star */
         text-align: center;
@@ -39,15 +40,23 @@
     }
 }
 
+.star {
+    cursor: pointer;
+}
+
 .title {
     margin-bottom: 0.25 * bp.$pt-grid-size;
-    span {
+    a {
         font-weight: 600;
+        color: inherit;
     }
 }
 
 .source {
     font-size: bp.$pt-font-size-small;
+    a {
+        color: inherit;
+    }
 }
 
 .author img {
@@ -72,4 +81,5 @@
     color: bp.$gray1;
     padding-left: bp.$pt-grid-size;
     padding-right: bp.$pt-grid-size;
+    cursor: pointer;
 }

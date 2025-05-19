@@ -27,21 +27,12 @@ const formatDate = (d: string) => {
 export default function PullRow({ pull, sizes }: PullRowProps) {
   const [active, setActive] = useState(false);
   const stars = useStars();
-  const handleClick = (e: React.MouseEvent) => {
-    // Manually reproduce the behaviour of CTRL+click or middle mouse button.
-    if (e.metaKey || e.ctrlKey || e.button == 1) {
-      window.open(pull.url);
-    } else {
-      window.location.href = pull.url;
-    }
-  };
   const handleStar = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleStar(pull).catch(console.error);
   };
   return (
     <tr
-      onClick={(e) => handleClick(e)}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
       className={styles.row}
@@ -52,9 +43,14 @@ export default function PullRow({ pull, sizes }: PullRowProps) {
             icon="star"
             color="#FBD065"
             title="Unstar pull request"
+            className={styles.star}
           />
         ) : (
-          <IconWithTooltip icon="star-empty" title="Star pull request" />
+          <IconWithTooltip
+            icon="star-empty"
+            title="Star pull request"
+            className={styles.star}
+          />
         )}
       </td>
       <td>
@@ -138,7 +134,7 @@ export default function PullRow({ pull, sizes }: PullRowProps) {
       </td>
       <td>
         <div className={styles.title}>
-          <span>{pull.title}</span>
+          <a href={pull.url}>{pull.title}</a>
           {active && (
             <CopyToClipboardIcon
               title="Copy URL to clipboard"
@@ -148,7 +144,9 @@ export default function PullRow({ pull, sizes }: PullRowProps) {
           )}
         </div>
         <div className={styles.source}>
-          {pull.host}/{pull.repo} #{pull.number}
+          <a href={pull.url}>
+            {pull.host}/{pull.repo} #{pull.number}
+          </a>
         </div>
       </td>
     </tr>
