@@ -1,5 +1,5 @@
 ---
-title: Deploy static files
+title: Deploy on Cloudflare Workers
 sidebar:
   order: 4
 ---
