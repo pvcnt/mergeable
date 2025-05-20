@@ -11,6 +11,3 @@ not_found_handling = "single-page-application"
 [observability.logs]
 enabled = true
 invocation_logs = true
-
-[build]
-command = "pnpm run build"

@@ -33,7 +33,6 @@ jobs:
         run: pnpm run build --filter web...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
-          VITE_RUNTIME: workerd
           MERGEABLE_GITHUB_URLS: https://api.github.com
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
