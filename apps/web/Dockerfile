@@ -13,7 +13,7 @@ ENV TURBO_TELEMETRY_DISABLED=1
 
 WORKDIR /src
 
-FROM base AS preparer
+FROM base AS pruner
 
 RUN pnpm install --global turbo@^2
 
@@ -22,17 +22,17 @@ RUN turbo prune web --docker
 
 FROM base AS builder
 
-COPY --from=preparer /src/out/json/ .
+COPY --from=pruner /src/out/json/ .
 RUN pnpm install --frozen-lockfile
  
-COPY --from=preparer /src/out/full/ .
+COPY --from=pruner /src/out/full/ .
 RUN NODE_ENV=production pnpm run build
 
 FROM base AS runtime
 
 RUN apk add --no-cache tini
 
-COPY --from=preparer /src/out/json/ .
+COPY --from=pruner /src/out/json/ .
 RUN pnpm install --frozen-lockfile --prod
 
 COPY --from=builder /src/apps/web/dist /src/apps/web/dist

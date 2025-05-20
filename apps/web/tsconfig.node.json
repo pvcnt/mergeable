@@ -6,6 +6,8 @@
     "react-router.config.ts",
     "vite.config.ts",
     "vitest.config.ts",
+    "server/**/*.ts",
+    "worker-configuration.d.ts",
   ],
   "compilerOptions": {
     "composite": true,
