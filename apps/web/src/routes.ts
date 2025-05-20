@@ -16,5 +16,4 @@ export default [
   ]),
   // API routes.
   route("health", "routes/health.ts"),
-  route("api/telemetry", "routes/api.telemetry.ts"),
 ] satisfies RouteConfig;

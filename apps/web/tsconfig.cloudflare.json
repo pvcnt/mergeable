@@ -1,17 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.vite.json",
+  "extends": "@repo/typescript-config/base.json",
   "include": [
-    "src/**/*",
-    "**/.server/**/*",
-    "**/.client/**/*",
-    ".react-router/types/**/*",
     "cloudflare/**/*",
     "worker-configuration.d.ts",
   ],
   "compilerOptions": {
     "composite": true,
-    "types": ["node", "@react-router/cloudflare"],
+    "types": ["node"],
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",

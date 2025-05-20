@@ -58,7 +58,7 @@ export default async function handleRequest(
             pipe(body);
           },
           onShellError(error: unknown) {
-            reject(error);
+            reject(error instanceof Error ? error : new Error(String(error)));
           },
           onError(error: unknown) {
             responseStatusCode = 500;

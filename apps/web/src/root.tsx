@@ -11,7 +11,6 @@ import { createQueryClient, createIDBPersister } from "./lib/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BlueprintProvider } from "@blueprintjs/core";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { useTelemetry } from "./lib/telemetry";
 import type { Route } from "./+types/root";
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -44,7 +43,6 @@ export default function App() {
   // Ensure that each request has its own cache.
   const [queryClient] = useState(createQueryClient);
   const persister = createIDBPersister();
-  useTelemetry();
   return (
     <BlueprintProvider>
       <PersistQueryClientProvider

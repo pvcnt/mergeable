@@ -21,7 +21,7 @@ Self-hosting Mergeable unlocks the following features:
 The following deployment methods are currently supported:
 
 | Name                       | Use cases                             |
-| ------------------------ --| ------------------------------------- |
+| -------------------------- | ------------------------------------- |
 | [Docker image](./docker)   | Local testing, bare metal, VMs, PaaS. |
 | [Helm chart](./helm)       | Kubernetes cluster.                   |
 | [Cloudflare](./cloudflare) | Cloudflare Workers.                   |
