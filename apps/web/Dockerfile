@@ -26,7 +26,7 @@ COPY --from=preparer /src/out/json/ .
 RUN pnpm install --frozen-lockfile
  
 COPY --from=preparer /src/out/full/ .
-RUN pnpm run build
+RUN NODE_ENV=production pnpm run build
 
 FROM base AS runtime
 
@@ -39,7 +39,10 @@ COPY --from=builder /src/apps/web/dist /src/apps/web/dist
 
 WORKDIR /src/apps/web
 
-RUN pwd && ls -la *
+RUN addgroup -g 1000 node \
+  && adduser -u 1000 -G node -s /bin/sh -D node \
+  && chown node:node .
+USER node
 
 EXPOSE 3000
 
