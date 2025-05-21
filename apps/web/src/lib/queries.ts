@@ -8,7 +8,9 @@ import {
   type Section,
 } from "../lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { isInAttentionSet, type Pull, splitQueries } from "@repo/github";
+import { isInAttentionSet, } from "../lib/github/attention";
+import { splitQueries } from "../lib/github/search";
+import type { Pull } from "../lib/github/types";
 import { groupBy, indexBy, prop, sortBy, unique } from "remeda";
 import { gitHubClient } from "../github";
 

@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
-import { isInAttentionSet } from "../src/attention";
-import type { Pull } from "../src/types";
+import { isInAttentionSet } from "../../../src/lib/github/attention";
+import type { Pull } from "../../../src/lib/github/types";
 
 const me = { id: "99", name: "test", avatarUrl: "", bot: false };
 const user1 = { id: "1", name: "test1", avatarUrl: "", bot: false };

@@ -5,7 +5,7 @@ import {
   SearchTerm,
   splitQueries,
   prepareQuery,
-} from "../src/search";
+} from "../../../src/lib/github/search";
 
 const expectTerms = (str: string, terms: SearchTerm[]) => {
   const q = new SearchQuery(str);

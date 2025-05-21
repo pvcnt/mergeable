@@ -1,10 +1,9 @@
+import type { Endpoint, GitHubClient } from "../src/lib/github/client";
 import type {
-  Endpoint,
-  GitHubClient,
   Profile,
   PullProps,
   Pull,
-} from "@repo/github";
+} from "../src/lib/github/types";
 import type { Section, Connection } from "../src/lib/types";
 
 export function mockPull(props?: Omit<Partial<Pull>, "uid" | "url">): Pull {

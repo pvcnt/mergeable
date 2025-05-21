@@ -1,17 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@repo/typescript-config/vite.json",
+  "extends": "@repo/typescript-config/base.json",
   "include": [
     "src/**/*",
     "tests/**/*",
     "**/.server/**/*",
     "**/.client/**/*",
     ".react-router/types/**/*",
+    "generated/**/*",
   ],
   "compilerOptions": {
     "composite": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "types": ["@testing-library/jest-dom", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
-  },
+    "target": "es2015",
+    "lib": ["es2023", "DOM", "WebWorker"],
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx"
+  }
 }

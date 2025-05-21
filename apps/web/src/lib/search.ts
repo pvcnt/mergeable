@@ -1,4 +1,4 @@
-import type { Pull } from "@repo/github";
+import type { Pull } from "../lib/github/types";
 
 export function pullMatches(search: string, pull: Pull) {
   if (search.length === 0) {

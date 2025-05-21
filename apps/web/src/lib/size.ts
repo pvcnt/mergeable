@@ -1,4 +1,4 @@
-import type { PullProps } from "@repo/github";
+import type { PullProps } from "../lib/github/types";
 
 // https://github.com/kubernetes-sigs/prow/blob/main/pkg/plugins/size/size.go
 const defaultSizes = [10, 30, 100, 500, 1000];

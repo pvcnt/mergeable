@@ -1,8 +1,8 @@
 import { test, expect } from "vitest";
-import { useRecording } from "./polly.js";
-import { DefaultGitHubClient } from "../src/client";
+import { setupRecording } from "./polly.js";
+import { DefaultGitHubClient } from "../../../src/lib/github/client";
 
-useRecording();
+setupRecording();
 
 const endpoint = {
   auth: "ghp_token",
