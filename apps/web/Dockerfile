@@ -36,16 +36,11 @@ COPY --from=pruner /src/out/json/ .
 RUN pnpm install --frozen-lockfile --prod
 
 COPY --from=builder /src/apps/web/dist /src/apps/web/dist
+COPY --from=builder /src/apps/web/server /src/apps/web/server
 
 WORKDIR /src/apps/web
-
-RUN addgroup -g 1000 node \
-  && adduser -u 1000 -G node -s /bin/sh -D node \
-  && chown node:node .
-USER node
-
 EXPOSE 3000
 
 ENTRYPOINT ["tini", "-g", "--"]
 
-CMD ["pnpm", "run", "start"]
+CMD ["node", "server/node.ts"]

@@ -16,5 +16,6 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "noEmit": true,
+    "allowImportingTsExtensions": true,
   }
 }
