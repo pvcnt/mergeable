@@ -1,5 +1,5 @@
 import { HTMLTable } from "@blueprintjs/core";
-import type { Pull } from "@repo/github";
+import type { Pull } from "../lib/github/types";
 import IconWithTooltip from "./IconWithTooltip";
 import PullRow from "./PullRow";
 import styles from "./PullTable.module.scss";

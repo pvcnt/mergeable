@@ -1,4 +1,4 @@
-import type { Profile } from "@repo/github";
+import type { Profile } from "../lib/github/types";
 
 export const DEFAULT_SECTION_LIMIT = 50;
 export const MAX_SECTION_LIMIT = 50;

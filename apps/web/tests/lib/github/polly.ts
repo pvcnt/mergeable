@@ -14,7 +14,7 @@ Polly.register(require("@pollyjs/adapter-fetch"));
  * @param {string} [options.recordingPath] - The path to save the recordings. If not provided, the recordings will be saved in a "__recordings__" directory next to the test file.
  * @see https://github.com/Netflix/pollyjs/issues/499
  */
-export function useRecording(
+export function setupRecording(
   options: { recordingName?: string; recordingPath?: string } = {},
 ) {
   let polly: Polly | undefined;

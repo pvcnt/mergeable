@@ -1,5 +1,5 @@
 import { db } from "./db";
-import type { Pull } from "@repo/github";
+import type { Pull } from "../lib/github/types";
 import { defaultSections, type Connection, type Section } from "../lib/types";
 import { omit } from "remeda";
 

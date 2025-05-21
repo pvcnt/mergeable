@@ -1,6 +1,6 @@
 import { Card, Collapse, H5, Icon, Spinner, Tag } from "@blueprintjs/core";
 import type { ReactNode } from "react";
-import type { Pull } from "@repo/github";
+import type { Pull } from "../lib/github/types";
 import PullTable from "./PullTable";
 import styles from "./SectionCard.module.scss";
 import { useLocalStorage } from "usehooks-ts";

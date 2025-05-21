@@ -19,7 +19,7 @@ import {
   StatusState,
   PullRequestReviewState,
   CheckConclusionState,
-} from "../generated/gql/graphql";
+} from "../../../generated/gql/graphql";
 
 const MyOctokit = Octokit.plugin(throttling);
 
