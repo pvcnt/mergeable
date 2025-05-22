@@ -61,7 +61,6 @@
     "@react-router/serve": "^7.6.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@repo/vite-plugin-process-env": "workspace:*",
     "@tanstack/eslint-plugin-query": "^5.74.7",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
