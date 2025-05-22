@@ -24,7 +24,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.5.0
+          node-version: 23.11.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
@@ -50,7 +50,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.5.0
+          node-version: 23.11.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
@@ -70,6 +70,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23.11.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Publish to Cloudflare Workers
@@ -85,6 +89,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23.11.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies

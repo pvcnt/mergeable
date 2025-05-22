@@ -1,8 +1,9 @@
-
 .git
+.github
 **/.turbo
 **/.react-router
-**/.wrangler/
+**/.wrangler
+**/worker-configuration.d.ts
 **/.env.local
 **/.env.*.local
 **/.env.production

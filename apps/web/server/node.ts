@@ -9,7 +9,7 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 // @ts-expect-error This file wont exist if it hasn't yet been built
 import * as build from "../dist/server/index.js";
-import { createLogger } from "./logger.ts";
+import { logHttpRequest } from "./logging.ts";
 
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
@@ -29,21 +29,20 @@ sourceMapSupport.install({
 
 const port = parseInt(process.env.PORT || "3000");
 const serverBuild = build as unknown as ServerBuild;
-const logger = createLogger();
 const requestHandler = createRequestHandler(serverBuild, process.env.NODE_ENV);
 
 const app = new Hono();
 app.use(compress());
 app.use(async (c, next) => {
   const start = Date.now();
-  await next();
-  logger.info({
-    "http.request.method": c.req.method,
-    "url.scheme": c.req.url.split(":")[0],
-    "http.route": c.req.path,
-    "http.response.status_code": c.res.status,
-    "http.server.request.duration": (Date.now() - start) / 1000,
-  });
+  try {
+    await next();
+  } finally {
+    logHttpRequest(c.req.raw, {
+      status: c.res.status,
+      duration: (Date.now() - start) / 1000,
+    });
+  }
 });
 app.use(
   path.posix.join(serverBuild.publicPath, "assets", "*"),

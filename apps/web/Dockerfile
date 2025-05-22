@@ -1,9 +1,7 @@
 # syntax=docker/dockerfile:1.8.1
 
-FROM node:24-alpine AS base
+FROM node:23 AS base
 
-RUN apk add --no-cache libc6-compat
-RUN apk update
 RUN corepack enable pnpm
 
 ENV PNPM_HOME=/app/.pnpm
@@ -30,7 +28,8 @@ RUN NODE_ENV=production pnpm run build
 
 FROM base AS runtime
 
-RUN apk add --no-cache tini
+ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
+RUN chmod +x /tini
 
 COPY --from=pruner /src/out/json/ .
 RUN pnpm install --frozen-lockfile --prod
@@ -41,6 +40,6 @@ COPY --from=builder /src/apps/web/server /src/apps/web/server
 WORKDIR /src/apps/web
 EXPOSE 3000
 
-ENTRYPOINT ["tini", "-g", "--"]
+ENTRYPOINT ["/tini", "-g", "--"]
 
 CMD ["node", "server/node.ts"]
