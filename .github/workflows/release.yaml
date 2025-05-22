@@ -18,7 +18,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.5.0
+          node-version: 23.11.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Install Cosign
@@ -48,7 +48,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: apps/web
+          context: .
+          file: apps/web/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}

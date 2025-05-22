@@ -8,9 +8,21 @@ import {
 import Navbar from "../components/Navbar";
 import PullTable from "../components/PullTable";
 import { useState } from "react";
+import { data } from "react-router";
 import { pullMatches } from "../lib/search";
+import { env } from "../lib/env.server";
+import type { Route } from "./+types/stars";
+import { isTruthy } from "remeda";
 
-export default function Stars() {
+export function loader() {
+  const sizes = isTruthy(env.MERGEABLE_PR_SIZES)
+    ? env.MERGEABLE_PR_SIZES.split(",").map((v) => parseInt(v))
+    : undefined;
+  return data({ sizes });
+}
+
+export default function Stars({ loaderData }: Route.ComponentProps) {
+  const { sizes } = loaderData;
   const [search, setSearch] = useState<string>("");
   const connections = useConnections();
   const sections = useSections();
@@ -19,9 +31,6 @@ export default function Stars() {
     sections: sections.data,
   });
   const stars = useStars();
-  const sizes = import.meta.env.MERGEABLE_PR_SIZES?.split(",").map((v) =>
-    parseInt(v),
-  );
   return (
     <>
       <Navbar

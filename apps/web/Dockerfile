@@ -1,31 +1,45 @@
 # syntax=docker/dockerfile:1.8.1
 
-FROM joseluisq/static-web-server:2.32.0-alpine
+FROM node:23 AS base
 
-RUN apk add --no-cache envsubst
-COPY --chmod=0755 docker/entrypoint.sh /
+RUN corepack enable pnpm
 
-COPY <<EOF /config.toml
-  [general]
+ENV PNPM_HOME=/app/.pnpm
+ENV PATH=$PNPM_HOME:$PATH
+ENV CI=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
-  host = "::"
-  port = 80
-  root = "/mergeable"
-  log-level = "info"
+WORKDIR /src
 
-  page-fallback = "/mergeable/index.html"
-  cache-control-headers = true
-  compression = true
-  security-headers = true
-  directory-listing = false
-  redirect-trailing-slash = true
-  compression-static = true
-  ignore-hidden-files = true
-EOF
+FROM base AS pruner
 
-COPY ./dist/client /mergeable
+RUN pnpm install --global turbo@^2
 
-ENV SERVER_CONFIG_FILE=config.toml
+COPY . . 
+RUN turbo prune web --docker
 
-ENTRYPOINT ["/entrypoint.sh"]
-EXPOSE 80
+FROM base AS builder
+
+COPY --from=pruner /src/out/json/ .
+RUN pnpm install --frozen-lockfile
+ 
+COPY --from=pruner /src/out/full/ .
+RUN NODE_ENV=production pnpm run build
+
+FROM base AS runtime
+
+ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
+RUN chmod +x /tini
+
+COPY --from=pruner /src/out/json/ .
+RUN pnpm install --frozen-lockfile --prod
+
+COPY --from=builder /src/apps/web/dist /src/apps/web/dist
+COPY --from=builder /src/apps/web/server /src/apps/web/server
+
+WORKDIR /src/apps/web
+EXPOSE 3000
+
+ENTRYPOINT ["/tini", "-g", "--"]
+
+CMD ["node", "server/node.ts"]

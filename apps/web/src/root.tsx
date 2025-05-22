@@ -16,7 +16,6 @@ import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "./styles.scss";
-
 export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
 ];
@@ -38,19 +37,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
-}
-
-if (!import.meta.env.SSR) {
-  // This ugly switch is needed to support the worker in dev mode.
-  if (import.meta.env.DEV) {
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    });
-  } else {
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "classic",
-    });
-  }
 }
 
 export default function App() {

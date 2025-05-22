@@ -6,6 +6,8 @@
     "react-router.config.ts",
     "vite.config.ts",
     "vitest.config.ts",
+    "server/**/*.ts",
+    "worker-configuration.d.ts",
   ],
   "compilerOptions": {
     "composite": true,
@@ -14,5 +16,6 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "noEmit": true,
+    "allowImportingTsExtensions": true,
   }
 }

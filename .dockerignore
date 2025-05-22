@@ -1,0 +1,16 @@
+.git
+.github
+**/.turbo
+**/.react-router
+**/.wrangler
+**/worker-configuration.d.ts
+**/.env.local
+**/.env.*.local
+**/.env.production
+**/.dev.vars
+**/*.tsbuildinfo
+**/*.env
+**/node_modules
+**/dist
+**/generated
+**/coverage
