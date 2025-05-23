@@ -55,6 +55,17 @@ You can search for pull requests using the search box, which can be focused by h
 
 This performs a fuzzy search on the title, and filters the pull requests displayed below to include those that match.
 
+## Sort pull requests
+
+By default, pull requests in a section are sorted by the "Last Action" column, showing the most recently updated ones first:
+
+![Sort by column](../../../assets/screenshots/dashboard-sort.png)
+
+Clicking on a sorted column will toggle the direction (ascending or descending).
+Clicking on a different sortable column will sort pull requests by this column.
+Not all columns are sortable, those that are sortable are shown as clickable.
+Sort column and direction is applied to all sections of the dashboard.
+
 ## Star pull requests
 
 When you have too many pull requests on your dashboard, it may become difficult to identify those that require a particular attention.
