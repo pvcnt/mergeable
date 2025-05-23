@@ -3,9 +3,11 @@
   "extends": "@repo/typescript-config/base.json",
   "include": [
     ".eslintrc.cjs",
+    "cloudflare/**/*.ts",
     "react-router.config.ts",
     "vite.config.ts",
     "vitest.config.ts",
+    "worker-configuration.d.ts",
   ],
   "compilerOptions": {
     "composite": true,

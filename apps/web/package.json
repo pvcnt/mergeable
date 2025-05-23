@@ -11,7 +11,8 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "codegen": "react-router typegen && wrangler types && graphql-codegen --config ./codegen.ts",
     "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "start:worker": "wrangler dev"
   },
   "dependencies": {
     "@blueprintjs/core": "^5.19.0",

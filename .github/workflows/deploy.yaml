@@ -16,33 +16,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web-legacy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.5.0
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Install dependencies
-        run: pnpm install --filter web...
-      - name: Build app
-        run: pnpm run build --filter web...
-        env:
-          VITE_COMMIT_SHA: ${{ github.sha }}
-          MERGEABLE_GITHUB_URLS: https://api.github.com
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          accountId: 1f74b8302712fd67d5eddea8c96eb776
-          projectName: mergeable
-          workingDirectory: apps/web
-          directory: dist/client
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
   web:
     runs-on: ubuntu-latest
     steps:
