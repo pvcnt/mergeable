@@ -10,6 +10,13 @@
             fill: bp.$pt-text-color-muted;
         }
     }
+    th.sortable {
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+    }
 }
 
 .empty {
