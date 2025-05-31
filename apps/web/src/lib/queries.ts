@@ -63,9 +63,16 @@ export const usePulls = ({
   connections: Connection[];
   sections: Section[];
 }) => {
+  // Embed all metadata in the query key that, if changed, should trigger a refresh.
+  const queryKey = [
+    "pulls",
+    ...connections.map((v) => `${v.auth}|${v.orgs.join(",")}`).toSorted(),
+    ...sections.map((v) => `${v.search}|${v.limit ?? ""}`).toSorted(),
+  ];
+
   return useQuery({
     enabled: connections.length > 0 && sections.length > 0,
-    queryKey: ["pulls"],
+    queryKey,
     queryFn: async () => {
       // Search for pull requests for every section and every connection.
       // Every request returns node IDs for matching pull requests, and

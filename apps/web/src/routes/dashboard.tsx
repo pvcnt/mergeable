@@ -19,7 +19,6 @@ import {
 import Navbar from "../components/Navbar";
 import SectionCard from "../components/SectionCard";
 import { pullMatches } from "../lib/search";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
   const connections = useConnections();
@@ -28,7 +27,6 @@ export default function Dashboard() {
     connections: connections.data,
     sections: sections.data,
   });
-  const queryClient = useQueryClient();
 
   const [search, setSearch] = useState<string>("");
   const [isEditing, setEditing] = useState(false);
@@ -86,15 +84,12 @@ export default function Dashboard() {
       setSearchParams({});
       setNewSection(undefined);
     }
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleSave = async (section: Section) => {
     await saveSection(section);
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleDelete = async (section: Section) => {
     await deleteSection(section);
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
 
   return (

@@ -6,18 +6,15 @@ import styles from "./AppLayout.module.scss";
 import { useLocalStorage } from "usehooks-ts";
 import { deleteConnections } from "../lib/mutations";
 import { Card } from "@blueprintjs/core";
-import { useQueryClient } from "@tanstack/react-query";
 import { useConnections } from "../lib/queries";
 
 export default function AppLayout() {
   const [isDark, setDark] = useLocalStorage("isDark", false, {
     initializeWithValue: false, // For SSR support.
   });
-  const queryClient = useQueryClient();
   const connections = useConnections();
   const handleLogout = async () => {
     await deleteConnections();
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   return (
     <div className={clsx(styles.app, isDark && "bp5-dark")}>

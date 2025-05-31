@@ -1,6 +1,5 @@
 import { Button, Card, H3 } from "@blueprintjs/core";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import ConnectionDialog from "../components/ConnectionDialog";
 import ConnectionTable from "../components/ConnectionTable";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -21,7 +20,6 @@ export default function Settings() {
   const [isResetting, setResetting] = useState(false);
   const connections = useConnections();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const toaster = useToaster();
 
   const allowedUrls = isTruthy(import.meta.env.MERGEABLE_GITHUB_URLS)
@@ -31,16 +29,13 @@ export default function Settings() {
   const handleNew = async (props: ConnectionProps) => {
     const viewer = await gitHubClient.getViewer(props);
     await saveConnection({ id: "", ...props, viewer });
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleEdit = async (previous: Connection, props: ConnectionProps) => {
     const viewer = await gitHubClient.getViewer(props);
     await saveConnection({ ...previous, ...props, viewer });
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleDelete = async (connection: Connection) => {
     await deleteConnection(connection);
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
   };
   const handleReset = async () => {
     await resetSections();
@@ -48,7 +43,6 @@ export default function Settings() {
       message: "Configuration has been reset to factory settings",
       intent: "success",
     });
-    await queryClient.invalidateQueries({ queryKey: ["pulls"] });
     await navigate("/inbox");
   };
 
