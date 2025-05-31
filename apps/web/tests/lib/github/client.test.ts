@@ -1,6 +1,9 @@
 import { test, expect } from "vitest";
 import { setupRecording } from "./polly.js";
-import { DefaultGitHubClient } from "../../../src/lib/github/client";
+import {
+  DefaultGitHubClient,
+  normalizeBaseUrl,
+} from "../../../src/lib/github/client";
 
 setupRecording();
 
@@ -8,6 +11,21 @@ const endpoint = {
   auth: "ghp_token",
   baseUrl: "https://api.github.com",
 };
+
+test("should normalize base URL", () => {
+  expect(normalizeBaseUrl("https://github.com")).toEqual(
+    "https://api.github.com",
+  );
+  expect(normalizeBaseUrl("https://api.github.com")).toEqual(
+    "https://api.github.com",
+  );
+  expect(normalizeBaseUrl("https://git.acme.com")).toEqual(
+    "https://git.acme.com/api/v3",
+  );
+  expect(normalizeBaseUrl("https://git.acme.com/api/v3")).toEqual(
+    "https://git.acme.com/api/v3",
+  );
+});
 
 test("should return viewer", async () => {
   const client = new DefaultGitHubClient();

@@ -15,4 +15,4 @@ enabled = true
 invocation_logs = true
 
 [vars]
-MERGEABLE_HOST_URL = "https://app.usemergeable.dev"
+MERGEABLE_APP_URL = "https://app.usemergeable.dev"

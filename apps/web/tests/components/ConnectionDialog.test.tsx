@@ -48,7 +48,6 @@ describe("ConnectionDialog", () => {
     expect(state.submitted).toEqual({
       label: "Some label",
       baseUrl: "https://api.github.com",
-      host: "github.com",
       auth: "ghp_foo",
       orgs: [],
     });

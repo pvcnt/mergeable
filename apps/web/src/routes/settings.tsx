@@ -5,6 +5,7 @@ import ConnectionTable from "../components/ConnectionTable";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConnections } from "../lib/queries";
 import {
+  createConnection,
   deleteConnection,
   resetSections,
   saveConnection,
@@ -15,6 +16,7 @@ import { useToaster } from "../lib/toaster";
 import { useNavigate } from "react-router";
 import { gitHubClient } from "../github";
 import { isTruthy } from "remeda";
+import { normalizeBaseUrl } from "../lib/github/client";
 export default function Settings() {
   const [isEditing, setEditing] = useState(false);
   const [isResetting, setResetting] = useState(false);
@@ -27,8 +29,9 @@ export default function Settings() {
     : undefined;
 
   const handleNew = async (props: ConnectionProps) => {
-    const viewer = await gitHubClient.getViewer(props);
-    await saveConnection({ id: "", ...props, viewer });
+    const baseUrl = normalizeBaseUrl(props.baseUrl);
+    const viewer = await gitHubClient.getViewer({ ...props, baseUrl });
+    await createConnection({ ...props, baseUrl }, viewer);
   };
   const handleEdit = async (previous: Connection, props: ConnectionProps) => {
     const viewer = await gitHubClient.getViewer(props);
