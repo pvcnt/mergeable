@@ -60,7 +60,7 @@ jobs:
         run: pnpm run build --filter web...
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
-          MERGEABLE_GITHUB_URLS: https://api.github.com
+          MERGEABLE_API_URL: https://api.usemergeable.dev
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
