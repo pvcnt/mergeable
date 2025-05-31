@@ -5,20 +5,22 @@ sidebar:
 ---
 
 The fastest way to get started is to use the public instance of Mergeable available at [usemergeable.dev](https://app.usemergeable.dev).
-This instance is provided free of charge, and allows to interact with pull requests from [github.com](https://github.com), from public and private repositories alike.
+This instance is provided free of charge, and allows to interact with pull requests from GitHub, public and private repositories alike.
+
+When you first start Mergeable, the login screen will appear:
+
+![Login screen](../../../assets/screenshots/login.png)
+
+If you want to use Mergeable with the public GitHub (github.com), the simplest way to get started is to click on the "Login to GitHub" button.
+This will initiate an OAuth login flow, and will result in [a connection](../../user-guide/connections/) being configured.
+
+Alternatively, you may manually provide a GitHub URL and an access token.
+This is especially useful if you are connecting to a self-hosted GitHub Enterprise instance, or if you want to ensure that no credentials are transiting via Mergeable backend.
 
 :::note
-If you need to interact with a private GitHub Enterprise instance, please consider [self-hosting](../../self-host/).
+If you have very strict privacy or compliance requirements, please consider [self-hosting](../../self-host/).
 :::
 
-When you first start Mergeable, it displays an empty dashboard, because it is not connected to any GitHub instance.
-From [the Settings page](https://app.usemergeable.dev/settings), accessible via the sidebar, click on the "New connection" button.
-The following dialog will open:
-
-![New connection dialog](../../../assets/screenshots/new-connection.png)
-
-You only have to provide an access token, that you can [obtain from GitHub](https://github.com/settings/tokens).
-Copy and paste the access token in the dialog, and click on "Submit".
-After going back to [the Inbox page](https://app.usemergeable.dev/inbox), you may already see some reviews in the dashboard if you are an active GitHub user:
+After being redirected to the inbox, you may already see some reviews in the dashboard if you are an active GitHub user:
 
 ![Inbox](../../../assets/screenshots/dashboard.png)

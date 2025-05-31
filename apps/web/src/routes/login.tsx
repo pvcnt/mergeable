@@ -66,7 +66,11 @@ export default function Login() {
       )}
       <Card className={classes.card}>
         <p>
-          You may connect to GitHub using a <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">Personal Access Token</a>.
+          You may connect to GitHub using a{" "}
+          <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">
+            Personal Access Token
+          </a>
+          .
         </p>
         <LoginForm onSubmit={handleSubmit} />
         <p className={classes.help}>
