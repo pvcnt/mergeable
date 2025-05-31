@@ -28,11 +28,13 @@ export function processEnv({ extraEnv }: Options = {}): PluginOption {
   let shouldGenerateSourcemap = false;
   let env: EnvVars = {};
   let workerScript = "";
+  let command = "";
 
   return {
     name: "vite-plugin-process-env",
     configResolved(config) {
       shouldGenerateSourcemap = config.build.sourcemap !== false;
+      command = config.command;
 
       // Load build-time environment variables.
       env = loadEnv(config.mode, config.envDir, config.envPrefix);
@@ -92,7 +94,17 @@ export function processEnv({ extraEnv }: Options = {}): PluginOption {
       }
       s.replace(/import\.meta\.env\.([A-Za-z0-9$_]+)/g, (match, name) => {
         assert(typeof name === "string");
-        return name in env ? `globalThis.env.${name}` : match;
+        if (name in env) {
+          if (command === "serve") {
+            // When running development server, replace environment variables directly.
+            return JSON.stringify(env[name]);
+          } else {
+            // In production, access the dynamically injected environment.
+            return `globalThis.env.${name}`;
+          }
+        } else {
+          return match;
+        }
       });
       if (!s.hasChanged()) {
         return;
