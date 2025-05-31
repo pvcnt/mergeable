@@ -48,9 +48,8 @@ app.get(
       create: { githubId: githubUser.id, ...attrs },
     });
 
-    // Redirect with the token passed in the hash to avoid exposing it in the history.
     const token = c.get("token");
-    return c.redirect(`${vars.MERGEABLE_HOST_URL}/#token=${token?.token}`);
+    return c.redirect(`${vars.MERGEABLE_HOST_URL}/?token=${token?.token}`);
   },
 );
 

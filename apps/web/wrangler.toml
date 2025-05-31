@@ -1,9 +1,9 @@
 name = "mergeable-web"
 compatibility_date = "2025-05-07"
 compatibility_flags = ["nodejs_compat"]
-main = "./cloudflare/worker.ts"
 
 # Expose on a custom domain, disable *.workers.dev domain.
+# https://developers.cloudflare.com/workers/configuration/routing/
 routes = [
   { pattern = "app.usemergeable.dev", custom_domain = true }
 ]
@@ -11,7 +11,6 @@ workers_dev = false
 
 [assets]
 directory = "./dist/client"
-binding = "ASSETS"
 not_found_handling = "single-page-application"
 
 [observability.logs]
