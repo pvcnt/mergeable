@@ -3,6 +3,13 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = "./src/index.ts"
 
+# Expose on a custom domain, disable *.workers.dev domain.
+# https://developers.cloudflare.com/workers/configuration/routing/
+routes = [
+  { pattern = "api.usemergeable.dev", custom_domain = true }
+]
+workers_dev = false
+
 [observability.logs]
 enabled = true
 invocation_logs = true
