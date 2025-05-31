@@ -6,6 +6,8 @@ import type { Env } from "./env";
 
 const app = new Hono();
 
+app.get("/health", (c) => c.text("OK"));
+
 app.get(
   "/auth/github",
   (c, next) => {
