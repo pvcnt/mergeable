@@ -51,7 +51,7 @@ app.get(
     });
 
     const token = c.get("token");
-    return c.redirect(`${vars.MERGEABLE_HOST_URL}/?token=${token?.token}`);
+    return c.redirect(`${vars.MERGEABLE_APP_URL}/?auth=${token?.token}`);
   },
 );
 

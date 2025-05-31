@@ -11,29 +11,19 @@ import {
 import { useState } from "react";
 import { isTruthy } from "remeda";
 import ConfirmDialog from "./ConfirmDialog";
-import type { ConnectionProps } from "../lib/types";
+import type { Connection, ConnectionProps } from "../lib/types";
 import { useToaster } from "../lib/toaster";
 import OrgSelector from "./OrgSelector";
 
 type Props = {
   title: string;
   isOpen: boolean;
-  connection?: ConnectionProps;
+  connection?: Connection;
   onClose?: () => void;
   onSubmit?: (v: ConnectionProps) => Promise<void>;
   onDelete?: () => void;
   allowedUrls?: string[];
 };
-
-function getHost(baseUrl: string) {
-  if (!baseUrl.startsWith("https://") && !baseUrl.startsWith("http://")) {
-    throw new Error("Invalid URL");
-  }
-  const url = new URL(baseUrl);
-  // Special case to identify github.com's host. For GHE instances, the
-  // API is mounted under /api and not under a subdomain.
-  return url.hostname == "api.github.com" ? "github.com" : url.hostname;
-}
 
 export default function ConnectionDialog({
   title,
@@ -64,9 +54,8 @@ export default function ConnectionDialog({
   const handleSubmit = async () => {
     if (isFilled()) {
       setDisabled(true);
-      const host = getHost(baseUrl);
       try {
-        onSubmit && (await onSubmit({ label, baseUrl, auth, orgs, host }));
+        onSubmit && (await onSubmit({ label, baseUrl, auth, orgs }));
         onClose && onClose();
       } catch (e) {
         const message = `Something went wrong: ${(e as Error).message}`;

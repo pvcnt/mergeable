@@ -7,7 +7,7 @@ import {
 
 // https://reactrouter.com/start/framework/routing
 export default [
-  index("routes/home.tsx"),
+  index("routes/login.tsx"),
   layout("components/AppLayout.tsx", [
     route("inbox", "routes/dashboard.tsx"),
     route("inbox/stars", "routes/stars.tsx"),

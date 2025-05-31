@@ -21,6 +21,32 @@ import {
   CheckConclusionState,
 } from "../../../generated/gql/graphql";
 
+export function normalizeBaseUrl(baseUrl: string): string {
+  if (!URL.canParse(baseUrl)) {
+    throw new Error("Invalid URL");
+  }
+  const url = new URL(baseUrl);
+  // Remove any query string parameters.
+  url.search = "";
+
+  // Normalize hostname.
+  if (url.host === "github.com") {
+    // github.com URL must point to the API root.
+    url.host = "api.github.com";
+    url.pathname = "";
+  } else if (!url.host.endsWith("github.com")) {
+    // GitHub Enterprise URL must point to the API root.
+    url.pathname = "/api/v3";
+  }
+
+  // Remove trailing slash.
+  baseUrl = url.toString();
+  if (baseUrl.endsWith("/")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+  }
+  return baseUrl;
+}
+
 const MyOctokit = Octokit.plugin(throttling);
 
 export type Endpoint = {

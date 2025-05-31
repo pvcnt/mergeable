@@ -49,7 +49,6 @@ export type Section = SectionProps & {
 export type ConnectionProps = {
   label: string;
   baseUrl: string;
-  host: string;
   auth: string;
   orgs: string[];
 };
@@ -59,6 +58,7 @@ export type ConnectionProps = {
  */
 export type Connection = ConnectionProps & {
   id: string;
+  host: string;
   viewer?: Profile;
 };
 

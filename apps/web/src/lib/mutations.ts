@@ -1,14 +1,28 @@
 import { db } from "./db";
-import type { Pull } from "../lib/github/types";
-import { defaultSections, type Connection, type Section } from "../lib/types";
+import type { Profile, Pull } from "../lib/github/types";
+import {
+  defaultSections,
+  type Connection,
+  type ConnectionProps,
+  type Section,
+} from "../lib/types";
 import { omit } from "remeda";
 
-export async function saveConnection(value: Connection): Promise<void> {
-  if (value.id.length === 0) {
-    await db.connections.add(omit(value, ["id"]));
-  } else {
-    await db.connections.put(value);
+export async function createConnection(
+  props: ConnectionProps,
+  viewer: Profile,
+): Promise<string> {
+  if (!URL.canParse(props.baseUrl)) {
+    throw new Error("Invalid URL");
   }
+  // Special case to identify github.com's host.
+  const url = new URL(props.baseUrl);
+  const host = url.hostname == "api.github.com" ? "github.com" : url.hostname;
+  return await db.connections.add({ ...props, host, viewer });
+}
+
+export async function saveConnection(value: Connection): Promise<void> {
+  await db.connections.put(value);
 }
 
 export async function deleteConnection(value: Connection): Promise<void> {
