@@ -24,4 +24,4 @@ The following deployment methods are currently supported:
 | ------------------------ | ------------------------------------- |
 | [Docker image](./docker/) | Local testing, bare metal, VMs, PaaS. |
 | [Helm chart](./helm/)     | Kubernetes cluster.                   |
-| [Static files](./static/) | Static website hosting platform.      |
+| [Static files](./static-files/) | Static website hosting platform.      |
