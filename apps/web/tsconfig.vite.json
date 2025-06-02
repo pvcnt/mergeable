@@ -15,7 +15,7 @@
     "types": ["@testing-library/jest-dom", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "target": "es2015",
-    "lib": ["es2023", "DOM", "WebWorker"],
+    "lib": ["ES2015", "ES2023.Array", "DOM", "WebWorker"],
     "useDefineForClassFields": true,
     "module": "ESNext",
     "sourceMap": true,
