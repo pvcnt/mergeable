@@ -13,7 +13,7 @@
     "composite": true,
     "types": ["node"],
     "target": "esnext",
-    "module": "esnext",
+    "module": "nodenext",
     "moduleResolution": "bundler",
     "noEmit": true,
   }
