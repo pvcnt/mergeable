@@ -9,7 +9,7 @@ import {
 } from "react-router";
 import { createQueryClient, createIDBPersister } from "./lib/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BlueprintProvider } from "@blueprintjs/core";
+import { BlueprintProvider, Spinner } from "@blueprintjs/core";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import "core-js/actual/array"; // Polyfill for ES2023.Array
 import type { Route } from "./+types/root";
@@ -17,10 +17,19 @@ import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "./styles.scss";
+import classes from "./root.module.scss";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
 ];
+
+export function HydrateFallback() {
+  return (
+    <div className={classes.loading}>
+      <Spinner size={100} />
+    </div>
+  );
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
