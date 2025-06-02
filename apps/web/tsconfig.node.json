@@ -12,7 +12,7 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
-    "target": "es2015",
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
