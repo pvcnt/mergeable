@@ -2,8 +2,41 @@ import { githubAuth } from "@hono/oauth-providers/github";
 import { Hono } from "hono";
 import { getPrismaClient } from "./db";
 import { environ } from "./env";
+import { logger } from "./logging";
+import { HTTPException } from "hono/http-exception";
 
 const app = new Hono();
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return err.getResponse();
+  }
+  return c.json({ ok: false }, 500);
+});
+
+app.use(async (c, next) => {
+  const start = Date.now();
+  try {
+    await next();
+  } finally {
+    const url = new URL(c.req.url);
+    const attrs: Record<string, string | number> = {
+      "http.request.method": c.req.method,
+      "url.scheme": url.protocol.substring(0, url.protocol.length - 1),
+      "url.path": url.pathname,
+      "http.response.status_code": c.res.status,
+      "http.server.request.duration": (Date.now() - start) / 1000,
+    };
+    if (c.error) {
+      attrs["exception.type"] = c.error.name;
+      attrs["exception.message"] = c.error.message;
+      if (c.error.stack) {
+        attrs["exception.stacktrace"] = c.error.stack;
+      }
+    }
+    logger.info(attrs);
+  }
+});
 
 app.get("/health", (c) => c.text("OK"));
 

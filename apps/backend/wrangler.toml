@@ -12,7 +12,7 @@ workers_dev = false
 
 [observability.logs]
 enabled = true
-invocation_logs = true
+invocation_logs = false
 
 [vars]
 MERGEABLE_APP_URL = "https://app.usemergeable.dev"
