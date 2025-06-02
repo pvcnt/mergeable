@@ -3,4 +3,8 @@
   "extends": "@repo/typescript-config/base.json",
   "include": ["src", "tests"],
   "exclude": ["node_modules"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+  }
 }
