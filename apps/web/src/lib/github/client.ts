@@ -76,6 +76,7 @@ type Actor =
       avatarUrl: any;
     }
   | { __typename: "Organization" }
+  | { __typename: "EnterpriseTeam" }
   | undefined
   | null;
 
