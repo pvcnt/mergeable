@@ -164,4 +164,30 @@ test("should filter by orgs", () => {
   expect(prepareQuery("is:open repo:apache/solr", orgs)).toEqual(
     "is:open repo:apache/solr type:pr archived:false sort:updated",
   );
+
+  // An excluded repo does not restrict the search to a set of repositories,
+  // hence the org filter must be kept, otherwise the search is performed
+  // against the whole of GitHub.
+  expect(prepareQuery("is:open -repo:apache/solr", orgs)).toEqual(
+    "is:open -repo:apache/solr type:pr archived:false org:apache org:kubernetes sort:updated",
+  );
+
+  expect(
+    prepareQuery("is:open repo:apache/lucene -repo:apache/solr", orgs),
+  ).toEqual(
+    "is:open repo:apache/lucene -repo:apache/solr type:pr archived:false sort:updated",
+  );
+});
+
+test("should tell whether a qualifier is present", () => {
+  const q = new SearchQuery("org:apache -repo:apache/solr");
+
+  expect(q.has("org")).toBe(true);
+  expect(q.has("repo")).toBe(true);
+  expect(q.has("author")).toBe(false);
+
+  expect(q.has("org", { exclude: false })).toBe(true);
+  expect(q.has("org", { exclude: true })).toBe(false);
+  expect(q.has("repo", { exclude: false })).toBe(false);
+  expect(q.has("repo", { exclude: true })).toBe(true);
 });

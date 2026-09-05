@@ -45,7 +45,7 @@ export function prepareQuery(search: string, orgs: string[]): string {
   if (orgs.length > 0) {
     q.setAll("org", orgs);
   }
-  if (q.has("org") && q.has("repo")) {
+  if (q.has("org") && q.has("repo", { exclude: false })) {
     // GitHub API does not seem to support having both terms with an "org"
     // and "repo" qualifier in a given query. In this situation, the term
     // with the "repo" qualifier is apparently ignored. We remediate to this
@@ -54,6 +54,12 @@ export function prepareQuery(search: string, orgs: string[]): string {
     //
     // Note: We ignore the situation where the targeted repo(s) are not within
     // the originally targeted org(s).
+    //
+    // Only terms with a positive "repo" qualifier conflict with the "org"
+    // qualifier. An excluded repo (e.g., "-repo:apache/solr") does not narrow
+    // the search down to a set of repositories, hence terms with the "org"
+    // qualifier must be preserved, otherwise the search would be performed
+    // against the whole of GitHub.
     q.delete("org");
   }
 
@@ -81,8 +87,20 @@ export class SearchQuery {
     this.terms = this.parseTerms(q);
   }
 
-  has(qualifier: string): boolean {
-    return this.terms.some((t) => t.qualifier === qualifier);
+  /**
+   * Return whether this query has at least one term with a given qualifier.
+   *
+   * @param qualifier A qualifier.
+   * @param opts.exclude If defined, only consider terms whose exclusion flag
+   *   matches this value. Otherwise, terms are considered whether they are
+   *   excluded or not.
+   */
+  has(qualifier: string, opts?: { exclude?: boolean }): boolean {
+    return this.terms.some(
+      (t) =>
+        t.qualifier === qualifier &&
+        (opts?.exclude === undefined || t.exclude === opts.exclude),
+    );
   }
 
   set(qualifier: string, value: string, op?: SearchOp): undefined {
