@@ -1,9 +1,11 @@
 import { test, expect } from "vitest";
+import { Kind, parse, visit } from "graphql";
 import { setupRecording } from "./polly.js";
 import {
   DefaultGitHubClient,
   normalizeBaseUrl,
 } from "../../../src/lib/github/client";
+import { SearchDocument } from "../../../generated/gql/graphql";
 
 setupRecording();
 
@@ -152,4 +154,28 @@ test("should search pulls", async () => {
       checks: [],
     },
   ]);
+});
+
+test("should not select contexts alongside state in statusCheckRollup", () => {
+  // GitHub returns a pessimistic `state` that accounts for superseded check
+  // runs when `contexts` is selected in the same selection set. Keeping the two
+  // in separate selection sets is what the `checkRollup` alias is for.
+  const selectionSets: string[][] = [];
+  visit(parse(SearchDocument.toString()), {
+    Field(node) {
+      if (node.name.value !== "statusCheckRollup") {
+        return;
+      }
+      selectionSets.push(
+        (node.selectionSet?.selections ?? [])
+          .filter((selection) => selection.kind === Kind.FIELD)
+          .map((selection) => selection.name.value),
+      );
+    },
+  });
+
+  expect(selectionSets.length).toBeGreaterThan(0);
+  for (const fields of selectionSets) {
+    expect(fields.includes("state") && fields.includes("contexts")).toBe(false);
+  }
 });

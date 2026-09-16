@@ -58,6 +58,12 @@ query search($q: String!, $limit: Int!) {
           }
           statusCheckRollup {
             state
+          }
+          # Aliased on purpose: when 'contexts' is selected next to 'state' in the
+          # same selection set, GitHub returns a pessimistic 'state' that accounts
+          # for superseded check runs. Fetching them separately keeps 'state'
+          # consistent with what GitHub reports for the commit.
+          checkRollup: statusCheckRollup {
             contexts(first: 100) {
               nodes {
                 __typename

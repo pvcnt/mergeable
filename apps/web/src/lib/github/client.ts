@@ -279,7 +279,7 @@ export class DefaultGitHubClient implements GitHubClient {
             approved: n.state === PullRequestReviewState.Approved,
           })) ?? [],
       checks:
-        node.statusCheckRollup?.contexts?.nodes
+        node.checkRollup?.contexts?.nodes
           ?.filter(isNonNullish)
           .map((n) => this.makeCheck(n)) ?? [],
       discussions,
